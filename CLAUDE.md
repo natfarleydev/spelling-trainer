@@ -18,7 +18,7 @@ Thus, the app must operate fully in the browser.
 
 - React 19 with TypeScript.
 - Vite 8 builds the app.
-- Vitest runs the unit tests.
+- Vitest runs the unit tests and the component tests. The component tests use Testing Library and jsdom.
 - Playwright runs the smoke tests in the `e2e` folder.
 - oxlint does the lint checks.
 - jsPDF makes the PDF file. PptxGenJS makes the PPTX file.
@@ -48,10 +48,13 @@ Obey this cycle for each change:
 4. Run all the tests. Make sure that they all pass.
 5. **Refactor:** Make the code better. Keep all the tests green.
 
-Use two levels of tests:
+Use three levels of tests:
 
-- **Unit tests (Vitest):** Each unit must have unit tests. Put the test file next to the unit. Name it `<unit>.test.ts`.
+- **Unit tests (Vitest, `unit` project):** Each pure unit must have unit tests. Put the test file next to the unit. Name it `<unit>.test.ts`. These tests run in the node environment, which is fast.
+- **Component tests (Vitest, `component` project):** Each React component must have component tests. Name the file `<Component>.test.tsx`. These tests use Testing Library in jsdom. Test what the user sees and does, not the internal state.
 - **Smoke tests (Playwright):** Each user-visible feature must have a smoke test in `e2e/`. The smoke tests use the production build.
+
+If a test passes before you write the code, prove that the test can fail. Break the code for a short time, run the test, then restore the code.
 
 Also obey these rules:
 
@@ -59,6 +62,29 @@ Also obey these rules:
 - Do not delete a test to make the tests pass.
 - Do not skip a test. Do not commit `test.only` or `it.skip`.
 - Run `npm run lint`, `npm test`, `npm run build` and `npm run test:e2e` before each push.
+
+## Clarifying questions
+
+Always ask clarifying questions about the functionality before you write the code.
+
+- Ask when a requirement has more than one possible meaning.
+- Ask when a decision changes what the user sees or does.
+- Give options, and give your recommendation first.
+- Do not guess the behavior of a feature.
+
+## User experience: NN/g guidance
+
+Be obsessive about good user experience (UX). Obey the guidance from the Nielsen Norman Group (NN/g).
+
+- Use the 10 usability heuristics of Jakob Nielsen for each feature.
+- Show the status of the system. Example: tell the user when the app saves a presentation.
+- Prevent errors before they occur. Do not let the user lose work by accident.
+- Give the user control. Supply undo, and make it easy to go back.
+- Use the words of the user, not technical words.
+- Make the actions and options visible. Do not make the user remember them.
+- Make the app accessible. Use semantic HTML, labels and a visible keyboard focus.
+- Make the app operate on a phone, a tablet and a desktop computer.
+- Include the UX rules in the tests. Example: a smoke test proves that a reload does not lose a presentation.
 
 ## Code style: functional programming
 
@@ -75,6 +101,7 @@ Composition makes the tests fast and keeps each test isolated.
 - In unit tests, use a small fake for a dependency. Do not load a large library in a unit test.
 - Do not use classes for app logic.
 - React components must be thin. Move logic into pure functions and test these functions.
+- Give side effects to a component as props with real defaults. Example: `App` gets `downloads`. The component tests give fakes.
 
 ## Language: ASD-STE100
 
