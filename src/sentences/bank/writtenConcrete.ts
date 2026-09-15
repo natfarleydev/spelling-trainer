@@ -57,4 +57,42 @@ export const WRITTEN_CONCRETE_BANK: readonly BankEntry[] = [
     word: 'shape',
     sentences: ['A circle is a round shape.', 'A square is a shape with four sides.', 'The cloud looked like the shape of a dog.'],
   },
+  // The second Tatoeba batch (concrete words 150 to 300).
+  {
+    word: 'hang',
+    sentences: ['Hang your coat on the hook by the door.', 'We hang pictures on the wall.', 'Hang the wet clothes outside to dry.'],
+  },
+  { word: 'reader', sentences: ['A good reader reads a lot of books.'] },
+  { word: 'roll', sentences: ['Roll the ball across the floor to the baby.'] },
+  {
+    word: 'lesson',
+    sentences: [
+      'Our first lesson today is music.',
+      'In the swimming lesson, we learned to float.',
+      'The teacher started the lesson by reading a story.',
+    ],
+  },
+  {
+    word: 'earth',
+    sentences: ['The earth goes around the sun.', 'The moon goes around the earth.', 'Plants grow in the earth in the garden.'],
+  },
+  { word: 'strange', sentences: ['We heard a strange noise in the night.'] },
+  { word: 'mouth', sentences: ['Open your mouth wide so the doctor can see your teeth.'] },
+  { word: 'square', sentences: ['A square has four sides that are the same.', 'Cut the paper into a square.'] },
+  { word: 'skin', sentences: ['Put on sun cream to protect your skin.', 'Our skin keeps our body warm and safe.'] },
+  { word: 'shoe', sentences: ['Put a shoe on each foot before you go outside.'] },
+  { word: 'hall', sentences: ['The whole school met in the hall for the show.'] },
+  { word: 'cup', sentences: ['I drank a cup of warm milk before bed.'] },
+  { word: 'finger', sentences: ['I hurt my finger when I shut the door.'] },
+  { word: 'tie', sentences: ['Tie the boat to the post so it does not float away.'] },
+  {
+    word: 'ice',
+    sentences: ['The pond froze, and the ice was thick.', 'Put some ice in my drink to make it cold.', 'Be careful not to fall on the ice.'],
+  },
+  { word: 'coast', sentences: ['We drove along the coast and looked at the sea.'] },
+  { word: 'alive', sentences: ['The fish was still alive, so we put it back in the water.'] },
+  { word: 'sweet', sentences: ['Sugar makes cakes taste sweet.'] },
+  { word: 'knock', sentences: ['Please knock before you come into my room.'] },
+  { word: 'metal', sentences: ['Keys and coins are made of metal.', 'The old metal gate was cold to touch.'] },
+  { word: 'sharp', sentences: ['The cat has sharp teeth.'] },
 ]

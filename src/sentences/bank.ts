@@ -1,5 +1,6 @@
 import { COMMON_EXCEPTION_WORDS_BANK } from './bank/commonExceptionWords'
 import { TATOEBA_0001_BANK } from './bank/tatoeba0001'
+import { TATOEBA_0002_BANK } from './bank/tatoeba0002'
 import { WRITTEN_CONCRETE_BANK } from './bank/writtenConcrete'
 import { YEARS_3_AND_4_BANK } from './bank/years3And4'
 import { YEARS_5_AND_6_BANK } from './bank/years5And6'
@@ -44,11 +45,14 @@ export const mergeEntries = (...lists: readonly (readonly BankEntry[])[]): reado
   return [...merged.values()]
 }
 
+// All the Tatoeba batches, in the order of the mining.
+export const TATOEBA_ENTRIES: readonly TatoebaEntry[] = [...TATOEBA_0001_BANK, ...TATOEBA_0002_BANK]
+
 export const BANK_ENTRIES: readonly BankEntry[] = mergeEntries(
   COMMON_EXCEPTION_WORDS_BANK,
   YEARS_3_AND_4_BANK,
   YEARS_5_AND_6_BANK,
-  toBankEntries(TATOEBA_0001_BANK),
+  toBankEntries(TATOEBA_ENTRIES),
   WRITTEN_CONCRETE_BANK,
 )
 

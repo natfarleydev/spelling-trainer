@@ -1,8 +1,7 @@
 import nlp from 'compromise/three'
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { BANK_ENTRIES, bankSentences, mergeEntries, toBankEntries } from './bank'
-import { TATOEBA_0001_BANK } from './bank/tatoeba0001'
+import { BANK_ENTRIES, bankSentences, mergeEntries, TATOEBA_ENTRIES, toBankEntries } from './bank'
 import { FUNCTION_WORDS } from './functionWords'
 import { splitSentence } from './highlight'
 import { NAMES } from './mining/hardFilter'
@@ -48,7 +47,7 @@ const everySentence = BANK_ENTRIES.flatMap((entry) => entry.sentences.map((sente
 
 // The mining script already measured the context of each Tatoeba sentence with a masked language model.
 // That measure agrees better with a person than the word vector check (see tools/mining/validateContext.ts).
-const TATOEBA_TEXTS: ReadonlySet<string> = new Set(TATOEBA_0001_BANK.flatMap((entry) => entry.sentences.map(({ text }) => text)))
+const TATOEBA_TEXTS: ReadonlySet<string> = new Set(TATOEBA_ENTRIES.flatMap((entry) => entry.sentences.map(({ text }) => text)))
 const writtenSentences = everySentence.filter(([, sentence]) => !TATOEBA_TEXTS.has(sentence))
 
 describe('BANK_ENTRIES', () => {
@@ -72,8 +71,8 @@ describe('BANK_ENTRIES', () => {
     expect(words.filter((word) => !FUNCTION_WORDS.has(word.toLowerCase()) && bankSentences(word).length === 0)).toEqual([])
   })
 
-  it('has at least 3 sentences for each word of the first Tatoeba batch', () => {
-    expect(TATOEBA_0001_BANK.map((entry) => entry.word).filter((word) => bankSentences(word).length < 3)).toEqual([])
+  it('has at least 3 sentences for each word of the Tatoeba batches', () => {
+    expect(TATOEBA_ENTRIES.map((entry) => entry.word).filter((word) => bankSentences(word).length < 3)).toEqual([])
   })
 
   it('has sentences for each word of the statutory word list for years 5 and 6', () => {
