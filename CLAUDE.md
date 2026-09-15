@@ -37,6 +37,7 @@ Thus, the app must operate fully in the browser.
 | `npm test` | Run the unit tests and the component tests one time. |
 | `npm run test:e2e` | Make the production build and run the Playwright smoke tests. |
 | `npm run build` | Do the type checks and make the production build. |
+| `npm run build:vectors` | Make `public/data/word-vectors.bin` again from the GloVe cache in `.cache/glove`. The script tells you how to get the cache. |
 
 ## Testing: test-driven development (TDD)
 
