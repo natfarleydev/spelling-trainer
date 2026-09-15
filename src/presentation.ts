@@ -1,8 +1,11 @@
-import { buildDeck, type Deck } from './deck'
+import { buildDeck, type Deck, type MakeSentence, type Slide } from './deck'
+import type { Sentence } from './sentences/sentence'
+import { isWordAnalysis } from './sentences/wordType'
 
 // A saved presentation. Change schemaVersion when the stored format changes.
+// Version 1: slides have only the word. Version 2: slides also have an analysis and a sentence.
 export type Presentation = {
-  readonly schemaVersion: 1
+  readonly schemaVersion: 1 | 2
   readonly id: string
   // The time in ISO 8601 format, in UTC.
   readonly createdAt: string
@@ -14,15 +17,22 @@ export type NewPresentation = {
   readonly id: string
   readonly createdAt: string
   readonly words: readonly string[]
+  readonly makeSentence?: MakeSentence
 }
 
-export const createPresentation = ({ id, createdAt, words }: NewPresentation): Presentation => ({
-  schemaVersion: 1,
+export const createPresentation = ({ id, createdAt, words, makeSentence }: NewPresentation): Presentation => ({
+  schemaVersion: 2,
   id,
   createdAt,
   words,
-  deck: buildDeck(words),
+  deck: buildDeck(words, makeSentence),
 })
+
+// Give a new presentation with one slide replaced. Give the same presentation when the index is not a slide.
+export const replaceSlide = (presentation: Presentation, index: number, slide: Slide): Presentation =>
+  Number.isInteger(index) && index >= 0 && index < presentation.deck.length
+    ? { ...presentation, deck: presentation.deck.map((current, i) => (i === index ? slide : current)) }
+    : presentation
 
 // Use our own month names, because different browsers give different short names. Example: "Sep" or "Sept".
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -63,13 +73,22 @@ export const makeId = (bytes: Uint8Array): string =>
 
 const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null
 
+const isSentence = (value: unknown): value is Sentence =>
+  isRecord(value) && typeof value.template === 'string' && typeof value.text === 'string'
+
+const isSlide = (value: unknown): value is Slide =>
+  isRecord(value) &&
+  typeof value.word === 'string' &&
+  (value.analysis === undefined || isWordAnalysis(value.analysis)) &&
+  (value.sentence === undefined || isSentence(value.sentence))
+
 // Make sure that stored data has the correct format before the app uses it.
 export const isPresentation = (value: unknown): value is Presentation =>
   isRecord(value) &&
-  value.schemaVersion === 1 &&
+  (value.schemaVersion === 1 || value.schemaVersion === 2) &&
   typeof value.id === 'string' &&
   typeof value.createdAt === 'string' &&
   Array.isArray(value.words) &&
   value.words.every((word) => typeof word === 'string') &&
   Array.isArray(value.deck) &&
-  value.deck.every((slide) => isRecord(slide) && typeof slide.word === 'string')
+  value.deck.every(isSlide)

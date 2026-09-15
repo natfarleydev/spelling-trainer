@@ -1,21 +1,55 @@
 import { describe, expect, it } from 'vitest'
 import { buildDeck } from './deck'
-import { createPresentation, isPresentation, makeId, presentationName, sortNewestFirst } from './presentation'
+import type { Slide } from './deck'
+import {
+  createPresentation,
+  isPresentation,
+  makeId,
+  presentationName,
+  replaceSlide,
+  sortNewestFirst,
+} from './presentation'
 
 const words = ['because', 'friend', 'necessary', 'separate']
 
 // 06:30 UTC is 07:30 in London in September (British Summer Time).
 const createdAt = '2026-09-15T06:30:00.000Z'
 
+const makeSentence = (word: string) => ({
+  analysis: { type: 'other' } as const,
+  sentence: { template: 'The word is {word}.', text: `The word is ${word}.` },
+})
+
 describe('createPresentation', () => {
-  it('keeps the id, the time and the words, and makes the deck', () => {
-    expect(createPresentation({ id: 'k3x9', createdAt, words })).toEqual({
-      schemaVersion: 1,
+  it('keeps the id, the time and the words, and makes the deck with sentences in schema version 2', () => {
+    expect(createPresentation({ id: 'k3x9', createdAt, words, makeSentence })).toEqual({
+      schemaVersion: 2,
       id: 'k3x9',
       createdAt,
       words,
-      deck: buildDeck(words),
+      deck: buildDeck(words, makeSentence),
     })
+  })
+})
+
+describe('replaceSlide', () => {
+  const presentation = createPresentation({ id: 'k3x9', createdAt, words, makeSentence })
+  const changed: Slide = { word: 'friend', analysis: { type: 'adverb' }, sentence: { template: 'x {word}', text: 'x friend' } }
+
+  it('gives a new presentation with the slide at the index replaced', () => {
+    const next = replaceSlide(presentation, 1, changed)
+    expect(next.deck[1]).toEqual(changed)
+    expect(next.deck.filter((_, i) => i !== 1)).toEqual(presentation.deck.filter((_, i) => i !== 1))
+  })
+
+  it('does not change the presentation that it gets', () => {
+    const before = structuredClone(presentation)
+    replaceSlide(presentation, 1, changed)
+    expect(presentation).toEqual(before)
+  })
+
+  it.each([-1, 4, 1.5])('gives the same presentation for the index %s that is not a slide', (index) => {
+    expect(replaceSlide(presentation, index, changed)).toBe(presentation)
   })
 })
 
@@ -76,10 +110,31 @@ describe('isPresentation', () => {
     ['null', null],
     ['a string', 'k3x9'],
     ['an empty object', {}],
-    ['a different schema version', { ...createPresentation({ id: 'k3x9', createdAt, words }), schemaVersion: 2 }],
     ['words that are not a list', { ...createPresentation({ id: 'k3x9', createdAt, words }), words: 'because' }],
     ['a deck that is not a list', { ...createPresentation({ id: 'k3x9', createdAt, words }), deck: null }],
+    ['schema version 3', { ...createPresentation({ id: 'k3x9', createdAt, words, makeSentence }), schemaVersion: 3 }],
+    [
+      'a slide with a sentence that is not an object',
+      { ...createPresentation({ id: 'k3x9', createdAt, words: ['cat'] }), deck: [{ word: 'cat', sentence: 'The word is cat.' }] },
+    ],
+    [
+      'a slide with a sentence that has no template',
+      { ...createPresentation({ id: 'k3x9', createdAt, words: ['cat'] }), deck: [{ word: 'cat', sentence: { text: 'The word is cat.' } }] },
+    ],
+    [
+      'a slide with an analysis that is not correct',
+      { ...createPresentation({ id: 'k3x9', createdAt, words: ['cat'] }), deck: [{ word: 'cat', analysis: { type: 'animal' } }] },
+    ],
   ])('rejects %s', (_, value) => {
     expect(isPresentation(value)).toBe(false)
+  })
+
+  it('accepts a presentation in schema version 1, which a previous version of the app saved', () => {
+    const stored = { schemaVersion: 1, id: 'old', createdAt, words: ['cat'], deck: [{ word: 'cat' }] }
+    expect(isPresentation(stored)).toBe(true)
+  })
+
+  it('accepts a presentation with sentences in schema version 2', () => {
+    expect(isPresentation(createPresentation({ id: 'k3x9', createdAt, words, makeSentence }))).toBe(true)
   })
 })
