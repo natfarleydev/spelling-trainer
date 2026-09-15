@@ -1,0 +1,10 @@
+{
+  "name": "spelling-trainer-mining",
+  "private": true,
+  "description": "Build-time tools that find and score Tatoeba sentences. Not part of the app.",
+  "type": "module",
+  "dependencies": {
+    "@huggingface/transformers": "4.2.0",
+    "tsx": "4.23.13"
+  }
+}

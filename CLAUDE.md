@@ -261,6 +261,21 @@ A sentence must help the child to understand the **meaning** of the word. Exampl
 - `src/sentences/bank.test.ts` checks all these rules. It also checks that the bank has each word of the statutory lists for years 3 to 6, and each common exception word for years 1 and 2 that is not in `FUNCTION_WORDS`.
 - The app chooses a bank sentence first. If the bank has no sentence for the word, the app chooses a template sentence, and the presentation page tells the teacher that the sentence does not show the meaning.
 - The app uses bank sentences only for the word type from the tagger. If the teacher selects a different type, the app uses the templates.
+- Give each word a minimum of 3 good sentences, so that the teacher has a choice when one sentence does not operate.
+
+### Tatoeba sentences (decisions from 2026-09-15)
+
+The bank also uses real sentences from [Tatoeba](https://tatoeba.org) (CC BY 2.0 FR). A build script finds and scores them. A person does not approve each sentence: Claude reads the best candidates and chooses them.
+
+- **Words:** all NGSL words and all the spelling lists. Do the work in batches, most frequent words first.
+- **Quality:** a sentence must give **context** for the word. A valid sentence is not sufficient. Example: "We eat food when we are hungry." is good. "Tom put the food on the table." is not good.
+- **Hard filters:** a whole sentence, a short length for KS2, the word one time, only known words, British English, no topic from the blocklist.
+- **Names and contractions:** allow a short list of common first names. Expand contractions (for example, "don't" to "do not") and record the change. Do not allow a possessive apostrophe.
+- **Score:** a GDEX score (Kilgarriff et al. 2008) multiplied by a context score. The context score hides the word and measures how well a masked language model guesses it. Run the model only at build time, never in the browser.
+- **Validation:** a hand-labelled set of good and poor context sentences must rank correctly with the score.
+- If Tatoeba does not give 3 good sentences for a word, write the missing sentences.
+- Keep the Tatoeba id of each sentence. The README must say that the sentences come from Tatoeba, with a link.
+- Keep the downloads (the Tatoeba file and the model) in the `.cache` folder. Do not commit them.
 - **Links are an experiment:** `src/sentences/link.ts` puts a word into a bank sentence of a word with a similar meaning. A review on 2026-09-15 found that most links did not show the meaning, so the app does not use them. Do not use links in the app until a review of real links shows good results.
 
 ## Language: ASD-STE100
