@@ -146,6 +146,27 @@ test('downloads a PDF file and a PPTX file from the presentation page', async ({
   expect((await pptx).suggestedFilename()).toBe('spelling-words.pptx')
 })
 
+// Different devices have different fonts. A wide font must not push a long word off the screen.
+// The letter spacing makes the font wide on all operating systems.
+for (const viewport of [
+  { name: 'phone', width: 375, height: 812 },
+  { name: 'desktop', width: 1280, height: 720 },
+]) {
+  test(`fits a long word to a ${viewport.name} screen when the font is wide`, async ({ page }) => {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height })
+    await page.reload()
+    await page.addStyleTag({ content: '.word { letter-spacing: 0.25em !important; }' })
+    await makePresentation(page, ['accommodate'])
+    const word = page.getByText('accommodate', { exact: true })
+    await expect(word).toBeVisible()
+    await expect(async () => {
+      const box = await word.boundingBox()
+      expect(box!.x).toBeGreaterThanOrEqual(0)
+      expect(box!.x + box!.width).toBeLessThanOrEqual(viewport.width)
+    }).toPass({ timeout: 2000 })
+  })
+}
+
 test('operates on a phone screen', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 })
   await page.reload()

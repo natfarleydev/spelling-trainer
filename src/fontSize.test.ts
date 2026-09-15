@@ -1,5 +1,39 @@
 import { describe, expect, it } from 'vitest'
-import { estimateUnitWidth, fitFontSize, screenFontSize } from './fontSize'
+import { estimateUnitWidth, fitFontSize, fitMeasuredFontSize, screenFontSize } from './fontSize'
+
+describe('fitMeasuredFontSize', () => {
+  it('makes a word that is too wide smaller, so that it fills 90% of the available width', () => {
+    // 400 px at 50 px gives 8 px of width for each 1 px of font size. 90% of 375 px is 337.5 px.
+    expect(fitMeasuredFontSize({ textWidth: 400, fontSize: 50, availableWidth: 375, availableHeight: 700 })).toBe(
+      337.5 / 8,
+    )
+  })
+
+  it('makes a short word larger, but not more than 40% of the available height', () => {
+    expect(fitMeasuredFontSize({ textWidth: 100, fontSize: 50, availableWidth: 1000, availableHeight: 500 })).toBe(200)
+  })
+
+  it('gives the same size when it measures a word at the size that it gave', () => {
+    const first = fitMeasuredFontSize({ textWidth: 400, fontSize: 50, availableWidth: 375, availableHeight: 700 })!
+    const second = fitMeasuredFontSize({
+      textWidth: (400 / 50) * first,
+      fontSize: first,
+      availableWidth: 375,
+      availableHeight: 700,
+    })
+    expect(second).toBeCloseTo(first, 10)
+  })
+
+  it.each([
+    { textWidth: 0, fontSize: 50, availableWidth: 375, availableHeight: 700 },
+    { textWidth: 400, fontSize: 0, availableWidth: 375, availableHeight: 700 },
+    { textWidth: 400, fontSize: 50, availableWidth: 0, availableHeight: 700 },
+    { textWidth: 400, fontSize: 50, availableWidth: 375, availableHeight: 0 },
+    { textWidth: Number.NaN, fontSize: 50, availableWidth: 375, availableHeight: 700 },
+  ])('gives null when a measurement is not available: %o', (measurement) => {
+    expect(fitMeasuredFontSize(measurement)).toBeNull()
+  })
+})
 
 describe('fitFontSize', () => {
   it('gives the font size that makes the text fill the available width', () => {

@@ -1,5 +1,6 @@
+import { useLayoutEffect, useRef } from 'react'
 import type { Deck } from './deck'
-import { screenFontSize } from './fontSize'
+import { fitMeasuredFontSize, screenFontSize } from './fontSize'
 import { nextIndex, previousIndex } from './navigation'
 
 type SlideshowProps = {
@@ -11,9 +12,39 @@ type SlideshowProps = {
 
 // Show one slide of the deck. The parent keeps the index, so that the URL can keep the slide number.
 export function Slideshow({ deck, index, onIndexChange }: SlideshowProps) {
+  const slideRef = useRef<HTMLDivElement>(null)
+  const wordRef = useRef<HTMLSpanElement>(null)
+
   const count = deck.length
   const isFirst = index === 0
   const isLast = index >= count - 1
+  const { word } = deck[index]
+
+  // Start with the CSS estimate, then measure the rendered word and fit it to the slide.
+  // The logic is in fitMeasuredFontSize. This effect only reads the layout and writes the style.
+  useLayoutEffect(() => {
+    const slideElement = slideRef.current
+    const wordElement = wordRef.current
+    if (!slideElement || !wordElement) return
+
+    const fit = () => {
+      const size = fitMeasuredFontSize({
+        textWidth: wordElement.getBoundingClientRect().width,
+        fontSize: parseFloat(getComputedStyle(wordElement).fontSize),
+        availableWidth: slideElement.clientWidth,
+        availableHeight: slideElement.clientHeight,
+      })
+      if (size !== null) wordElement.style.fontSize = `${size}px`
+    }
+
+    fit()
+    if (typeof ResizeObserver === 'undefined') return
+    // Fit again when the slide changes size, or when a font loads and changes the width of the word.
+    const observer = new ResizeObserver(fit)
+    observer.observe(slideElement)
+    observer.observe(wordElement)
+    return () => observer.disconnect()
+  }, [word])
 
   const next = () => {
     if (!isLast) onIndexChange(nextIndex(index, count))
@@ -22,12 +53,10 @@ export function Slideshow({ deck, index, onIndexChange }: SlideshowProps) {
     if (!isFirst) onIndexChange(previousIndex(index))
   }
 
-  const { word } = deck[index]
-
   return (
     <div className="slideshow">
-      <div className="slide" onClick={next}>
-        <span className="word" style={{ fontSize: screenFontSize(word) }}>
+      <div className="slide" ref={slideRef} onClick={next}>
+        <span className="word" ref={wordRef} style={{ fontSize: screenFontSize(word) }}>
           {word}
         </span>
       </div>

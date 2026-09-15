@@ -30,3 +30,32 @@ export const screenFontSize = (word: string): string => {
   })
   return `min(${round2(vw)}vw, ${SCREEN_MAX_VH}vh)`
 }
+
+export type TextMeasurement = {
+  readonly textWidth: number
+  readonly fontSize: number
+  readonly availableWidth: number
+  readonly availableHeight: number
+}
+
+// The measured word fills a maximum of 90% of the width and 40% of the height of the slide.
+const MEASURED_FILL_WIDTH = 0.9
+const MEASURED_MAX_HEIGHT = 0.4
+
+const isPositive = (value: number): boolean => Number.isFinite(value) && value > 0
+
+// Give the font size that makes a measured word fit. Different devices have different fonts, so an estimate is not sufficient.
+// Give null when a measurement is not available. Example: jsdom has no layout.
+export const fitMeasuredFontSize = ({
+  textWidth,
+  fontSize,
+  availableWidth,
+  availableHeight,
+}: TextMeasurement): number | null =>
+  [textWidth, fontSize, availableWidth, availableHeight].every(isPositive)
+    ? fitFontSize({
+        unitWidth: textWidth / fontSize,
+        availableWidth: MEASURED_FILL_WIDTH * availableWidth,
+        maxSize: MEASURED_MAX_HEIGHT * availableHeight,
+      })
+    : null
