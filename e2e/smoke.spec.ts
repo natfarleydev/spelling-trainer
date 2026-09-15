@@ -20,6 +20,9 @@ const TEN_WORDS = [
   'receive',
 ]
 
+// The word is also in the sentence, so the tests find the slide word by its class.
+const slideWord = (page: Page) => page.locator('.slide .word')
+
 const textbox = (page: Page) => page.getByLabel('Type the spelling words. Put one word on each line.')
 
 async function makePresentation(page: Page, words: string[]) {
@@ -71,17 +74,17 @@ test('keeps the words after a reload, until the user clicks Clear', async ({ pag
 
 test('makes a presentation and moves between its slides', async ({ page }) => {
   await makePresentation(page, TEN_WORDS)
-  await expect(page.getByText('because', { exact: true })).toBeVisible()
+  await expect(slideWord(page)).toHaveText('because')
   await expect(page.getByText('1 / 10')).toBeVisible()
   await page.screenshot({ path: 'test-results/screenshots/slide-1.png' })
 
   await page.keyboard.press('ArrowRight')
   await expect(page).toHaveURL(/\/2$/)
-  await expect(page.getByText('friend', { exact: true })).toBeVisible()
+  await expect(slideWord(page)).toHaveText('friend')
 
   await page.keyboard.press('ArrowLeft')
   await expect(page).toHaveURL(/\/1$/)
-  await expect(page.getByText('because', { exact: true })).toBeVisible()
+  await expect(slideWord(page)).toHaveText('because')
 })
 
 test('does not move past the last slide', async ({ page }) => {
@@ -98,7 +101,7 @@ test('keeps the presentation and the slide after a reload', async ({ page }) => 
   await page.keyboard.press('ArrowRight')
   await expect(page).toHaveURL(/\/3$/)
   await page.reload()
-  await expect(page.getByText('necessary', { exact: true })).toBeVisible()
+  await expect(slideWord(page)).toHaveText('necessary')
   await expect(page.getByText('3 / 10')).toBeVisible()
 })
 
@@ -107,13 +110,13 @@ test('does not close the presentation when the user pushes Escape', async ({ pag
   const url = page.url()
   await page.keyboard.press('Escape')
   await expect(page).toHaveURL(url)
-  await expect(page.getByText('because', { exact: true })).toBeVisible()
+  await expect(slideWord(page)).toHaveText('because')
 })
 
 test('goes to the home page with Back, and lists the saved presentation', async ({ page }) => {
   await textbox(page).fill('cat\ndog')
   await page.getByRole('button', { name: 'Make the presentation' }).click()
-  await expect(page.getByText('cat', { exact: true })).toBeVisible()
+  await expect(slideWord(page)).toHaveText('cat')
   await page.keyboard.press('ArrowRight')
 
   await page.goBack()
@@ -124,7 +127,7 @@ test('goes to the home page with Back, and lists the saved presentation', async 
   await page.screenshot({ path: 'test-results/screenshots/home-with-saved.png', fullPage: true })
 
   await saved.click()
-  await expect(page.getByText('cat', { exact: true })).toBeVisible()
+  await expect(slideWord(page)).toHaveText('cat')
 })
 
 test('shows a simple sentence with the word on each slide', async ({ page }) => {
@@ -171,7 +174,7 @@ test('opens a deep link through the GitHub Pages 404 page', async ({ page }) => 
 
   await page.goto(deepLink)
   await expect(page).toHaveURL(deepLink)
-  await expect(page.getByText('separate', { exact: true })).toBeVisible()
+  await expect(slideWord(page)).toHaveText('separate')
   await expect(page.getByText('4 / 10')).toBeVisible()
 })
 
@@ -205,8 +208,8 @@ for (const viewport of [
     await page.reload()
     await page.addStyleTag({ content: '.word { letter-spacing: 0.25em !important; }' })
     await makePresentation(page, ['accommodate'])
-    const word = page.getByText('accommodate', { exact: true })
-    await expect(word).toBeVisible()
+    const word = slideWord(page)
+    await expect(word).toHaveText('accommodate')
     await expect(async () => {
       const box = await word.boundingBox()
       expect(box!.x).toBeGreaterThanOrEqual(0)
@@ -220,8 +223,8 @@ test('operates on a phone screen', async ({ page }) => {
   await page.reload()
   await page.screenshot({ path: 'test-results/screenshots/home-phone.png', fullPage: true })
   await makePresentation(page, ['accommodate'])
-  const word = page.getByText('accommodate', { exact: true })
-  await expect(word).toBeVisible()
+  const word = slideWord(page)
+  await expect(word).toHaveText('accommodate')
   const box = await word.boundingBox()
   expect(box!.x).toBeGreaterThanOrEqual(0)
   expect(box!.x + box!.width).toBeLessThanOrEqual(375)

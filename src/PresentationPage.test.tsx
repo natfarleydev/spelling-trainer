@@ -18,6 +18,11 @@ const presentation = createPresentation({
   makeSentence: makeSlideSentence({ tagWord: nounTagger, random: () => 0 }),
 })
 const nounSentence = (index: number, word: string) => fillTemplate(TEMPLATES['noun.singular'][index], word)
+// The sentence has the word under test in a separate element, so the tests compare the full text of the sentence element.
+const sentenceMatcher = (text: string) => (_: string, element: Element | null) =>
+  element?.classList.contains('sentence') === true && element.textContent === text
+const findSentence = (text: string) => screen.findByText(sentenceMatcher(text))
+const getSentence = (text: string) => screen.getByText(sentenceMatcher(text))
 
 const fakeDownloads = (overrides: Partial<Downloads> = {}): Downloads => ({
   pdf: vi.fn().mockResolvedValue(undefined),
@@ -42,6 +47,8 @@ const renderPage = (overrides: Partial<PresentationPageProps> = {}) => {
 }
 
 const button = (name: string) => screen.getByRole('button', { name })
+// The word is also in the sentence, so the tests find the slide word by its class.
+const WORD = { selector: '.word' }
 const typeSelector = () => screen.getByRole('combobox', { name: 'Word type' })
 
 describe('PresentationPage', () => {
@@ -52,7 +59,7 @@ describe('PresentationPage', () => {
 
   it('shows the word of the slide in the URL', async () => {
     renderPage({ slide: 2 })
-    expect(await screen.findByText('friend')).toBeInTheDocument()
+    expect(await screen.findByText('friend', WORD)).toBeInTheDocument()
     expect(screen.getByText('2 / 3')).toBeInTheDocument()
   })
 
@@ -72,14 +79,14 @@ describe('PresentationPage', () => {
   it('changes the URL to slide 1 when the URL has no slide number', async () => {
     const navigator = createMemoryNavigator(`${BASE}presentations/k3x9`)
     renderPage({ slide: null, navigator })
-    await screen.findByText('because')
+    await screen.findByText('because', WORD)
     expect(navigator.pathname()).toBe(`${BASE}presentations/k3x9/1`)
   })
 
   it('changes the URL to the last slide when the slide number is too large', async () => {
     const navigator = createMemoryNavigator(`${BASE}presentations/k3x9/99`)
     renderPage({ slide: 99, navigator })
-    await screen.findByText('necessary')
+    await screen.findByText('necessary', WORD)
     expect(navigator.pathname()).toBe(`${BASE}presentations/k3x9/3`)
   })
 
@@ -87,7 +94,7 @@ describe('PresentationPage', () => {
     const navigator = createMemoryNavigator(BASE)
     navigator.push(`${BASE}presentations/k3x9/1`)
     const { user } = renderPage({ navigator })
-    await screen.findByText('because')
+    await screen.findByText('because', WORD)
     await user.click(button('Next slide'))
     expect(navigator.pathname()).toBe(`${BASE}presentations/k3x9/2`)
     navigator.back()
@@ -97,7 +104,7 @@ describe('PresentationPage', () => {
   it('moves between the slides with the keyboard', async () => {
     const navigator = createMemoryNavigator(`${BASE}presentations/k3x9/1`)
     const { user } = renderPage({ navigator })
-    await screen.findByText('because')
+    await screen.findByText('because', WORD)
     await user.keyboard('{ArrowRight}')
     expect(navigator.pathname()).toBe(`${BASE}presentations/k3x9/2`)
     await user.keyboard('{ArrowLeft}')
@@ -107,16 +114,16 @@ describe('PresentationPage', () => {
   it('does nothing when the user pushes the Escape key', async () => {
     const navigator = createMemoryNavigator(`${BASE}presentations/k3x9/2`)
     const { user } = renderPage({ slide: 2, navigator })
-    await screen.findByText('friend')
+    await screen.findByText('friend', WORD)
     await user.keyboard('{Escape}')
     expect(navigator.pathname()).toBe(`${BASE}presentations/k3x9/2`)
-    expect(screen.getByText('friend')).toBeInTheDocument()
+    expect(screen.getByText('friend', WORD)).toBeInTheDocument()
   })
 
   it('does not change the slide when the user pushes the space bar on a focused button', async () => {
     const navigator = createMemoryNavigator(`${BASE}presentations/k3x9/1`)
     const { user, props } = renderPage({ navigator })
-    await screen.findByText('because')
+    await screen.findByText('because', WORD)
     button('Download PDF').focus()
     await user.keyboard(' ')
     expect(props.downloads.pdf).toHaveBeenCalledOnce()
@@ -126,7 +133,7 @@ describe('PresentationPage', () => {
   it('has a link to all the presentations', async () => {
     const navigator = createMemoryNavigator(`${BASE}presentations/k3x9/1`)
     const { user } = renderPage({ navigator })
-    await screen.findByText('because')
+    await screen.findByText('because', WORD)
     await user.click(screen.getByRole('link', { name: 'All presentations' }))
     expect(navigator.pathname()).toBe(BASE)
   })
@@ -134,7 +141,7 @@ describe('PresentationPage', () => {
   it('removes its keyboard listener when it is removed', async () => {
     const navigator = createMemoryNavigator(`${BASE}presentations/k3x9/1`)
     const { user, unmount } = renderPage({ navigator })
-    await screen.findByText('because')
+    await screen.findByText('because', WORD)
     unmount()
     await user.keyboard('{ArrowRight}')
     expect(navigator.pathname()).toBe(`${BASE}presentations/k3x9/1`)
@@ -143,23 +150,23 @@ describe('PresentationPage', () => {
   describe('sentences', () => {
     it('shows the sentence of the slide under the word', async () => {
       renderPage()
-      expect(await screen.findByText(nounSentence(0, 'because'))).toHaveClass('sentence')
+      expect(await findSentence(nounSentence(0, 'because'))).toHaveClass('sentence')
     })
 
     it('shows the word type of the slide in the selector', async () => {
       renderPage()
-      await screen.findByText('because')
+      await screen.findByText('because', WORD)
       expect(typeSelector()).toHaveValue('noun')
     })
 
     it('gives the slide a new sentence and saves it', async () => {
       const store = createMemoryStore([presentation])
       const { user } = renderPage({ store })
-      await screen.findByText(nounSentence(0, 'because'))
+      await findSentence(nounSentence(0, 'because'))
 
       await user.click(button('New sentence'))
 
-      expect(await screen.findByText(nounSentence(1, 'because'))).toBeInTheDocument()
+      expect(await findSentence(nounSentence(1, 'because'))).toBeInTheDocument()
       expect((await store.get('k3x9'))?.deck[0].sentence?.text).toBe(nounSentence(1, 'because'))
       expect(screen.getByRole('status')).toHaveTextContent('Saved.')
     })
@@ -167,11 +174,11 @@ describe('PresentationPage', () => {
     it('changes only the current slide', async () => {
       const store = createMemoryStore([presentation])
       const { user } = renderPage({ store, slide: 2 })
-      await screen.findByText(nounSentence(0, 'friend'))
+      await findSentence(nounSentence(0, 'friend'))
 
       await user.click(button('New sentence'))
 
-      await screen.findByText(nounSentence(1, 'friend'))
+      await findSentence(nounSentence(1, 'friend'))
       const saved = await store.get('k3x9')
       expect(saved?.deck[0]).toEqual(presentation.deck[0])
       expect(saved?.deck[2]).toEqual(presentation.deck[2])
@@ -180,12 +187,12 @@ describe('PresentationPage', () => {
     it('changes the word type, gives a sentence for the new type and saves it', async () => {
       const store = createMemoryStore([presentation])
       const { user } = renderPage({ store })
-      await screen.findByText(nounSentence(0, 'because'))
+      await findSentence(nounSentence(0, 'because'))
 
       await user.selectOptions(typeSelector(), 'verb')
 
       const verbSentence = fillTemplate(TEMPLATES['verb.infinitive.transitive'][0], 'because')
-      expect(await screen.findByText(verbSentence)).toBeInTheDocument()
+      expect(await findSentence(verbSentence)).toBeInTheDocument()
       expect(typeSelector()).toHaveValue('verb')
       expect((await store.get('k3x9'))?.deck[0].analysis).toEqual({ type: 'verb', form: 'infinitive', transitive: true })
     })
@@ -193,12 +200,12 @@ describe('PresentationPage', () => {
     it('shows an error and keeps the sentence when the change cannot be saved', async () => {
       const store = { ...createMemoryStore([presentation]), save: vi.fn().mockRejectedValue(new Error('full')) }
       const { user } = renderPage({ store })
-      await screen.findByText(nounSentence(0, 'because'))
+      await findSentence(nounSentence(0, 'because'))
 
       await user.click(button('New sentence'))
 
       expect(await screen.findByRole('alert')).toHaveTextContent('The app could not save the change. Try again.')
-      expect(screen.getByText(nounSentence(0, 'because'))).toBeInTheDocument()
+      expect(getSentence(nounSentence(0, 'because'))).toBeInTheDocument()
     })
 
     it('makes a sentence with the tagger for a slide from schema version 1', async () => {
@@ -211,19 +218,19 @@ describe('PresentationPage', () => {
       }
       const loadTagger = vi.fn(async () => nounTagger)
       const { user, container } = renderPage({ id: 'old1', store: createMemoryStore([old]), loadTagger })
-      await screen.findByText('yacht')
+      await screen.findByText('yacht', WORD)
       expect(container.querySelector('.sentence')).toBeNull()
 
       await user.click(button('New sentence'))
 
-      expect(await screen.findByText(nounSentence(0, 'yacht'))).toBeInTheDocument()
+      expect(await findSentence(nounSentence(0, 'yacht'))).toBeInTheDocument()
       expect(loadTagger).toHaveBeenCalledOnce()
     })
 
     it('does not change the slide when the user pushes an arrow key in the word type selector', async () => {
       const navigator = createMemoryNavigator(`${BASE}presentations/k3x9/1`)
       const { user } = renderPage({ navigator })
-      await screen.findByText('because')
+      await screen.findByText('because', WORD)
       typeSelector().focus()
       await user.keyboard('{ArrowRight}')
       expect(navigator.pathname()).toBe(`${BASE}presentations/k3x9/1`)
@@ -233,7 +240,7 @@ describe('PresentationPage', () => {
   describe('downloads', () => {
     it('gives the deck to the PDF download', async () => {
       const { user, props } = renderPage()
-      await screen.findByText('because')
+      await screen.findByText('because', WORD)
       await user.click(button('Download PDF'))
       expect(props.downloads.pdf).toHaveBeenCalledWith(presentation.deck)
       expect(props.downloads.pptx).not.toHaveBeenCalled()
@@ -241,7 +248,7 @@ describe('PresentationPage', () => {
 
     it('gives the deck to the PPTX download', async () => {
       const { user, props } = renderPage()
-      await screen.findByText('because')
+      await screen.findByText('because', WORD)
       await user.click(button('Download PPTX'))
       expect(props.downloads.pptx).toHaveBeenCalledWith(presentation.deck)
       expect(props.downloads.pdf).not.toHaveBeenCalled()
@@ -250,7 +257,7 @@ describe('PresentationPage', () => {
     it('shows an error when a download fails, and removes it when the next download starts', async () => {
       const pdf = vi.fn().mockRejectedValueOnce(new Error('no')).mockResolvedValue(undefined)
       const { user } = renderPage({ downloads: fakeDownloads({ pdf }) })
-      await screen.findByText('because')
+      await screen.findByText('because', WORD)
       await user.click(button('Download PDF'))
       expect(await screen.findByRole('alert')).toHaveTextContent('The download failed. Try again.')
       await user.click(button('Download PDF'))

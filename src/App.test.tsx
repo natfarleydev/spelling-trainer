@@ -37,7 +37,7 @@ describe('App', () => {
 
   it('shows the presentation page at a presentation path', async () => {
     renderApp(`${BASE}presentations/k3x9/2`)
-    expect(await screen.findByText('friend')).toBeInTheDocument()
+    expect(await screen.findByText('friend', { selector: '.word' })).toBeInTheDocument()
   })
 
   it('shows the not-found page at an unknown path', () => {
@@ -57,7 +57,7 @@ describe('App', () => {
   it('shows the new page when the path changes', async () => {
     const { dependencies } = renderApp(BASE)
     act(() => dependencies.navigator.push(`${BASE}presentations/k3x9/1`))
-    expect(await screen.findByText('because')).toBeInTheDocument()
+    expect(await screen.findByText('because', { selector: '.word' })).toBeInTheDocument()
     act(() => dependencies.navigator.back())
     expect(screen.getByRole('heading', { name: 'Spelling trainer' })).toBeInTheDocument()
   })
@@ -67,7 +67,7 @@ describe('App', () => {
     await user.type(screen.getByLabelText('Type the spelling words. Put one word on each line.'), 'cat{Enter}dog')
     await user.click(screen.getByRole('button', { name: 'Make the presentation' }))
 
-    expect(await screen.findByText('cat')).toBeInTheDocument()
+    expect(await screen.findByText('cat', { selector: '.word' })).toBeInTheDocument()
     expect(dependencies.navigator.pathname()).toBe(`${BASE}presentations/new1/1`)
 
     act(() => dependencies.navigator.back())
