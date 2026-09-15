@@ -102,6 +102,115 @@ Be obsessive about good user experience (UX). Obey the guidance from the Nielsen
 - Make the app operate on a phone, a tablet and a desktop computer.
 - Include the UX rules in the tests. Example: a smoke test proves that a reload does not lose a presentation.
 
+## Style guide
+
+Obey this style guide for all pages, slides and downloads. The tests in `src/theme` and the smoke tests check the parts that a machine can measure.
+
+### Audience and feel
+
+- Children in KS2 (ages 7 to 11) look at the slides. Teachers and parents use the pages.
+- The app must feel friendly, bright and calm. Use colour and round shapes for a playful feel. Do not add clutter.
+- Clarity is more important than decoration. Each page has one primary action.
+- Write all interface text in STE. Use short labels in sentence case. Example: "Make the presentation".
+
+### Fonts
+
+| Use | Font | Licence | Why |
+| --- | --- | --- | --- |
+| Slides (the word and the sentence), page titles | **Playpen Sans** by TypeTogether | OFL-1.1 | It looks like handwriting. It has a single-storey "a" and "g", which are the shapes that children learn to write. |
+| All other interface text | **Andika** by SIL International | OFL-1.1 | SIL made it for new readers. It has a single-storey "a" and "g", and "I", "l" and "1" are different. |
+
+- Host the fonts with the app through `@fontsource`. Do not load fonts from a third-party server, because children use the app.
+- Use these fallback stacks: `'Playpen Sans', 'Andika', 'Comic Sans MS', sans-serif` and `'Andika', 'Comic Sans MS', sans-serif`. Comic Sans MS is a default font on Windows and macOS, and it also has a single-storey "a" and "g".
+- **Known limit (measured on 2026-09-15):** in Playpen Sans, the capital "I" and the lowercase "l" look almost the same, and no stylistic set changes this. Do not use Playpen Sans for text where this confusion matters, for example an id or a code.
+- Do not use capital letters for a full word or sentence. Exception: the alpha sticker.
+
+### Type sizes
+
+- Interface text: minimum 1rem (16px). Line height 1.5. Maximum line length 60ch.
+- Page title: 2.25rem, Playpen Sans, weight 700. Section heading: 1.35rem, Andika, weight 700.
+- Slide word: Playpen Sans, weight 700. The slide measures the word and fits it (maximum 90% of the width and 40% of the height).
+- Slide sentence: Playpen Sans, weight 400, `clamp(1.5rem, 4vw, 3.25rem)`, line height 1.3.
+- In the sentence, show the word under test in bold with a thick primary underline. This helps the child to connect the word and its meaning.
+
+### Colours
+
+The CSS custom properties in `src/index.css` are the colour tokens. `src/theme/contrastPairs.ts` lists the pairs that the tests check.
+
+| Token | Value | Use |
+| --- | --- | --- |
+| `--paper` | `#FFFBF2` | Page background (warm white) |
+| `--ink` | `#1F2544` | Main text, word on the slide, focus ring |
+| `--ink-soft` | `#4A4F6A` | Secondary text, sentence on the slide |
+| `--line` | `#E6DCC8` | Decorative dividers only |
+| `--line-strong` | `#8A8069` | Borders of text boxes, selectors and secondary buttons |
+| `--primary` | `#2657D4` | Primary buttons, links, the underline of the word in the sentence |
+| `--primary-dark` | `#1B3F9E` | Hover and pressed state of primary buttons |
+| `--on-primary` | `#FFFFFF` | Text on primary colours |
+| `--sunshine` | `#FFC83D` | Alpha sticker, highlights (with ink text only) |
+| `--coral` | `#FF6F59` | Decoration only, or behind ink text |
+| `--mint` | `#3CCB9F` | Decoration only, or behind ink text |
+| `--grape` | `#8B6FE8` | Decoration only |
+| `--danger` | `#B42318` | Error text |
+| `--success` | `#11785A` | Success text |
+| `--slide-cream`, `--slide-sky`, `--slide-mint`, `--slide-lilac`, `--slide-peach` | `#FFF4D6`, `#DDF0FF`, `#DDF7EC`, `#EDE6FF`, `#FFE4DC` | Slide backgrounds. The slides use them in this order, then start again. |
+
+Measured contrast (WCAG 2.x) for the most important pairs:
+
+| Pair | Ratio | Minimum |
+| --- | --- | --- |
+| `--ink` on `--paper` | 14.46:1 | 4.5:1 |
+| `--ink-soft` on `--paper` | 7.77:1 | 4.5:1 |
+| `--on-primary` on `--primary` | 6.18:1 | 4.5:1 |
+| `--primary` on `--paper` | 5.99:1 | 4.5:1 |
+| `--ink` on `--sunshine` | 9.66:1 | 4.5:1 |
+| `--line-strong` on `--paper` | 3.78:1 | 3:1 (control border) |
+| `--ink` on each slide background | 12.35:1 to 13.63:1 | 7:1 (projectors) |
+| `--ink-soft` on each slide background | 6.63:1 to 7.32:1 | 4.5:1 |
+
+Rules:
+
+- Do not put white text on `--coral`, `--sunshine`, `--mint` or `--grape`. White on coral is only 2.74:1.
+- Do not use `--line` for a control border. It is only 1.32:1 on paper.
+- Do not use colour as the only signal. An error message also has words, for example "The download failed. Try again."
+- A new colour pair for text must go into `src/theme/contrastPairs.ts` with its minimum.
+
+### Shapes, spacing and depth
+
+- Spacing scale: 4, 8, 12, 16, 24, 32 and 48 px.
+- Corner radius: 12px for text boxes and selectors, 20px for cards, full pill shape for buttons.
+- Depth: a soft, solid shadow under buttons and cards (`0 4px 0 rgb(31 37 68 / 15%)`). A pressed button moves 2px down and its shadow gets smaller.
+- Touch targets: minimum 44 × 44 px.
+
+### Components
+
+- **Primary button:** `--primary` background, `--on-primary` text, pill shape, solid shadow. Hover: `--primary-dark`.
+- **Secondary button:** `--paper` background, `--ink` text, 2px `--line-strong` border.
+- **Text box and selector:** `--paper` background, 2px `--line-strong` border, 12px radius, Andika.
+- **Focus:** a 3px `--ink` outline with a 2px offset on each focusable element. Do not remove it.
+- **Saved presentation card:** a card with a coloured left edge. The colours go in the order coral, mint, grape, sunshine.
+- **Alpha sticker:** `--sunshine` background, `--ink` text, dashed `--ink` border, turned 12 degrees.
+- **Slide:** a full slide background from the slide colours, the word in `--ink`, the sentence in `--ink-soft`, and round slide controls.
+- **Messages:** status text in `--ink-soft`, errors in `--danger`, success in `--success`.
+
+### Motion
+
+- Use short transitions (maximum 150 ms) for hover and press.
+- When the user sets `prefers-reduced-motion: reduce`, do not move or animate anything.
+
+### Downloads
+
+- **PDF:** embed Playpen Sans (static TTF files) with jsPDF. Use the same slide backgrounds and layout as the screen.
+- **PPTX:** PptxGenJS cannot embed fonts. Use "Comic Sans MS". Windows and macOS install it, it has a single-storey "a" and "g", and its "I", "l" and "1" are different (measured on 2026-09-15). Do not use Century Gothic: it was not installed on the Windows test computer. Use the same slide background colours.
+
+### How to check the style guide
+
+- `src/theme/contrast.test.ts` tests the WCAG contrast calculation.
+- `src/theme/palette.test.ts` reads `src/index.css` and checks each pair in `src/theme/contrastPairs.ts`.
+- A smoke test runs axe-core on the home page and on a slide. It must find no serious or critical problems.
+- A smoke test checks that the browser loaded Playpen Sans and Andika.
+- Look at the desktop and phone screenshots in `test-results/screenshots` after each visual change.
+
 ## Code style: functional programming
 
 Use functional programming in all the code. Composition is the primary tool.
