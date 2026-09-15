@@ -5,6 +5,7 @@ import { BANK_ENTRIES, bankSentences } from './bank'
 import { FUNCTION_WORDS } from './functionWords'
 import { splitSentence } from './highlight'
 import { AMERICAN_WORDS } from './simpleWords'
+import { YEAR_1_COMMON_EXCEPTION_WORDS, YEAR_2_COMMON_EXCEPTION_WORDS } from './testing/commonExceptionWords'
 import { isKnownWord } from './testing/knownWords'
 import { YEARS_3_AND_4, YEARS_5_AND_6 } from './testing/ks2StatutoryWords'
 import { cosineSimilarity, decodeWordVectors } from './wordVectors'
@@ -56,6 +57,12 @@ describe('BANK_ENTRIES', () => {
 
   it('has sentences for each word of the statutory word list for years 3 and 4', () => {
     expect(YEARS_3_AND_4.filter((word) => bankSentences(word).length === 0)).toEqual([])
+  })
+
+  // A function word, for example "the" or "was", has no meaning of its own, so the bank has no sentences for it.
+  it('has sentences for each common exception word for years 1 and 2 that is not a function word', () => {
+    const words = [...YEAR_1_COMMON_EXCEPTION_WORDS, ...YEAR_2_COMMON_EXCEPTION_WORDS]
+    expect(words.filter((word) => !FUNCTION_WORDS.has(word.toLowerCase()) && bankSentences(word).length === 0)).toEqual([])
   })
 
   it('has sentences for each word of the statutory word list for years 5 and 6', () => {

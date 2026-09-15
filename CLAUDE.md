@@ -258,7 +258,7 @@ A sentence must help the child to understand the **meaning** of the word. Exampl
 - Add a word to `KNOWN_EXTRA_WORDS` only when a bank sentence needs it, and only when a child aged 7 to 11 in the UK knows it.
 - Meaning rule: at least one content word in the sentence must have a word vector similarity of 0.40 or more with the word under test. Before you write a sentence, find clue words with the word vectors.
 - Keep a sentence to a maximum of 15 words, with no apostrophe.
-- `src/sentences/bank.test.ts` checks all these rules. It also checks that the bank has each word of the statutory lists for years 3 to 6.
+- `src/sentences/bank.test.ts` checks all these rules. It also checks that the bank has each word of the statutory lists for years 3 to 6, and each common exception word for years 1 and 2 that is not in `FUNCTION_WORDS`.
 - The app chooses a bank sentence first. If the bank has no sentence for the word, the app chooses a template sentence, and the presentation page tells the teacher that the sentence does not show the meaning.
 - The app uses bank sentences only for the word type from the tagger. If the teacher selects a different type, the app uses the templates.
 - **Links are an experiment:** `src/sentences/link.ts` puts a word into a bank sentence of a word with a similar meaning. A review on 2026-09-15 found that most links did not show the meaning, so the app does not use them. Do not use links in the app until a review of real links shows good results.

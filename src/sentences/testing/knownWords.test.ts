@@ -83,6 +83,7 @@ describe('candidateBases', () => {
     ['best', 'good'],
     ['woke', 'wake'],
     ['broken', 'break'],
+    ['done', 'do'],
   ])('gives %j as a possible base of %j', (word, base) => {
     expect(candidateBases(word)).toContain(base)
   })

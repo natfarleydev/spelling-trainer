@@ -15,7 +15,7 @@ const nounTagger: TagWord = () => ['Noun', 'Singular']
 const presentation = createPresentation({
   id: 'k3x9',
   createdAt: '2026-09-15T06:30:00.000Z',
-  words: ['because', 'friend', 'necessary'],
+  words: ['because', 'zebra', 'necessary'],
   makeSentence: makeSlideSentence({ tagWord: nounTagger, random: () => 0, bankSentences }),
 })
 const NO_MEANING_NOTE = 'This simple sentence does not show what the word means.'
@@ -61,7 +61,7 @@ describe('PresentationPage', () => {
 
   it('shows the word of the slide in the URL', async () => {
     renderPage({ slide: 2 })
-    expect(await screen.findByText('friend', WORD)).toBeInTheDocument()
+    expect(await screen.findByText('zebra', WORD)).toBeInTheDocument()
     expect(screen.getByText('2 / 3')).toBeInTheDocument()
   })
 
@@ -116,10 +116,10 @@ describe('PresentationPage', () => {
   it('does nothing when the user pushes the Escape key', async () => {
     const navigator = createMemoryNavigator(`${BASE}presentations/k3x9/2`)
     const { user } = renderPage({ slide: 2, navigator })
-    await screen.findByText('friend', WORD)
+    await screen.findByText('zebra', WORD)
     await user.keyboard('{Escape}')
     expect(navigator.pathname()).toBe(`${BASE}presentations/k3x9/2`)
-    expect(screen.getByText('friend', WORD)).toBeInTheDocument()
+    expect(screen.getByText('zebra', WORD)).toBeInTheDocument()
   })
 
   it('does not change the slide when the user pushes the space bar on a focused button', async () => {
@@ -188,11 +188,11 @@ describe('PresentationPage', () => {
     it('changes only the current slide', async () => {
       const store = createMemoryStore([presentation])
       const { user } = renderPage({ store, slide: 2 })
-      await findSentence(nounSentence(0, 'friend'))
+      await findSentence(nounSentence(0, 'zebra'))
 
       await user.click(button('New sentence'))
 
-      await findSentence(nounSentence(1, 'friend'))
+      await findSentence(nounSentence(1, 'zebra'))
       const saved = await store.get('k3x9')
       expect(saved?.deck[0]).toEqual(presentation.deck[0])
       expect(saved?.deck[2]).toEqual(presentation.deck[2])
