@@ -149,7 +149,7 @@ test('keeps a new sentence and a new word type after a reload', async ({ page })
 
   // The templates for "Other" are predictable, so the test can check the sentence.
   await wordType.selectOption('other')
-  await expect(sentence).toHaveText(/^(The word is record\.|Can you spell record\?|Write the word record\.)$/)
+  await expect(sentence).toHaveText(/^(The cat can spell record\.|Can the frog spell record\?|The dog wrote record on the mat\.)$/)
   const saved = await sentence.textContent()
 
   await page.reload()

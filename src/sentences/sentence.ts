@@ -22,42 +22,42 @@ export type TemplateKey =
   | 'number.ordinal'
   | 'other'
 
-// Simple sentences in British English. Only the word under test can be difficult.
-// The tests make sure that each other word is in the first 1000 NGSL words, or is an extra simple word.
+// Short, playful sentences for KS2 children, in British English. Example: "The cat sat on the hat."
+// Only the word under test can be difficult. The tests make sure that each other word is simple,
+// that each template has an animal or a playful thing, and that each template has a maximum of 8 words.
 // A template has no "a" or "an" before the word, because the correct article depends on the sound of the word.
-// A review of the sentences for all the KS2 statutory words gave the rules in sentence.test.ts.
 export const TEMPLATES: Readonly<Record<TemplateKey, readonly string[]>> = {
   // These templates also operate for an abstract noun, for example "curiosity".
   'noun.singular': [
-    'We talked about the {word}.',
-    'Tell me about the {word}.',
-    'I want to learn about the {word}.',
-    'Our teacher talked about the {word}.',
-    'I read about the {word}.',
+    'The cat sat on the {word}.',
+    'The dog ran to the {word}.',
+    'A frog hid in the {word}.',
+    'The fox told the hen about the {word}.',
+    'The pig found the {word} in a box.',
   ],
   'noun.plural': [
-    'We talked about the {word}.',
-    'The {word} are here.',
-    'I want to learn about {word}.',
-    'Where are the {word}?',
+    'The {word} sat on the mat.',
+    'The dog ran past the {word}.',
+    'A fox hid the {word} in a box.',
+    'The cat saw the {word} on the hill.',
   ],
-  'noun.uncountable': ['We talked about {word}.', 'Tell me about {word}.', 'I want to learn more about {word}.'],
-  'noun.month': ['My birthday is in {word}.', 'We will go on holiday in {word}.', 'It is often cold in {word}.'],
-  'noun.day': ['We go to school on {word}.', 'I will see you on {word}.', 'Today is {word}.'],
-  'verb.infinitive.transitive': ['I want to {word} them.', 'We will {word} them today.', 'Can you {word} it?'],
-  'verb.infinitive.intransitive': ['We will {word} soon.', 'When will it {word}?', 'I think they will {word}.'],
-  'verb.past.transitive': ['We {word} them last week.', 'I think she {word} it.', 'They {word} it before school.'],
-  'verb.past.intransitive': ['It {word} last week.', 'I think they {word} again.', 'We {word} on the first day.'],
-  'verb.thirdPerson.transitive': ['She {word} them every day.', 'He often {word} it.'],
-  'verb.thirdPerson.intransitive': ['It {word} every day.', 'She often {word} at night.'],
-  'verb.gerund.transitive': ['We are {word} them now.', 'She is {word} it today.'],
-  'verb.gerund.intransitive': ['It is {word} now.', 'They are {word} again.'],
+  'noun.uncountable': ['The owl knows all about {word}.', 'The cat told the dog about {word}.', 'A frog had lots of {word}.'],
+  'noun.month': ['The cat has a party in {word}.', 'It snows on the hill in {word}.', 'The bear sleeps in {word}.'],
+  'noun.day': ['The dog has a bath on {word}.', 'The frog swims in the pond on {word}.', 'The pig bakes a cake on {word}.'],
+  'verb.infinitive.transitive': ['The cat will {word} the hat.', 'Can the dog {word} the ball?', 'The fox wants to {word} the box.'],
+  'verb.infinitive.intransitive': ['The duck will {word} soon.', 'When will the frog {word}?', 'The hen wants to {word} again.'],
+  'verb.past.transitive': ['The fox {word} the box.', 'The cat {word} the hat on the mat.', 'Yesterday the dog {word} the ball.'],
+  'verb.past.intransitive': ['The frog {word} on the log.', 'The duck {word} in the pond.', 'The bee {word} in the sun.'],
+  'verb.thirdPerson.transitive': ['The dog {word} the ball every day.', 'The cat often {word} the hat.'],
+  'verb.thirdPerson.intransitive': ['The frog {word} on the log.', 'The owl often {word} at night.'],
+  'verb.gerund.transitive': ['The pig is {word} the cake.', 'The cat is {word} the hat.'],
+  'verb.gerund.intransitive': ['The duck is {word} in the pond.', 'The hen is {word} again.'],
   // These templates also operate for an adjective that has no degrees, for example "actual".
-  adjective: ['I think it is {word}.', 'They are {word} people.', 'We saw some {word} things.'],
-  adverb: ['We {word} go to the park.', 'She did it {word}.', 'He said it {word}.'],
-  'number.cardinal': ['I have {word} books.', 'There are {word} people here.'],
-  'number.ordinal': ['It is my {word} birthday.', 'This is the {word} time.'],
-  other: ['The word is {word}.', 'Can you spell {word}?', 'Write the word {word}.'],
+  adjective: ['The {word} dog sat on the mat.', 'The frog looked {word}.', 'The cat has some {word} hats.'],
+  adverb: ['The cat ran {word}.', 'The dog {word} sits on the mat.', 'The frog jumped {word}.'],
+  'number.cardinal': ['I saw {word} frogs on a log.', 'The cat has {word} hats.'],
+  'number.ordinal': ['The frog came {word} in the race.', 'It is the {word} cake for the pig.'],
+  other: ['The cat can spell {word}.', 'Can the frog spell {word}?', 'The dog wrote {word} on the mat.'],
 }
 
 export const templateKey = (analysis: WordAnalysis): TemplateKey => {

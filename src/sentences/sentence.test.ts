@@ -56,11 +56,36 @@ describe('TEMPLATES', () => {
     'verb.past.intransitive',
     'verb.thirdPerson.intransitive',
     'verb.gerund.intransitive',
-  ] as const)('%s has a template with a person as the subject of the verb', (key) => {
-    // "It will decide soon." does not make sense for a verb that a person does.
+  ] as const)('%s has a template with a person or an animal as the subject of the verb', (key) => {
+    // "It will decide soon." does not make sense for a verb that a person or an animal does.
     // "I think it will {word}." does not count, because "it" is the subject of the verb.
-    const personBeforeVerb = /\b(I|we|they|she|he|you)( will| often| are| is| am)? \{word\}/i
-    expect(TEMPLATES[key].some((template) => personBeforeVerb.test(template))).toBe(true)
+    const subjectBeforeVerb =
+      /\b(I|we|they|she|he|you|the (cat|dog|frog|fox|hen|pig|duck|owl|bear))( will| often| are| is| am| was)? \{word\}/i
+    expect(TEMPLATES[key].some((template) => subjectBeforeVerb.test(template))).toBe(true)
+  })
+
+  // The sentences are for KS2 children. They must be short, concrete and playful, like "The cat sat on the hat."
+  const PLAYFUL_WORDS: ReadonlySet<string> = new Set([
+    'bath', 'bear', 'bee', 'box', 'bus', 'cake', 'cat', 'dog', 'duck', 'fish', 'fox', 'frog', 'hat', 'hen',
+    'hill', 'log', 'mat', 'nap', 'owl', 'party', 'pig', 'pond', 'race', 'snow', 'sun', 'tree',
+  ])
+
+  it.each(everyTemplate)('%s: %j has an animal or a playful thing', (_, template) => {
+    expect(otherWords(template).some((word) => PLAYFUL_WORDS.has(word.toLowerCase()))).toBe(true)
+  })
+
+  it.each(everyTemplate)('%s: %j has a maximum of 8 words', (_, template) => {
+    // The word under test counts as one word.
+    expect(template.replace(WORD_SLOT, 'x').split(/\s+/).length).toBeLessThanOrEqual(8)
+  })
+
+  it.each(everyTemplate)('%s: %j has no apostrophe', (_, template) => {
+    // Contractions and possessives are more difficult to read.
+    expect(template).not.toMatch(/['’]/)
+  })
+
+  it.each(everyTemplate)('%s: %j does not use an adult phrase', (_, template) => {
+    expect(template).not.toMatch(/\b(I think|talked about|learn about|learn more about|tell me about)\b/i)
   })
 })
 

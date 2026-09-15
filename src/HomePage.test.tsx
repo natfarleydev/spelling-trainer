@@ -7,6 +7,7 @@ import { HomePage, type HomePageProps } from './HomePage'
 import { createMemoryNavigator } from './navigator'
 import { createPresentation } from './presentation'
 import { createMemoryStore, type PresentationStore } from './presentationStore'
+import { fillTemplate, TEMPLATES } from './sentences/sentence'
 import { makeSlideSentence } from './sentences/slideSentence'
 import type { TagWord } from './sentences/wordType'
 import { brokenStorage, createMemoryStorage } from './testing/memoryStorage'
@@ -169,7 +170,7 @@ describe('HomePage', () => {
       const deck = (await store.get('k3x9'))?.deck
       // The override table does not need the tagger.
       expect(deck?.[0].analysis).toEqual({ type: 'noun', form: 'singular' })
-      expect(deck?.[1].sentence?.text).toBe('The word is yacht.')
+      expect(deck?.[1].sentence?.text).toBe(fillTemplate(TEMPLATES.other[0], 'yacht'))
     })
 
     it('shows an error and stays on the page when the save fails', async () => {

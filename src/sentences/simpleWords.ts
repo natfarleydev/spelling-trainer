@@ -1,8 +1,12 @@
 import { NGSL_FIRST_1000 } from './ngslFirst1000'
 
-// Our own list (CC0) of words that young children in the UK know, but that are not in the first 1000 NGSL words.
+// Our own list (CC0) of short words that UK children read in Reception and Year 1, but that are not in the
+// first 1000 NGSL words. Most are decodable phonics words, for example "cat", "hat" and "frog".
 // Add a word here only when a template needs it.
-export const EXTRA_SIMPLE_WORDS: readonly string[] = ['birthday', 'spell']
+export const EXTRA_SIMPLE_WORDS: readonly string[] = [
+  'bake', 'ball', 'bath', 'bee', 'cake', 'cat', 'duck', 'fox', 'frog', 'hat', 'hen', 'hide',
+  'hill', 'jump', 'log', 'mat', 'owl', 'pig', 'pond', 'snow', 'spell', 'sun', 'swim',
+]
 
 // Inflected forms of simple words, with their base form. The NGSL gives only the base form of each word.
 export const WORD_FORMS: Readonly<Record<string, string>> = {
@@ -12,17 +16,31 @@ export const WORD_FORMS: Readonly<Record<string, string>> = {
   were: 'be',
   did: 'do',
   has: 'have',
+  had: 'have',
   went: 'go',
   came: 'come',
-  talked: 'talk',
-  said: 'say',
+  sat: 'sit',
+  sits: 'sit',
+  ran: 'run',
+  hid: 'hide',
+  told: 'tell',
+  found: 'find',
+  wrote: 'write',
+  knows: 'know',
+  wants: 'want',
+  sleeps: 'sleep',
+  swims: 'swim',
+  bakes: 'bake',
+  looked: 'look',
+  jumped: 'jump',
+  snows: 'snow',
   saw: 'see',
-  books: 'book',
-  things: 'thing',
+  hats: 'hat',
+  frogs: 'frog',
+  lots: 'lot',
   me: 'I',
   my: 'I',
   us: 'we',
-  our: 'we',
   them: 'they',
 }
 
