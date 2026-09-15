@@ -6,9 +6,13 @@ export const PDF_FILE_NAME = 'spelling-words.pdf'
 // The page size in points. The ratio is 16:9.
 export const PDF_PAGE = { width: 960, height: 540 } as const
 
-const MAX_FONT_SIZE = 220
-// The word fills a maximum of 85% of the page width.
+const MAX_WORD_FONT_SIZE = 220
+const MAX_SENTENCE_FONT_SIZE = 40
+// A text fills a maximum of 85% of the page width.
 const FILL = 0.85
+// When a page has a sentence, the word is higher on the page and the sentence is under the word.
+const WORD_Y_WITH_SENTENCE = 0.42
+const SENTENCE_Y = 0.78
 
 export type PdfText = {
   readonly text: string
@@ -17,37 +21,59 @@ export type PdfText = {
   readonly fontSize: number
 }
 
+export type PdfPage = {
+  readonly word: PdfText
+  // A slide from schema version 1 has no sentence.
+  readonly sentence: PdfText | null
+}
+
 // Give the width of the text for a font size of 1.
 export type MeasureText = (text: string) => number
 
-// Calculate the text position and the font size for each page.
+const fitToPage = (measure: MeasureText, text: string, maxSize: number): number =>
+  fitFontSize({ unitWidth: measure(text), availableWidth: FILL * PDF_PAGE.width, maxSize })
+
+// Calculate the positions and the font sizes of the texts on each page.
 export const layoutPdf =
   (measure: MeasureText) =>
-  (deck: Deck): readonly PdfText[] =>
-    deck.map(({ word }) => ({
-      text: word,
-      x: PDF_PAGE.width / 2,
-      y: PDF_PAGE.height / 2,
-      fontSize: fitFontSize({
-        unitWidth: measure(word),
-        availableWidth: FILL * PDF_PAGE.width,
-        maxSize: MAX_FONT_SIZE,
-      }),
+  (deck: Deck): readonly PdfPage[] =>
+    deck.map(({ word, sentence }) => ({
+      word: {
+        text: word,
+        x: PDF_PAGE.width / 2,
+        y: PDF_PAGE.height * (sentence ? WORD_Y_WITH_SENTENCE : 0.5),
+        fontSize: fitToPage(measure, word, MAX_WORD_FONT_SIZE),
+      },
+      sentence: sentence
+        ? {
+            text: sentence.text,
+            x: PDF_PAGE.width / 2,
+            y: PDF_PAGE.height * SENTENCE_Y,
+            fontSize: fitToPage(measure, sentence.text, MAX_SENTENCE_FONT_SIZE),
+          }
+        : null,
     }))
+
+const CENTRE = { align: 'center', baseline: 'middle' } as const
 
 // The jsPDF methods that drawPdf uses.
 export type PdfWriter = {
   addPage: (format: [number, number], orientation: 'landscape') => unknown
   setFontSize: (size: number) => unknown
-  text: (text: string, x: number, y: number, options: { align: 'center'; baseline: 'middle' }) => unknown
+  text: (text: string, x: number, y: number, options: typeof CENTRE) => unknown
+}
+
+const drawText = (writer: PdfWriter, { text, x, y, fontSize }: PdfText): void => {
+  writer.setFontSize(fontSize)
+  writer.text(text, x, y, CENTRE)
 }
 
 // Draw the pages with the writer. The writer already has the first page.
-export const drawPdf = (writer: PdfWriter, pages: readonly PdfText[]): void => {
+export const drawPdf = (writer: PdfWriter, pages: readonly PdfPage[]): void => {
   pages.forEach((page, i) => {
     if (i > 0) writer.addPage([PDF_PAGE.width, PDF_PAGE.height], 'landscape')
-    writer.setFontSize(page.fontSize)
-    writer.text(page.text, page.x, page.y, { align: 'center', baseline: 'middle' })
+    drawText(writer, page.word)
+    if (page.sentence) drawText(writer, page.sentence)
   })
 }
 
