@@ -11,6 +11,71 @@ The app makes a presentation from these words.
 GitHub Pages serves only static files.
 Thus, the app must operate fully in the browser.
 
+- Live site: https://natfarleydev.github.io/spelling-trainer/
+- The app is in alpha. Keep the alpha sticker on the page until the user tells you to remove it.
+
+## Stack
+
+- React 19 with TypeScript.
+- Vite 8 builds the app.
+- Vitest runs the unit tests.
+- Playwright runs the smoke tests in the `e2e` folder.
+- oxlint does the lint checks.
+- jsPDF makes the PDF file. PptxGenJS makes the PPTX file.
+- GitHub Actions runs the CI and deploys to GitHub Pages.
+
+## Commands
+
+| Command | Result |
+| --- | --- |
+| `npm run dev` | Start the development server. |
+| `npm run lint` | Run the lint checks. |
+| `npm test` | Run the unit tests one time. |
+| `npm run test:watch` | Run the unit tests after each change. |
+| `npm run test:e2e` | Build the app and run the Playwright smoke tests. |
+| `npm run build` | Do the type checks and make the production build. |
+
+## Testing: test-driven development (TDD)
+
+TDD is mandatory. Be obsessive about tests.
+Do not write production code before a test that fails.
+
+Obey this cycle for each change:
+
+1. **Red:** Write one small test for the new behavior.
+2. Run the test. Make sure that it fails for the correct reason.
+3. **Green:** Write the minimum code that makes the test pass.
+4. Run all the tests. Make sure that they all pass.
+5. **Refactor:** Make the code better. Keep all the tests green.
+
+Use two levels of tests:
+
+- **Unit tests (Vitest):** Each unit must have unit tests. Put the test file next to the unit. Name it `<unit>.test.ts`.
+- **Smoke tests (Playwright):** Each user-visible feature must have a smoke test in `e2e/`. The smoke tests use the production build.
+
+Also obey these rules:
+
+- A defect fix starts with a test that shows the defect.
+- Do not delete a test to make the tests pass.
+- Do not skip a test. Do not commit `test.only` or `it.skip`.
+- Run `npm run lint`, `npm test`, `npm run build` and `npm run test:e2e` before each push.
+
+## Code style: functional programming
+
+Use functional programming in all the code. Composition is the primary tool.
+Composition makes the tests fast and keeps each test isolated.
+
+- Write pure functions. A pure function gives the same output for the same input. It has no side effects.
+- Do not change data. Make new data. Use `readonly` types.
+- Keep the side effects at the edge of the app. Use the "functional core, imperative shell" pattern.
+- The core calculates plain data. Example: `layoutPdf` calculates the position and size of the text.
+- The shell is thin. It only composes the core functions and does the side effects. Example: `downloadPdf` loads jsPDF, draws the layout and saves the file.
+- Give a dependency to a function as an argument. Do not import a dependency with side effects into the core.
+- Use small interfaces for dependencies. Example: `PdfWriter` has only the jsPDF methods that `drawPdf` uses.
+- In unit tests, use a small fake for a dependency. Do not load a large library in a unit test.
+- Do not use classes for app logic.
+- React components must be thin. Move logic into pure functions and test these functions.
+
 ## Language: ASD-STE100
 
 Use ASD-STE100 Simplified Technical English (STE) for all text.
@@ -20,6 +85,7 @@ This rule applies to:
 - Comments in the code.
 - Commit messages.
 - Documentation, which includes this file.
+- Text in the user interface.
 
 Obey these STE rules:
 
@@ -67,6 +133,22 @@ This project uses trunk-based development only.
 - Keep each commit small.
 - Make sure that each commit keeps `main` in a working condition.
 
+### CI and deploy
+
+Each push to `main` starts the `CI and deploy` workflow in `.github/workflows/deploy.yml`.
+The workflow runs the lint checks, the unit tests, the build and the smoke tests.
+It deploys to GitHub Pages only when all these steps pass.
+
+After each push, monitor the workflow in the background:
+
+```bash
+gh run watch --exit-status $(gh run list --branch main --limit 1 --json databaseId --jq '.[0].databaseId')
+```
+
+If the workflow fails, fix forward immediately.
+
+### Fix forward
+
 If a push causes a defect, fix forward:
 
 1. Make a new commit that corrects the defect.
@@ -75,3 +157,7 @@ If a push causes a defect, fix forward:
 
 Do not rewrite the history of `main`.
 Do not use `git push --force` on `main`.
+
+## GitHub
+
+Use the GitHub CLI (`gh`) for GitHub tasks. Examples: the Pages settings and the CI runs.
