@@ -5,7 +5,19 @@ import { downloadPptx } from './pptx'
 import { Slideshow } from './Slideshow'
 import { isValidWordList, MAX_WORDS, parseWords, wordCountMessage } from './words'
 
-export default function App() {
+export type Downloads = {
+  readonly pdf: (deck: Deck) => Promise<void>
+  readonly pptx: (deck: Deck) => Promise<void>
+}
+
+const DEFAULT_DOWNLOADS: Downloads = { pdf: downloadPdf, pptx: downloadPptx }
+
+type AppProps = {
+  // The tests give fake downloads. The app uses the real downloads.
+  downloads?: Downloads
+}
+
+export default function App({ downloads = DEFAULT_DOWNLOADS }: AppProps) {
   const [text, setText] = useState('')
   const [presenting, setPresenting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -49,10 +61,10 @@ export default function App() {
         <button type="button" onClick={present} disabled={!valid}>
           Show the slides
         </button>
-        <button type="button" onClick={() => download(downloadPdf)} disabled={!valid}>
+        <button type="button" onClick={() => download(downloads.pdf)} disabled={!valid}>
           Download PDF
         </button>
-        <button type="button" onClick={() => download(downloadPptx)} disabled={!valid}>
+        <button type="button" onClick={() => download(downloads.pptx)} disabled={!valid}>
           Download PPTX
         </button>
       </div>

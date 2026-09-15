@@ -7,7 +7,26 @@ export default defineConfig({
   base: '/spelling-trainer/',
   plugins: [react()],
   test: {
-    // Vitest runs only the unit tests. Playwright runs the tests in the e2e folder.
-    include: ['src/**/*.test.{ts,tsx}'],
+    // Vitest runs only the tests in src. Playwright runs the tests in the e2e folder.
+    projects: [
+      {
+        extends: true,
+        test: {
+          // The pure units do not need a DOM. The node environment keeps these tests fast.
+          name: 'unit',
+          include: ['src/**/*.test.ts'],
+          environment: 'node',
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'component',
+          include: ['src/**/*.test.tsx'],
+          environment: 'jsdom',
+          setupFiles: ['./src/componentTestSetup.ts'],
+        },
+      },
+    ],
   },
 })
