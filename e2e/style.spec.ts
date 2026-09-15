@@ -86,3 +86,52 @@ for (const viewport of [
     expect(overlaps, `sticker ${JSON.stringify(box)} and title text ${JSON.stringify(title)}`).toBe(false)
   })
 }
+
+test('embeds Playpen Sans in the PDF download', async ({ page }) => {
+  await makePresentation(page, ['necessary'])
+  const downloadPromise = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Download PDF' }).click()
+  const download = await downloadPromise
+  expect(download.suggestedFilename()).toBe('spelling-words.pdf')
+
+  const { readFile } = await import('node:fs/promises')
+  const pdf = (await readFile(await download.path())).toString('latin1')
+  // jsPDF writes the name of each embedded font into the file. If the font files do not load, the PDF has only Helvetica.
+  expect(pdf).toContain('PlaypenSans')
+})
+
+test('still downloads a PDF when the font files are not valid', async ({ page }) => {
+  // NN/g: prevent errors. A server can answer with an HTML page and the status 200 instead of a font file.
+  // Then the PDF must use its fallback font, and the download must still operate.
+  await page.route('**/fonts/playpen-sans/*.ttf', (route) =>
+    route.fulfill({ status: 200, contentType: 'text/html', body: '<!doctype html><title>Not a font</title>' }),
+  )
+  await makePresentation(page, ['necessary'])
+  const downloadPromise = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Download PDF' }).click()
+  const download = await downloadPromise
+
+  const { readFile } = await import('node:fs/promises')
+  const pdf = (await readFile(await download.path())).toString('latin1')
+  expect(pdf).not.toContain('PlaypenSans')
+  expect(pdf).toContain('Helvetica')
+})
+
+test('uses Comic Sans MS and the slide colours in the PPTX download', async ({ page }) => {
+  await makePresentation(page, ['necessary', 'yacht'])
+  const downloadPromise = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Download PPTX' }).click()
+  const download = await downloadPromise
+  expect(download.suggestedFilename()).toBe('spelling-words.pptx')
+
+  // A PPTX file is a zip file. Read the XML of each slide.
+  const { readFile } = await import('node:fs/promises')
+  const { strFromU8, unzipSync } = await import('fflate')
+  const files = unzipSync(new Uint8Array(await readFile(await download.path())))
+  const slideXml = (number: number) => strFromU8(files[`ppt/slides/slide${number}.xml`])
+
+  // The slides have the cream and the sky backgrounds of the style guide, in order.
+  expect(slideXml(1)).toContain('FFF4D6')
+  expect(slideXml(2)).toContain('DDF0FF')
+  expect(slideXml(1)).toContain('Comic Sans MS')
+})
