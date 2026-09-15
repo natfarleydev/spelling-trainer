@@ -2,8 +2,10 @@ import nlp from 'compromise/three'
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { BANK_ENTRIES, bankSentences, mergeEntries, toBankEntries } from './bank'
+import { TATOEBA_0001_BANK } from './bank/tatoeba0001'
 import { FUNCTION_WORDS } from './functionWords'
 import { splitSentence } from './highlight'
+import { NAMES } from './mining/hardFilter'
 import { AMERICAN_WORDS } from './simpleWords'
 import { YEAR_1_COMMON_EXCEPTION_WORDS, YEAR_2_COMMON_EXCEPTION_WORDS } from './testing/commonExceptionWords'
 import { isKnownWord } from './testing/knownWords'
@@ -44,6 +46,11 @@ const bestClue = (word: string, sentence: string): { word: string; similarity: n
 
 const everySentence = BANK_ENTRIES.flatMap((entry) => entry.sentences.map((sentence) => [entry.word, sentence] as const))
 
+// The mining script already measured the context of each Tatoeba sentence with a masked language model.
+// That measure agrees better with a person than the word vector check (see tools/mining/validateContext.ts).
+const TATOEBA_TEXTS: ReadonlySet<string> = new Set(TATOEBA_0001_BANK.flatMap((entry) => entry.sentences.map(({ text }) => text)))
+const writtenSentences = everySentence.filter(([, sentence]) => !TATOEBA_TEXTS.has(sentence))
+
 describe('BANK_ENTRIES', () => {
   it('has each word one time', () => {
     const words = BANK_ENTRIES.map((entry) => entry.word.toLowerCase())
@@ -63,6 +70,10 @@ describe('BANK_ENTRIES', () => {
   it('has sentences for each common exception word for years 1 and 2 that is not a function word', () => {
     const words = [...YEAR_1_COMMON_EXCEPTION_WORDS, ...YEAR_2_COMMON_EXCEPTION_WORDS]
     expect(words.filter((word) => !FUNCTION_WORDS.has(word.toLowerCase()) && bankSentences(word).length === 0)).toEqual([])
+  })
+
+  it('has at least 3 sentences for each word of the first Tatoeba batch', () => {
+    expect(TATOEBA_0001_BANK.map((entry) => entry.word).filter((word) => bankSentences(word).length < 3)).toEqual([])
   })
 
   it('has sentences for each word of the statutory word list for years 5 and 6', () => {
@@ -94,11 +105,13 @@ describe.each(everySentence)('%s: %j', (word, sentence) => {
 
   it('uses only words that a KS2 child knows', () => {
     const unknown = wordsOf(sentence).filter(
-      (other) => other.toLowerCase() !== word.toLowerCase() && !isKnownWord(other, rootOf),
+      (other) => other.toLowerCase() !== word.toLowerCase() && !NAMES.has(other) && !isKnownWord(other, rootOf),
     )
     expect(unknown).toEqual([])
   })
+})
 
+describe.each(writtenSentences)('written sentence for %s: %j', (word, sentence) => {
   it(`shows the meaning: a content word has a similarity of at least ${MEANING_THRESHOLD}`, () => {
     const clue = bestClue(word, sentence)
     expect(clue?.similarity ?? 0, `best clue: ${JSON.stringify(clue)}`).toBeGreaterThanOrEqual(MEANING_THRESHOLD)

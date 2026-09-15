@@ -150,6 +150,12 @@ export function HomePage({ base, store, storage, navigator, makeId, now, timeZon
           </ul>
         )}
       </section>
+
+      <footer className="credits">
+        <p>
+          Some example sentences come from <a href="https://tatoeba.org">Tatoeba</a> (CC BY 2.0 FR).
+        </p>
+      </footer>
     </main>
   )
 }

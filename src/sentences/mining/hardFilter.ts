@@ -50,6 +50,8 @@ export const BLOCKED_WORDS: ReadonlySet<string> = new Set([
   'lovers',
   'military',
   'patients',
+  'abortion',
+  'pregnancy',
   'political',
   'retirement',
   'unemployment',

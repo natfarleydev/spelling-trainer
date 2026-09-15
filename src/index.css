@@ -331,6 +331,16 @@ button.link-button {
   color: var(--ink-soft);
 }
 
+/* The credit for third-party content. The Tatoeba licence needs it. */
+.credits {
+  color: var(--ink-soft);
+  font-size: 1rem;
+}
+
+.credits a {
+  color: var(--primary);
+}
+
 .slideshow {
   position: relative;
   flex: 1;

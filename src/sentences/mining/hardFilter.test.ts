@@ -57,7 +57,7 @@ describe('hardFilterReason', () => {
     expect(hardFilterReason('I love the control of my new bike.', 'bike', { isKnown: () => true })).toBeNull()
   })
 
-  it.each(['cancer', 'attacked', 'criminal', 'youths', 'patients'])('rejects a sentence with the blocked word %j', (word) => {
+  it.each(['cancer', 'attacked', 'criminal', 'youths', 'patients', 'pregnancy', 'abortion'])('rejects a sentence with the blocked word %j', (word) => {
     expect(hardFilterReason(`We talked about the ${word} at the table.`, 'table', { isKnown: () => true })).not.toBeNull()
   })
 

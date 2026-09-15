@@ -1,4 +1,6 @@
 import { COMMON_EXCEPTION_WORDS_BANK } from './bank/commonExceptionWords'
+import { TATOEBA_0001_BANK } from './bank/tatoeba0001'
+import { WRITTEN_CONCRETE_BANK } from './bank/writtenConcrete'
 import { YEARS_3_AND_4_BANK } from './bank/years3And4'
 import { YEARS_5_AND_6_BANK } from './bank/years5And6'
 
@@ -42,7 +44,13 @@ export const mergeEntries = (...lists: readonly (readonly BankEntry[])[]): reado
   return [...merged.values()]
 }
 
-export const BANK_ENTRIES: readonly BankEntry[] = mergeEntries(COMMON_EXCEPTION_WORDS_BANK, YEARS_3_AND_4_BANK, YEARS_5_AND_6_BANK)
+export const BANK_ENTRIES: readonly BankEntry[] = mergeEntries(
+  COMMON_EXCEPTION_WORDS_BANK,
+  YEARS_3_AND_4_BANK,
+  YEARS_5_AND_6_BANK,
+  toBankEntries(TATOEBA_0001_BANK),
+  WRITTEN_CONCRETE_BANK,
+)
 
 const SENTENCES_BY_WORD: ReadonlyMap<string, readonly string[]> = new Map(
   BANK_ENTRIES.map((entry) => [entry.word.toLowerCase(), entry.sentences]),

@@ -127,6 +127,15 @@ describe('HomePage', () => {
     })
   })
 
+  // The Tatoeba licence (CC BY 2.0 FR) needs a credit with a link.
+  it('gives the credit for the Tatoeba sentences with a link to Tatoeba', () => {
+    renderHome()
+    expect(screen.getByRole('link', { name: 'Tatoeba' })).toHaveAttribute('href', 'https://tatoeba.org')
+    expect(screen.getByText(/Some example sentences come from/)).toHaveTextContent(
+      'Some example sentences come from Tatoeba (CC BY 2.0 FR).',
+    )
+  })
+
   describe('Make the presentation', () => {
     it('saves the presentation with a sentence for each word, and opens its first slide', async () => {
       const store = createMemoryStore()

@@ -43,6 +43,13 @@ test('shows the home page with the alpha sticker', async ({ page }) => {
   await page.screenshot({ path: 'test-results/screenshots/home.png', fullPage: true })
 })
 
+// The Tatoeba licence (CC BY 2.0 FR) needs a credit with a link.
+test('gives the credit for the Tatoeba sentences on the home page', async ({ page }) => {
+  const credit = page.getByRole('link', { name: 'Tatoeba' })
+  await expect(credit).toBeVisible()
+  await expect(credit).toHaveAttribute('href', 'https://tatoeba.org')
+})
+
 test('has the expected build version', async ({ page }) => {
   // CI sets EXPECTED_APP_VERSION to the commit SHA. Then the test proves that the site has this commit.
   const expected = process.env.EXPECTED_APP_VERSION ?? ANY_VERSION
