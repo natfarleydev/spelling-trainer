@@ -45,8 +45,11 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
       # The Playwright web server makes the production build before the smoke tests.
+      # The build gets the commit SHA from GITHUB_SHA. The version test compares the build to this commit.
       - name: Smoke tests
         run: npm run test:e2e
+        env:
+          EXPECTED_APP_VERSION: ${{ github.sha }}
       - name: Keep the Playwright report when a test fails
         if: failure()
         uses: actions/upload-artifact@v7
@@ -62,9 +65,62 @@ jobs:
   deploy:
     needs: test
     runs-on: ubuntu-latest
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
         uses: actions/deploy-pages@v5
+
+  # Test the deployed site. First make sure that GitHub Pages serves this commit, then run the smoke tests against the site.
+  verify-deployment:
+    needs: deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      BASE_URL: ${{ needs.deploy.outputs.page_url }}
+      EXPECTED_APP_VERSION: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      # GitHub Pages can serve the previous version for a short time after a deploy.
+      - name: Wait until GitHub Pages serves this commit
+        run: |
+          for attempt in $(seq 1 30); do
+            if curl --silent --fail --header 'Cache-Control: no-cache' "$BASE_URL" | grep -q "name=\"app-version\" content=\"$EXPECTED_APP_VERSION\""; then
+              echo "GitHub Pages serves $EXPECTED_APP_VERSION."
+              exit 0
+            fi
+            echo "Attempt $attempt: GitHub Pages does not serve $EXPECTED_APP_VERSION yet."
+            sleep 10
+          done
+          echo "::error::GitHub Pages did not serve $EXPECTED_APP_VERSION after 5 minutes."
+          exit 1
+      - name: Get the Playwright version
+        id: playwright
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+      - name: Restore the Playwright browser cache
+        id: playwright-cache
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+      - name: Install the Playwright browser
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+      - name: Smoke tests against the deployed site
+        run: npm run test:e2e
+      - name: Keep the Playwright report when a test fails
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report-deployment
+          path: playwright-report
+          retention-days: 7
