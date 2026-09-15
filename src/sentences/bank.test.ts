@@ -1,7 +1,7 @@
 import nlp from 'compromise/three'
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { BANK_ENTRIES, bankSentences } from './bank'
+import { BANK_ENTRIES, bankSentences, mergeEntries, toBankEntries } from './bank'
 import { FUNCTION_WORDS } from './functionWords'
 import { splitSentence } from './highlight'
 import { AMERICAN_WORDS } from './simpleWords'
@@ -102,6 +102,40 @@ describe.each(everySentence)('%s: %j', (word, sentence) => {
   it(`shows the meaning: a content word has a similarity of at least ${MEANING_THRESHOLD}`, () => {
     const clue = bestClue(word, sentence)
     expect(clue?.similarity ?? 0, `best clue: ${JSON.stringify(clue)}`).toBeGreaterThanOrEqual(MEANING_THRESHOLD)
+  })
+})
+
+describe('mergeEntries', () => {
+  it('joins the sentences of the same word without duplicates, and keeps the order of the words', () => {
+    const written = [{ word: 'cat', sentences: ['A cat sat.', 'The cat ran.'] }]
+    const found = [
+      { word: 'Cat', sentences: ['The cat ran.', 'My cat is black.'] },
+      { word: 'dog', sentences: ['The dog barked.'] },
+    ]
+    expect(mergeEntries(written, found)).toEqual([
+      { word: 'cat', sentences: ['A cat sat.', 'The cat ran.', 'My cat is black.'] },
+      { word: 'dog', sentences: ['The dog barked.'] },
+    ])
+  })
+
+  it('gives an empty list when there are no entries', () => {
+    expect(mergeEntries()).toEqual([])
+  })
+})
+
+describe('toBankEntries', () => {
+  it('keeps only the text of each Tatoeba sentence', () => {
+    expect(
+      toBankEntries([
+        {
+          word: 'food',
+          sentences: [
+            { id: 1, text: 'We need food to live.' },
+            { id: 2, text: 'I do not like cold food.', changed: true },
+          ],
+        },
+      ]),
+    ).toEqual([{ word: 'food', sentences: ['We need food to live.', 'I do not like cold food.'] }])
   })
 })
 

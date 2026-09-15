@@ -59,6 +59,25 @@ npm run dev
 | `npm run test:e2e` | Make the production build and run the Playwright smoke tests. |
 | `npm run build` | Do the type checks and make the production build. |
 
+### Mine the Tatoeba sentences
+
+The sentence bank uses sentences from [Tatoeba](https://tatoeba.org). The tools in `tools/mining` find and score them at build time. The app does not use these tools.
+
+1. Download [eng_sentences_detailed.tsv.bz2](https://downloads.tatoeba.org/exports/per_language/eng/eng_sentences_detailed.tsv.bz2) into `.cache/tatoeba`, and unpack it with `bunzip2 -k`.
+2. Install the tools:
+
+   ```bash
+   npm ci --prefix tools/mining
+   ```
+
+3. Mine one batch of words. The first run downloads the RoBERTa model (approximately 126 MB) into `.cache/models`:
+
+   ```bash
+   cd tools/mining && node node_modules/tsx/dist/cli.mjs mineTatoeba.ts --from 0 --to 300
+   ```
+
+The script removes sentences that fail the hard filters, then sorts the others by a GDEX score multiplied by a context score. The context score hides the word and measures how well the model guesses it. `validateContext.ts` checks the context score against a hand-labelled set.
+
 ### Test the live site
 
 After each deploy, CI runs the smoke tests against the live site. It first makes sure that the site has the new commit. You can also run the smoke tests against the live site:
@@ -94,6 +113,21 @@ The app includes these libraries in the build that GitHub Pages serves.
 | [compromise](https://github.com/spencermountain/compromise) (`compromise/two`) | Finds the word type (noun, verb and more) for the sentences. The app loads it only when it makes sentences. | MIT |
 
 The development tools are in `devDependencies` in [package.json](package.json). They are not in the build.
+
+### Build-time tools
+
+These tools find and score the Tatoeba sentences. They are not in the app, and CI does not install them.
+
+| Tool | Licence | Use |
+| --- | --- | --- |
+| [Transformers.js](https://github.com/huggingface/transformers.js) 4.2.0 | Apache-2.0 | Runs the fill-mask model in Node.js |
+| [RoBERTa base](https://huggingface.co/FacebookAI/roberta-base), ONNX copy [Xenova/roberta-base](https://huggingface.co/Xenova/roberta-base) (quantised) | MIT | Guesses the hidden word for the context score |
+| [tsx](https://github.com/privatenumber/tsx) | MIT | Runs the TypeScript tools |
+
+The scores come from these methods:
+
+- GDEX: Kilgarriff, A., Husák, M., McAdam, K., Rundell, M. and Rychlý, P. (2008). GDEX: Automatically finding good dictionary examples in a corpus. Proceedings of EURALEX 2008.
+- Context score: the masked-word method in [Measuring Contextual Informativeness in Child-Directed Text](https://arxiv.org/abs/2412.17427) (2024). We compare the guesses with our GloVe word vectors.
 
 ### Fonts
 
