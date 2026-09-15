@@ -1,99 +1,66 @@
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
-import App, { type Downloads } from './App'
-import { buildDeck } from './deck'
+import App, { type AppDependencies } from './App'
+import { createMemoryNavigator } from './navigator'
+import { createPresentation } from './presentation'
+import { createMemoryStore } from './presentationStore'
+import { createMemoryStorage } from './testing/memoryStorage'
 
-const fakeDownloads = (overrides: Partial<Downloads> = {}): Downloads => ({
-  pdf: vi.fn().mockResolvedValue(undefined),
-  pptx: vi.fn().mockResolvedValue(undefined),
-  ...overrides,
-})
+const BASE = '/spelling-trainer/'
 
-const renderApp = (downloads = fakeDownloads()) => ({
-  user: userEvent.setup(),
-  downloads,
-  ...render(<App downloads={downloads} />),
-})
-
-const textbox = () => screen.getByLabelText('Type the spelling words. Put one word on each line.')
-const button = (name: string) => screen.getByRole('button', { name })
+const renderApp = (start: string, overrides: Partial<AppDependencies> = {}) => {
+  const dependencies: AppDependencies = {
+    base: BASE,
+    store: createMemoryStore([
+      createPresentation({ id: 'k3x9', createdAt: '2026-09-15T06:30:00.000Z', words: ['because', 'friend'] }),
+    ]),
+    storage: createMemoryStorage(),
+    navigator: createMemoryNavigator(start),
+    downloads: { pdf: vi.fn(), pptx: vi.fn() },
+    makeId: () => 'new1',
+    now: () => '2026-09-16T06:30:00.000Z',
+    timeZone: 'Europe/London',
+    ...overrides,
+  }
+  return { dependencies, user: userEvent.setup(), ...render(<App dependencies={dependencies} />) }
+}
 
 describe('App', () => {
-  it('shows the alpha sticker', () => {
-    renderApp()
-    expect(screen.getByRole('note', { name: 'Alpha version' })).toHaveTextContent('Alpha')
+  it('shows the home page at the base path', () => {
+    renderApp(BASE)
+    expect(screen.getByRole('heading', { name: 'Spelling trainer' })).toBeInTheDocument()
   })
 
-  it('disables all the buttons when there are no words', () => {
-    renderApp()
-    expect(screen.getByText('0 of 10 words')).toBeInTheDocument()
-    expect(button('Show the slides')).toBeDisabled()
-    expect(button('Download PDF')).toBeDisabled()
-    expect(button('Download PPTX')).toBeDisabled()
+  it('shows the presentation page at a presentation path', async () => {
+    renderApp(`${BASE}presentations/k3x9/2`)
+    expect(await screen.findByText('friend')).toBeInTheDocument()
   })
 
-  it('enables all the buttons when there are words', async () => {
-    const { user } = renderApp()
-    await user.type(textbox(), 'because{Enter}friend')
-    expect(screen.getByText('2 of 10 words')).toBeInTheDocument()
-    expect(button('Show the slides')).toBeEnabled()
-    expect(button('Download PDF')).toBeEnabled()
-    expect(button('Download PPTX')).toBeEnabled()
+  it('shows the not-found page at an unknown path', () => {
+    renderApp(`${BASE}unknown`)
+    expect(screen.getByRole('heading', { name: 'We cannot find this page' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'All presentations' })).toHaveAttribute('href', BASE)
   })
 
-  it('disables all the buttons and shows a warning when there are too many words', async () => {
-    const { user } = renderApp()
-    await user.type(textbox(), Array.from({ length: 11 }, (_, i) => `word${i}`).join('{Enter}'))
-    expect(screen.getByText('11 of 10 words. Remove 1.')).toHaveClass('too-many')
-    expect(button('Show the slides')).toBeDisabled()
-    expect(button('Download PDF')).toBeDisabled()
-    expect(button('Download PPTX')).toBeDisabled()
+  it('shows the new page when the path changes', async () => {
+    const { dependencies } = renderApp(BASE)
+    act(() => dependencies.navigator.push(`${BASE}presentations/k3x9/1`))
+    expect(await screen.findByText('because')).toBeInTheDocument()
+    act(() => dependencies.navigator.back())
+    expect(screen.getByRole('heading', { name: 'Spelling trainer' })).toBeInTheDocument()
   })
 
-  it('gives the deck to the PDF download', async () => {
-    const { user, downloads } = renderApp()
-    await user.type(textbox(), 'because{Enter}friend')
-    await user.click(button('Download PDF'))
-    expect(downloads.pdf).toHaveBeenCalledWith(buildDeck(['because', 'friend']))
-    expect(downloads.pptx).not.toHaveBeenCalled()
-  })
+  it('makes a presentation, shows it, and goes back to the home page with the words kept', async () => {
+    const { user, dependencies } = renderApp(BASE)
+    await user.type(screen.getByLabelText('Type the spelling words. Put one word on each line.'), 'cat{Enter}dog')
+    await user.click(screen.getByRole('button', { name: 'Make the presentation' }))
 
-  it('gives the deck to the PPTX download', async () => {
-    const { user, downloads } = renderApp()
-    await user.type(textbox(), 'because')
-    await user.click(button('Download PPTX'))
-    expect(downloads.pptx).toHaveBeenCalledWith(buildDeck(['because']))
-    expect(downloads.pdf).not.toHaveBeenCalled()
-  })
+    expect(await screen.findByText('cat')).toBeInTheDocument()
+    expect(dependencies.navigator.pathname()).toBe(`${BASE}presentations/new1/1`)
 
-  it('shows an error when a download fails', async () => {
-    const { user } = renderApp(fakeDownloads({ pdf: vi.fn().mockRejectedValue(new Error('no')) }))
-    await user.type(textbox(), 'because')
-    await user.click(button('Download PDF'))
-    expect(await screen.findByText('The download failed. Try again.')).toHaveClass('error')
-  })
-
-  it('removes the error when the next download starts', async () => {
-    const pdf = vi.fn().mockRejectedValueOnce(new Error('no')).mockResolvedValue(undefined)
-    const { user } = renderApp(fakeDownloads({ pdf }))
-    await user.type(textbox(), 'because')
-    await user.click(button('Download PDF'))
-    await screen.findByText('The download failed. Try again.')
-    await user.click(button('Download PDF'))
-    expect(screen.queryByText('The download failed. Try again.')).not.toBeInTheDocument()
-  })
-
-  it('shows the slides, then shows the same words again after exit', async () => {
-    const { user } = renderApp()
-    await user.type(textbox(), 'because{Enter}friend')
-    await user.click(button('Show the slides'))
-
-    expect(screen.getByText('because')).toBeInTheDocument()
-    expect(screen.getByText('1 / 2')).toBeInTheDocument()
-    expect(screen.queryByRole('note', { name: 'Alpha version' })).not.toBeInTheDocument()
-
-    await user.click(button('Exit'))
-    expect(textbox()).toHaveValue('because\nfriend')
+    act(() => dependencies.navigator.back())
+    expect(screen.getByLabelText('Type the spelling words. Put one word on each line.')).toHaveValue('cat\ndog')
+    expect(await screen.findByRole('link', { name: /cat, dog/ })).toBeInTheDocument()
   })
 })

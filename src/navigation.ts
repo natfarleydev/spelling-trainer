@@ -1,5 +1,6 @@
-export type NavigationAction = 'next' | 'previous' | 'exit'
+export type NavigationAction = 'next' | 'previous'
 
+// The Escape key has no action, so that the user cannot close a presentation by accident.
 const KEY_ACTIONS: Readonly<Record<string, NavigationAction>> = {
   ArrowRight: 'next',
   ArrowDown: 'next',
@@ -8,11 +9,11 @@ const KEY_ACTIONS: Readonly<Record<string, NavigationAction>> = {
   ArrowLeft: 'previous',
   ArrowUp: 'previous',
   PageUp: 'previous',
-  Escape: 'exit',
 }
 
 // Give the navigation action for a keyboard key. Give null if the key has no action.
-export const keyToAction = (key: string): NavigationAction | null => KEY_ACTIONS[key] ?? null
+export const keyToAction = (key: string): NavigationAction | null =>
+  Object.hasOwn(KEY_ACTIONS, key) ? KEY_ACTIONS[key] : null
 
 // Give the index of the next slide. Stay on the last slide.
 export const nextIndex = (index: number, count: number): number => Math.max(0, Math.min(index + 1, count - 1))

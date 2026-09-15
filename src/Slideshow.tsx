@@ -1,52 +1,26 @@
-import { useEffect, useState } from 'react'
 import type { Deck } from './deck'
 import { screenFontSize } from './fontSize'
-import { keyToAction, nextIndex, previousIndex } from './navigation'
+import { nextIndex, previousIndex } from './navigation'
 
 type SlideshowProps = {
   deck: Deck
-  onExit: () => void
+  // The index of the current slide. It starts at 0.
+  index: number
+  onIndexChange: (index: number) => void
 }
 
-// Show the deck one slide at a time. The logic is in navigation.ts and fontSize.ts.
-export function Slideshow({ deck, onExit }: SlideshowProps) {
-  const [index, setIndex] = useState(0)
+// Show one slide of the deck. The parent keeps the index, so that the URL can keep the slide number.
+export function Slideshow({ deck, index, onIndexChange }: SlideshowProps) {
   const count = deck.length
+  const isFirst = index === 0
+  const isLast = index >= count - 1
 
-  const next = () => setIndex((i) => nextIndex(i, count))
-  const previous = () => setIndex(previousIndex)
-
-  const exit = () => {
-    if (document.fullscreenElement) {
-      // The fullscreenchange listener calls onExit.
-      document.exitFullscreen().catch(onExit)
-    } else {
-      onExit()
-    }
+  const next = () => {
+    if (!isLast) onIndexChange(nextIndex(index, count))
   }
-
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      const action = keyToAction(event.key)
-      if (action === null) return
-      event.preventDefault()
-      if (action === 'next') setIndex((i) => nextIndex(i, count))
-      if (action === 'previous') setIndex(previousIndex)
-      if (action === 'exit') onExit()
-    }
-
-    // The browser uses the Escape key to stop full screen. It does not send a keydown event.
-    const onFullscreenChange = () => {
-      if (!document.fullscreenElement) onExit()
-    }
-
-    window.addEventListener('keydown', onKeyDown)
-    document.addEventListener('fullscreenchange', onFullscreenChange)
-    return () => {
-      window.removeEventListener('keydown', onKeyDown)
-      document.removeEventListener('fullscreenchange', onFullscreenChange)
-    }
-  }, [count, onExit])
+  const previous = () => {
+    if (!isFirst) onIndexChange(previousIndex(index))
+  }
 
   const { word } = deck[index]
 
@@ -57,18 +31,15 @@ export function Slideshow({ deck, onExit }: SlideshowProps) {
           {word}
         </span>
       </div>
-      <nav className="controls">
-        <button type="button" onClick={previous} disabled={index === 0} aria-label="Previous slide">
+      <nav className="controls" aria-label="Slide controls">
+        <button type="button" onClick={previous} disabled={isFirst} aria-label="Previous slide">
           ←
         </button>
         <span>
           {index + 1} / {count}
         </span>
-        <button type="button" onClick={next} disabled={index === count - 1} aria-label="Next slide">
+        <button type="button" onClick={next} disabled={isLast} aria-label="Next slide">
           →
-        </button>
-        <button type="button" onClick={exit}>
-          Exit
         </button>
       </nav>
     </div>

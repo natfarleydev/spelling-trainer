@@ -10,12 +10,9 @@ describe('keyToAction', () => {
     expect(keyToAction(key)).toBe('previous')
   })
 
-  it('gives "exit" for the Escape key', () => {
-    expect(keyToAction('Escape')).toBe('exit')
-  })
-
-  it('gives null for a different key', () => {
-    expect(keyToAction('a')).toBeNull()
+  // The Escape key must not close the presentation by accident.
+  it.each(['Escape', 'a'])('gives null for the %j key', (key) => {
+    expect(keyToAction(key)).toBeNull()
   })
 })
 

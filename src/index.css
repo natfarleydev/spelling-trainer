@@ -5,6 +5,7 @@
   --line: #d4d4db;
   --accent: #2f5bd3;
   --danger: #b3261e;
+  --focus: #ffb000;
 
   color: var(--ink);
   background: var(--paper);
@@ -20,8 +21,13 @@ body {
   margin: 0;
 }
 
+a {
+  color: var(--accent);
+}
+
 button {
   font: inherit;
+  min-height: 2.75rem;
   padding: 0.5rem 1rem;
   border: 1px solid var(--line);
   border-radius: 0.5rem;
@@ -35,22 +41,66 @@ button:disabled {
   opacity: 0.5;
 }
 
-/* The page where the user types the words. */
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
+}
 
-.setup {
-  max-width: 32rem;
+/* A button that looks like a link. Example: Undo. */
+button.link-button {
+  min-height: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* Make the keyboard focus easy to see. */
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.error {
+  color: var(--danger);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* The home page. */
+
+.home-page,
+.message-page {
+  max-width: 36rem;
   margin: 0 auto;
   padding: 2rem 1rem;
+}
+
+.home-page h1 {
+  margin: 0 0 1rem;
+}
+
+.home-page h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.word-form,
+.saved {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  margin-bottom: 2.5rem;
 }
 
-.setup h1 {
-  margin: 0 0 0.5rem;
-}
-
-.setup textarea {
+.word-form textarea {
   font: inherit;
   font-size: 1.25rem;
   padding: 0.5rem 0.75rem;
@@ -59,26 +109,31 @@ button:disabled {
   resize: vertical;
 }
 
-.count {
+.count,
+.notice,
+.empty {
   margin: 0;
   color: var(--muted);
 }
 
-.too-many,
-.error {
+.too-many {
   color: var(--danger);
 }
 
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+.saved ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
 }
 
-.actions button:first-child {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #ffffff;
+.saved li {
+  border-bottom: 1px solid var(--line);
+}
+
+.saved li a {
+  display: block;
+  padding: 0.75rem 0.25rem;
 }
 
 /* The alpha sticker tells the user that the app is not complete. */
@@ -116,12 +171,29 @@ button:disabled {
   }
 }
 
-/* The slides. */
+/* The presentation page. */
+
+.presentation-page {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.presentation-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--line);
+}
 
 .slideshow {
-  position: fixed;
-  inset: 0;
-  background: var(--paper);
+  position: relative;
+  flex: 1;
+  min-height: 0;
 }
 
 .slide {
@@ -147,11 +219,4 @@ button:disabled {
   align-items: center;
   gap: 0.5rem;
   color: var(--muted);
-  opacity: 0.4;
-  transition: opacity 0.2s;
-}
-
-.controls:hover,
-.controls:focus-within {
-  opacity: 1;
 }

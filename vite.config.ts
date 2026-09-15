@@ -6,6 +6,12 @@ export default defineConfig({
   // GitHub Pages serves the app from the /spelling-trainer/ path.
   base: '/spelling-trainer/',
   plugins: [react()],
+  build: {
+    rollupOptions: {
+      // GitHub Pages serves 404.html for a deep link. 404.html sends the path to index.html.
+      input: { main: 'index.html', notFound: '404.html' },
+    },
+  },
   test: {
     // Vitest runs only the tests in src. Playwright runs the tests in the e2e folder.
     projects: [
