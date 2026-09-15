@@ -32,7 +32,9 @@ The app can do these tasks now:
 - Keep the typed words in the browser until the teacher clicks **Clear**. **Undo** puts the words back.
 - Save each presentation in the browser (IndexedDB) and list the saved presentations on the home page.
 - Show one large word on each slide. The URL has the slide number, for example `/presentations/k3x9/3`. Thus a reload or a bookmark keeps the slide.
-- Download the slides as a PDF file or a PPTX file.
+- Show a short sentence with the word under test on each slide. **New sentence** gives a different sentence, and **Word type** changes the type of the sentence.
+- Use a friendly style for KS2 children: handwriting-style letters (Playpen Sans), a pastel colour for each slide, and the word under test underlined in the sentence. The style guide is in [CLAUDE.md](CLAUDE.md#style-guide).
+- Download the slides as a PDF file (with the same fonts and colours as the screen) or as a PPTX file.
 
 The app keeps presentations only in the browser where the teacher made them. The app has no server.
 
@@ -92,6 +94,16 @@ The app includes these libraries in the build that GitHub Pages serves.
 | [compromise](https://github.com/spencermountain/compromise) (`compromise/two`) | Finds the word type (noun, verb and more) for the sentences. The app loads it only when it makes sentences. | MIT |
 
 The development tools are in `devDependencies` in [package.json](package.json). They are not in the build.
+
+### Fonts
+
+| Font | Use | Source | Licence |
+| --- | --- | --- | --- |
+| [Playpen Sans](https://github.com/TypeTogether/Playpen-Sans) by TypeTogether | Slides and page titles | [`@fontsource/playpen-sans`](https://fontsource.org/fonts/playpen-sans) for the pages. The static TTF files for the PDF download are copies of `fonts/ttf/PlaypenSans-Regular.ttf` and `PlaypenSans-Bold.ttf` from the TypeTogether repository, in [public/fonts/playpen-sans](public/fonts/playpen-sans) with the licence file. | SIL Open Font License 1.1 |
+| [Andika](https://software.sil.org/andika/) by SIL International | Interface text | [`@fontsource/andika`](https://fontsource.org/fonts/andika) | SIL Open Font License 1.1 |
+| Comic Sans MS | Text in the PPTX download | A system font on Windows and macOS. The app does not include it. | Not distributed |
+
+The app hosts all its fonts. It does not load fonts from a third-party server.
 
 ### Data
 
