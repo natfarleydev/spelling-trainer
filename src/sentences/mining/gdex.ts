@@ -63,6 +63,11 @@ export const GREYLIST: ReadonlySet<string> = new Set([
   'married',
   'hotel',
   'coffee',
+  'stock',
+  'sales',
+  'profit',
+  'economy',
+  'president',
 ])
 
 // A pronoun at the start usually refers to something outside the sentence.

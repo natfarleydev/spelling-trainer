@@ -113,7 +113,7 @@ for await (const line of reader) {
   const expansion = expandContractions(original)
   if (expansion === null) continue
   for (const word of targets) {
-    if (hardFilterReason(expansion.text, word, { isKnown }) !== null) continue
+    if (hardFilterReason(expansion.text, word, { isKnown, bases: candidateBases }) !== null) continue
     const key = duplicateKey(expansion.text)
     const wordSeen = seen.get(word)!
     if (wordSeen.has(key)) continue

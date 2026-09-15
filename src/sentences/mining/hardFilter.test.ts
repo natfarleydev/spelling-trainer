@@ -27,6 +27,40 @@ describe('hardFilterReason', () => {
     expect(hardFilterReason(sentence, word, known)).not.toBeNull()
   })
 
+  it('rejects a sentence with a form of a blocked word, through the base forms', () => {
+    const withBases: FilterTools = {
+      isKnown: () => true,
+      bases: (word) => (word === 'murders' ? ['murder'] : []),
+    }
+    expect(hardFilterReason('We read about the murders in the town.', 'town', withBases)).not.toBeNull()
+  })
+
+  it('rejects a sentence with a form of an American word, through the base forms', () => {
+    const withBases: FilterTools = {
+      isKnown: () => true,
+      bases: (word) => (word === 'movies' ? ['movie'] : []),
+    }
+    expect(hardFilterReason('I watch movies almost every day.', 'day', withBases)).not.toBeNull()
+  })
+
+  it.each([
+    ['make love', 'I want to make love with you today.', 'today'],
+    ['birth control', 'Do you use any method of birth control?', 'method'],
+    ['life support', 'How many people are on life support?', 'people'],
+    ['passed away', 'My old dog passed away last year.', 'dog'],
+    ['fell in love', 'Tom fell in love with a woman at work.', 'woman'],
+  ])('rejects a sentence with the blocked phrase %j', (_, sentence, keyword) => {
+    expect(hardFilterReason(sentence, keyword, { isKnown: () => true })).not.toBeNull()
+  })
+
+  it('does not reject a sentence only because a blocked phrase word is in it alone', () => {
+    expect(hardFilterReason('I love the control of my new bike.', 'bike', { isKnown: () => true })).toBeNull()
+  })
+
+  it.each(['cancer', 'attacked', 'criminal', 'youths', 'patients'])('rejects a sentence with the blocked word %j', (word) => {
+    expect(hardFilterReason(`We talked about the ${word} at the table.`, 'table', { isKnown: () => true })).not.toBeNull()
+  })
+
   it('accepts a name from the list of names', () => {
     expect(hardFilterReason('Tom likes the food when we are hungry.', 'food', tools)).toBeNull()
     expect(hardFilterReason('Muiriel likes the food when we are hungry.', 'food', tools)).not.toBeNull()
