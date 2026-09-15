@@ -14,6 +14,7 @@ import { createInterface } from 'node:readline'
 import { env, pipeline } from '@huggingface/transformers'
 import nlp from 'compromise/three'
 import { FUNCTION_WORDS } from '../../src/sentences/functionWords'
+import { CONCRETE_WORDS } from '../../src/sentences/mining/concreteWords'
 import { contextScore, maskSentence, type Guess } from '../../src/sentences/mining/context'
 import { expandContractions } from '../../src/sentences/mining/contractions'
 import { makeCommonness } from '../../src/sentences/mining/commonness'
@@ -44,19 +45,25 @@ if (!existsSync(SOURCE)) {
   process.exit(1)
 }
 
-// All the bank words, most frequent first. A function word has no meaning of its own, so it gets no sentences.
-const ALL_WORDS = [
+// --list all: all the bank words. --list concrete (the default): the concrete words, most frequent first.
+// A function word has no meaning of its own, so it gets no sentences.
+const NGSL_ORDER = new Map(NGSL_WORDS.map((word, index) => [word.toLowerCase(), index]))
+const listIndex = process.argv.indexOf('--list')
+const listName = listIndex === -1 ? 'concrete' : process.argv[listIndex + 1]
+const ALL_WORDS = listName === 'concrete'
+  ? [...CONCRETE_WORDS].sort((a, b) => (NGSL_ORDER.get(a) ?? Infinity) - (NGSL_ORDER.get(b) ?? Infinity))
+  : [
   ...new Set(
     [...NGSL_WORDS, ...YEAR_1_COMMON_EXCEPTION_WORDS, ...YEAR_2_COMMON_EXCEPTION_WORDS, ...YEARS_3_AND_4, ...YEARS_5_AND_6]
       .map((word) => word.toLowerCase())
       .filter((word) => !FUNCTION_WORDS.has(word)),
   ),
-]
+  ]
 const from = argument('from', 0)
 const to = argument('to', ALL_WORDS.length)
 const words = ALL_WORDS.slice(from, to)
 const wordSet = new Set(words)
-console.log(`words ${from} to ${to} of ${ALL_WORDS.length}: ${words.length} words`)
+console.log(`list ${listName}: words ${from} to ${to} of ${ALL_WORDS.length}: ${words.length} words`)
 
 // isKnownWord with the compromise root is slow, and the sentences repeat the same words. Keep each result.
 const knownCache = new Map<string, boolean>()
@@ -161,7 +168,7 @@ for (const [index, word] of words.entries()) {
 }
 
 mkdirSync(OUTPUT_FOLDER, { recursive: true })
-const base = `${OUTPUT_FOLDER}/candidates-${from}-${to}`
+const base = `${OUTPUT_FOLDER}/candidates-${listName}-${from}-${to}`
 writeFileSync(`${base}.json`, JSON.stringify(results, null, 1))
 const NEWLINE = String.fromCharCode(10)
 writeFileSync(

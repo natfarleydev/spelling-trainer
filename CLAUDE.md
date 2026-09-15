@@ -267,13 +267,15 @@ A sentence must help the child to understand the **meaning** of the word. Exampl
 
 The bank also uses real sentences from [Tatoeba](https://tatoeba.org) (CC BY 2.0 FR). A build script finds and scores them. A person does not approve each sentence: Claude reads the best candidates and chooses them.
 
-- **Words:** all NGSL words and all the spelling lists. Do the work in batches, most frequent words first.
+- **Words (changed on 2026-09-15):** concrete words first. These are nouns, verbs and adjectives that a teacher can set as spelling words, for example "light", "train" or "garden". The first vetting pass found that Tatoeba gives good context sentences mainly for concrete words. Abstract and grammar words, for example "whether", "rate" or "however", keep the simple sentence with the note for now. Do the work in batches. `CONCRETE_WORDS` in `src/sentences/mining/concreteWords.ts` is our own list. Do not use the concreteness ratings of Brysbaert et al. (2014): the licence of the original data is not clear.
 - **Quality:** a sentence must give **context** for the word. A valid sentence is not sufficient. Example: "We eat food when we are hungry." is good. "Tom put the food on the table." is not good.
 - **Hard filters:** a whole sentence, a short length for KS2, the word one time, only known words, British English, no topic from the blocklist.
 - **Names and contractions:** allow a short list of common first names. Expand contractions (for example, "don't" to "do not") and record the change. Do not allow a possessive apostrophe.
 - **Score:** a GDEX score (Kilgarriff et al. 2008) multiplied by a context score. The context score hides the word and measures how well a masked language model guesses it. Run the model only at build time, never in the browser.
 - **GDEX details:** the best length is 6 to 10 words. The commonness of each word comes from its NGSL rank. A greylist word (formal, old-fashioned, American or adult) multiplies the score by 0.7. The first review found that a yes-or-no commonness check gave 1.00 to 94% of the candidates, so the old sentences with the lowest ids won.
 - **Diversity:** do not pick a sentence that shares 40% or more of its three-word sequences with a sentence that is already picked.
+- **Safety:** children read these sentences. The filters are not sufficient alone. The first vetting pass found "I want to make love with you." and sentences about crime and illness in the candidates. When you vet, reject each sentence about romance, violence, crime, illness, death, money worries, politics or adult work. When you find a new unsafe word or phrase, add it to `BLOCKED_WORDS` or `BLOCKED_PHRASES` with a test.
+- **Abstract words:** Tatoeba has few KS2 context sentences for abstract words, for example "whether", "rate" or "concern", and many idioms for common verbs, for example "make sense". Write the missing sentences for these words.
 - **Validation:** a hand-labelled set of good and poor context sentences must rank correctly with the score.
 - If Tatoeba does not give 3 good sentences for a word, write the missing sentences.
 - Keep the Tatoeba id of each sentence. The README must say that the sentences come from Tatoeba, with a link.
