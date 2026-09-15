@@ -21,6 +21,7 @@ describe('expandContractions', () => {
     ["Let's play.", 'Let us play.'],
     ["I'd like some tea.", 'I would like some tea.'],
     ["I'd gone home.", 'I had gone home.'],
+    ["You'd better hurry.", 'You had better hurry.'],
   ] as const)('expands %j to %j', (sentence, expected) => {
     expect(expandContractions(sentence)?.text ?? null).toBe(expected)
   })

@@ -71,6 +71,11 @@ describe('BANK_ENTRIES', () => {
     expect(words.filter((word) => !FUNCTION_WORDS.has(word.toLowerCase()) && bankSentences(word).length === 0)).toEqual([])
   })
 
+  // The meaning check for a written sentence needs a vector for the word.
+  it('has a word vector for each bank word', () => {
+    expect(BANK_ENTRIES.map((entry) => entry.word).filter((word) => vectorOf(word) === undefined)).toEqual([])
+  })
+
   it('has at least 3 sentences for each word of the Tatoeba batches', () => {
     expect(TATOEBA_ENTRIES.map((entry) => entry.word).filter((word) => bankSentences(word).length < 3)).toEqual([])
   })

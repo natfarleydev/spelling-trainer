@@ -8,6 +8,7 @@
 // The script keeps the most frequent words and all the words of the spelling lists, so that the file stays small.
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { CONCRETE_WORDS } from '../src/sentences/mining/concreteWords.ts'
 import { NGSL_FIRST_1000 } from '../src/sentences/ngslFirst1000.ts'
 import { YEAR_1_COMMON_EXCEPTION_WORDS, YEAR_2_COMMON_EXCEPTION_WORDS } from '../src/sentences/testing/commonExceptionWords.ts'
 import { YEARS_3_AND_4, YEARS_5_AND_6 } from '../src/sentences/testing/ks2StatutoryWords.ts'
@@ -27,7 +28,7 @@ if (!existsSync(SOURCE)) {
 
 // The words that the file must always have, because the sentences use them.
 const listWords = new Set(
-  [...NGSL_FIRST_1000, ...YEARS_3_AND_4, ...YEARS_5_AND_6, ...YEAR_1_COMMON_EXCEPTION_WORDS, ...YEAR_2_COMMON_EXCEPTION_WORDS].map(
+  [...NGSL_FIRST_1000, ...CONCRETE_WORDS, ...YEARS_3_AND_4, ...YEARS_5_AND_6, ...YEAR_1_COMMON_EXCEPTION_WORDS, ...YEAR_2_COMMON_EXCEPTION_WORDS].map(
     (word) => word.toLowerCase(),
   ),
 )

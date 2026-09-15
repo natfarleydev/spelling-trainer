@@ -53,7 +53,8 @@ const expandWord = (word: string, next: string): string | null => {
     case 'll':
       return `${base} will`
     case 'd':
-      return `${base} ${PARTICIPLES.has(next) || next.endsWith('ed') ? 'had' : 'would'}`
+      // "You'd better" means "you had better".
+      return `${base} ${PARTICIPLES.has(next) || next.endsWith('ed') || next === 'better' ? 'had' : 'would'}`
     case 's':
       return S_BASES.has(base.toLowerCase()) ? `${base} ${PARTICIPLES.has(next) ? 'has' : 'is'}` : null
     default:
