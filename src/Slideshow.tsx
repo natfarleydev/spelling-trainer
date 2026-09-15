@@ -1,8 +1,10 @@
-import { useLayoutEffect, useRef } from 'react'
+import { Fragment, useLayoutEffect, useRef } from 'react'
 import type { Deck } from './deck'
 import { fitMeasuredFontSize, screenFontSize } from './fontSize'
 import { measureWordInBrowser, type MeasureWord } from './measureWord'
 import { nextIndex, previousIndex } from './navigation'
+import { splitSentence } from './sentences/highlight'
+import { slideColour } from './theme/slideColours'
 
 type SlideshowProps = {
   deck: Deck
@@ -53,12 +55,24 @@ export function Slideshow({ deck, index, onIndexChange, measureWord = measureWor
 
   return (
     <div className="slideshow">
-      <div className="slide" ref={slideRef} onClick={next}>
+      <div className="slide" data-colour={slideColour(index)} ref={slideRef} onClick={next}>
         <span className="word" ref={wordRef} style={{ fontSize: screenFontSize(word) }}>
           {word}
         </span>
         {/* A slide from schema version 1 has no sentence. */}
-        {sentence && <p className="sentence">{sentence.text}</p>}
+        {sentence && (
+          <p className="sentence">
+            {splitSentence(sentence.text, word).map((part, i) =>
+              part.isWord ? (
+                <strong key={i} className="sentence-word">
+                  {part.text}
+                </strong>
+              ) : (
+                <Fragment key={i}>{part.text}</Fragment>
+              ),
+            )}
+          </p>
+        )}
       </div>
       <nav className="controls" aria-label="Slide controls">
         <button type="button" onClick={previous} disabled={isFirst} aria-label="Previous slide">

@@ -8,6 +8,11 @@ import { downloadPptx } from './pptx'
 import { createIdbStore } from './presentationStore'
 import { loadCompromiseTagger } from './sentences/compromiseTagger'
 import { restoredPath } from './spaRedirect'
+// The fonts of the style guide. Fontsource hosts them with the app, so the app loads no third-party fonts.
+import '@fontsource/andika/400.css'
+import '@fontsource/andika/700.css'
+import '@fontsource/playpen-sans/400.css'
+import '@fontsource/playpen-sans/700.css'
 import './index.css'
 
 // This file is the imperative shell. It makes the real dependencies and gives them to the app.

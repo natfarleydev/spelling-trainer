@@ -87,7 +87,27 @@ describe('Slideshow', () => {
       sentence: { template: 'The word is {word}.', text: `The word is ${word}.` },
     }))
     render(<Slideshow deck={withSentence} index={0} onIndexChange={vi.fn()} />)
-    expect(screen.getByText('The word is because.')).toHaveClass('sentence')
+    expect(
+      screen.getByText((_, element) => element?.classList.contains('sentence') === true && element.textContent === 'The word is because.'),
+    ).toBeInTheDocument()
+  })
+
+  it('shows the word under test in the sentence as a highlighted word', () => {
+    const withSentence = buildDeck(['cat'], () => ({
+      analysis: { type: 'other' },
+      sentence: { template: '', text: 'The cat sat on the mat.' },
+    }))
+    const { container } = render(<Slideshow deck={withSentence} index={0} onIndexChange={vi.fn()} />)
+    const sentence = container.querySelector('.sentence')
+    expect(sentence).toHaveTextContent('The cat sat on the mat.')
+    expect(sentence?.querySelector('.sentence-word')).toHaveTextContent('cat')
+  })
+
+  it('gives the slide the background colour for its index', () => {
+    const { container, rerender } = renderSlideshow(0)
+    expect(container.querySelector('.slide')).toHaveAttribute('data-colour', 'cream')
+    rerender(<Slideshow deck={deck} index={1} onIndexChange={vi.fn()} />)
+    expect(container.querySelector('.slide')).toHaveAttribute('data-colour', 'sky')
   })
 
   it('shows no sentence for a slide that has no sentence', () => {
