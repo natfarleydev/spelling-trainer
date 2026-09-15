@@ -81,6 +81,20 @@ describe('Slideshow', () => {
     expect(onIndexChange).not.toHaveBeenCalled()
   })
 
+  it('shows the sentence of the slide under the word', () => {
+    const withSentence = buildDeck(['because'], (word) => ({
+      analysis: { type: 'other' },
+      sentence: { template: 'The word is {word}.', text: `The word is ${word}.` },
+    }))
+    render(<Slideshow deck={withSentence} index={0} onIndexChange={vi.fn()} />)
+    expect(screen.getByText('The word is because.')).toHaveClass('sentence')
+  })
+
+  it('shows no sentence for a slide that has no sentence', () => {
+    const { container } = renderSlideshow(0)
+    expect(container.querySelector('.sentence')).toBeNull()
+  })
+
   it('has no Exit button', () => {
     renderSlideshow(0)
     expect(screen.queryByRole('button', { name: 'Exit' })).not.toBeInTheDocument()

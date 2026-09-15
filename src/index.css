@@ -199,10 +199,40 @@ button.link-button {
 .slide {
   height: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 3vh;
   cursor: pointer;
   user-select: none;
+}
+
+/* The sentence must be easy to read from the back of a classroom. */
+.sentence {
+  margin: 0;
+  max-width: 90%;
+  padding-inline: 1rem;
+  font-size: clamp(1.25rem, 3.5vw, 3rem);
+  line-height: 1.3;
+  text-align: center;
+  color: var(--ink);
+}
+
+.sentence-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sentence-controls select {
+  font: inherit;
+  min-height: 2.75rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--paper);
+  color: var(--ink);
 }
 
 .word {

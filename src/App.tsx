@@ -6,6 +6,7 @@ import type { Navigator } from './navigator'
 import { PresentationPage, type Downloads } from './PresentationPage'
 import type { PresentationStore } from './presentationStore'
 import { parseRoute, type Route } from './routes'
+import type { TagWord } from './sentences/wordType'
 
 // All the side effects that the app uses. main.tsx gives the real ones. The tests give fakes.
 export type AppDependencies = {
@@ -19,6 +20,10 @@ export type AppDependencies = {
   timeZone: string | undefined
   // The commit SHA of the build.
   version: string
+  // Load the part-of-speech tagger for the sentences.
+  loadTagger: () => Promise<TagWord>
+  // Give a number from 0 to 1, to choose the sentences.
+  random: () => number
 }
 
 function RoutePage({ route, dependencies }: { route: Route; dependencies: AppDependencies }) {
@@ -37,6 +42,8 @@ function RoutePage({ route, dependencies }: { route: Route; dependencies: AppDep
           store={dependencies.store}
           navigator={navigator}
           downloads={dependencies.downloads}
+          loadTagger={dependencies.loadTagger}
+          random={dependencies.random}
         />
       )
     case 'notFound':

@@ -21,7 +21,7 @@ export function Slideshow({ deck, index, onIndexChange, measureWord = measureWor
   const count = deck.length
   const isFirst = index === 0
   const isLast = index >= count - 1
-  const { word } = deck[index]
+  const { word, sentence } = deck[index]
 
   // Start with the CSS estimate, then measure the rendered word and fit it to the slide.
   // The logic is in fitMeasuredFontSize. This effect only reads the layout and writes the style.
@@ -57,6 +57,8 @@ export function Slideshow({ deck, index, onIndexChange, measureWord = measureWor
         <span className="word" ref={wordRef} style={{ fontSize: screenFontSize(word) }}>
           {word}
         </span>
+        {/* A slide from schema version 1 has no sentence. */}
+        {sentence && <p className="sentence">{sentence.text}</p>}
       </div>
       <nav className="controls" aria-label="Slide controls">
         <button type="button" onClick={previous} disabled={isFirst} aria-label="Previous slide">

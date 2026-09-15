@@ -6,6 +6,7 @@ import { createBrowserNavigator } from './navigator'
 import { downloadPdf } from './pdf'
 import { downloadPptx } from './pptx'
 import { createIdbStore } from './presentationStore'
+import { loadCompromiseTagger } from './sentences/compromiseTagger'
 import { restoredPath } from './spaRedirect'
 import './index.css'
 
@@ -48,6 +49,8 @@ const dependencies: AppDependencies = {
   now: () => new Date().toISOString(),
   timeZone: undefined,
   version: import.meta.env.VITE_APP_VERSION,
+  loadTagger: loadCompromiseTagger,
+  random: Math.random,
 }
 
 createRoot(document.getElementById('root')!).render(

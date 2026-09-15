@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react'
-import type { Deck } from './deck'
+import { useEffect, useRef, useState } from 'react'
+import type { Deck, Slide } from './deck'
 import { Link } from './Link'
 import { MessagePage } from './MessagePage'
 import { keyToAction, nextIndex, previousIndex } from './navigation'
 import type { Navigator } from './navigator'
-import type { Presentation } from './presentation'
+import { replaceSlide, type Presentation } from './presentation'
 import type { PresentationStore } from './presentationStore'
 import { homePath, presentationPath } from './routes'
+import { changeWordType, newSentence } from './sentences/slideSentence'
+import { WORD_TYPES, type TagWord, type WordType } from './sentences/wordType'
 import { Slideshow } from './Slideshow'
 
 export type Downloads = {
@@ -22,6 +24,10 @@ export type PresentationPageProps = {
   store: PresentationStore
   navigator: Navigator
   downloads: Downloads
+  // Load the part-of-speech tagger. The page needs it only for a slide from schema version 1.
+  loadTagger: () => Promise<TagWord>
+  // Give a number from 0 to 1, to choose the sentences.
+  random: () => number
 }
 
 type LoadState =
@@ -30,6 +36,20 @@ type LoadState =
   | { readonly status: 'failed' }
   | { readonly status: 'ready'; readonly presentation: Presentation }
 
+type SaveState = 'idle' | 'saving' | 'saved' | 'failed'
+
+const TYPE_LABELS: Readonly<Record<WordType, string>> = {
+  noun: 'Noun',
+  verb: 'Verb',
+  adjective: 'Adjective',
+  adverb: 'Adverb',
+  number: 'Number',
+  other: 'Other',
+}
+
+// If the tagger does not load, the override table and the "other" templates still give a sentence.
+const NO_TAGS: TagWord = () => []
+
 // The space bar and the Enter key operate a focused control. The slide keys must not also operate.
 const ownsKey = (target: EventTarget | null, key: string): boolean => {
   if (!(target instanceof Element)) return false
@@ -37,9 +57,21 @@ const ownsKey = (target: EventTarget | null, key: string): boolean => {
   return (key === ' ' || key === 'Enter') && target.closest('button, a') !== null
 }
 
-export function PresentationPage({ base, id, slide, store, navigator, downloads }: PresentationPageProps) {
+export function PresentationPage({
+  base,
+  id,
+  slide,
+  store,
+  navigator,
+  downloads,
+  loadTagger,
+  random,
+}: PresentationPageProps) {
   const [state, setState] = useState<LoadState>({ status: 'loading' })
   const [downloadFailed, setDownloadFailed] = useState(false)
+  const [saveState, setSaveState] = useState<SaveState>('idle')
+  // Load the tagger one time only, and only when a slide needs it.
+  const taggerRef = useRef<Promise<TagWord> | null>(null)
 
   useEffect(() => {
     let active = true
@@ -99,12 +131,39 @@ export function PresentationPage({ base, id, slide, store, navigator, downloads 
     )
   }
 
-  const { deck } = state.presentation
+  const { presentation } = state
+  const { deck } = presentation
+  const currentSlide = deck[index]
 
   const download = (save: (deck: Deck) => Promise<void>) => {
     setDownloadFailed(false)
     save(deck).catch(() => setDownloadFailed(true))
   }
+
+  const getTagger = () => (taggerRef.current ??= loadTagger().catch(() => NO_TAGS))
+
+  // Change the current slide, save the presentation, then show the change.
+  // If the save fails, the page keeps the previous slide, so that it shows only saved data.
+  const updateSlide = async (change: (slide: Slide) => Slide | Promise<Slide>) => {
+    const changed = await change(currentSlide)
+    if (changed === currentSlide) return
+    const next = replaceSlide(presentation, index, changed)
+    setSaveState('saving')
+    try {
+      await store.save(next)
+      setState({ status: 'ready', presentation: next })
+      setSaveState('saved')
+    } catch {
+      setSaveState('failed')
+    }
+  }
+
+  const giveNewSentence = () =>
+    updateSlide(async (current) =>
+      newSentence(current, { tagWord: current.analysis ? NO_TAGS : await getTagger(), random }),
+    )
+
+  const selectType = (type: WordType) => updateSlide((current) => changeWordType(current, type, { random }))
 
   return (
     <div className="presentation-page">
@@ -112,6 +171,36 @@ export function PresentationPage({ base, id, slide, store, navigator, downloads 
         <Link navigator={navigator} href={homePath(base)} className="back-link">
           All presentations
         </Link>
+        <div className="sentence-controls">
+          <button type="button" onClick={giveNewSentence}>
+            New sentence
+          </button>
+          <label>
+            Word type{' '}
+            <select
+              value={currentSlide.analysis?.type ?? ''}
+              onChange={(event) => selectType(event.target.value as WordType)}
+            >
+              {!currentSlide.analysis && (
+                <option value="" disabled>
+                  Not known
+                </option>
+              )}
+              {WORD_TYPES.map((type) => (
+                <option key={type} value={type}>
+                  {TYPE_LABELS[type]}
+                </option>
+              ))}
+            </select>
+          </label>
+          {saveState === 'saving' && <span role="status">Saving…</span>}
+          {saveState === 'saved' && <span role="status">Saved.</span>}
+          {saveState === 'failed' && (
+            <span className="error" role="alert">
+              The app could not save the change. Try again.
+            </span>
+          )}
+        </div>
         <div className="actions">
           {downloadFailed && (
             <span className="error" role="alert">

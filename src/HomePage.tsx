@@ -5,6 +5,8 @@ import type { Navigator } from './navigator'
 import { createPresentation, presentationName, type Presentation } from './presentation'
 import type { PresentationStore } from './presentationStore'
 import { presentationPath } from './routes'
+import { makeSlideSentence } from './sentences/slideSentence'
+import type { TagWord } from './sentences/wordType'
 import { isValidWordList, MAX_WORDS, parseWords, wordCountMessage } from './words'
 
 export type HomePageProps = {
@@ -16,9 +18,16 @@ export type HomePageProps = {
   now: () => string
   // The time zone for the names of the presentations. Undefined means the time zone of the device.
   timeZone: string | undefined
+  // Load the part-of-speech tagger for the sentences.
+  loadTagger: () => Promise<TagWord>
+  // Give a number from 0 to 1, to choose the sentences.
+  random: () => number
 }
 
-export function HomePage({ base, store, storage, navigator, makeId, now, timeZone }: HomePageProps) {
+// If the tagger does not load, the override table and the "other" templates still give a sentence for each word.
+const NO_TAGS: TagWord = () => []
+
+export function HomePage({ base, store, storage, navigator, makeId, now, timeZone, loadTagger, random }: HomePageProps) {
   const [text, setText] = useState(() => loadDraft(storage))
   const [storageFailed, setStorageFailed] = useState(false)
   // The words before the user clicked Clear. Undo puts them back.
@@ -61,7 +70,13 @@ export function HomePage({ base, store, storage, navigator, makeId, now, timeZon
   const makePresentation = async () => {
     setSaving(true)
     setSaveFailed(false)
-    const presentation = createPresentation({ id: makeId(), createdAt: now(), words })
+    const tagWord = await loadTagger().catch(() => NO_TAGS)
+    const presentation = createPresentation({
+      id: makeId(),
+      createdAt: now(),
+      words,
+      makeSentence: makeSlideSentence({ tagWord, random }),
+    })
     try {
       await store.save(presentation)
       navigator.push(presentationPath(base, presentation.id, 1))

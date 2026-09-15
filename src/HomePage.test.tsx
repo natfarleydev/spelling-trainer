@@ -1,15 +1,19 @@
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
+import { buildDeck } from './deck'
 import { DRAFT_KEY, loadDraft } from './draft'
 import { HomePage, type HomePageProps } from './HomePage'
 import { createMemoryNavigator } from './navigator'
 import { createPresentation } from './presentation'
 import { createMemoryStore, type PresentationStore } from './presentationStore'
+import { makeSlideSentence } from './sentences/slideSentence'
+import type { TagWord } from './sentences/wordType'
 import { brokenStorage, createMemoryStorage } from './testing/memoryStorage'
 
 const BASE = '/spelling-trainer/'
 const NOW = '2026-09-15T06:30:00.000Z'
+const nounTagger: TagWord = () => ['Noun', 'Singular']
 
 const renderHome = (overrides: Partial<HomePageProps> = {}) => {
   const props: HomePageProps = {
@@ -20,6 +24,8 @@ const renderHome = (overrides: Partial<HomePageProps> = {}) => {
     makeId: () => 'k3x9',
     now: () => NOW,
     timeZone: 'Europe/London',
+    loadTagger: async () => nounTagger,
+    random: () => 0,
     ...overrides,
   }
   return { props, user: userEvent.setup(), ...render(<HomePage {...props} />) }
@@ -27,6 +33,7 @@ const renderHome = (overrides: Partial<HomePageProps> = {}) => {
 
 const textbox = () => screen.getByLabelText('Type the spelling words. Put one word on each line.')
 const button = (name: string) => screen.getByRole('button', { name })
+const firstSlidePath = `${BASE}presentations/k3x9/1`
 
 describe('HomePage', () => {
   it('shows the alpha sticker', () => {
@@ -76,9 +83,11 @@ describe('HomePage', () => {
 
     it('keeps the words after the user makes a presentation', async () => {
       const storage = createMemoryStorage()
-      const { user } = renderHome({ storage })
+      const navigator = createMemoryNavigator(BASE)
+      const { user } = renderHome({ storage, navigator })
       await user.type(textbox(), 'because')
       await user.click(button('Make the presentation'))
+      await waitFor(() => expect(navigator.pathname()).toBe(firstSlidePath))
       expect(loadDraft(storage)).toBe('because')
     })
   })
@@ -117,17 +126,50 @@ describe('HomePage', () => {
   })
 
   describe('Make the presentation', () => {
-    it('saves the presentation and opens its first slide', async () => {
+    it('saves the presentation with a sentence for each word, and opens its first slide', async () => {
       const store = createMemoryStore()
       const navigator = createMemoryNavigator(BASE)
       const { user } = renderHome({ store, navigator })
       await user.type(textbox(), 'because{Enter}friend')
       await user.click(button('Make the presentation'))
 
+      await waitFor(() => expect(navigator.pathname()).toBe(firstSlidePath))
       expect(await store.get('k3x9')).toEqual(
-        createPresentation({ id: 'k3x9', createdAt: NOW, words: ['because', 'friend'] }),
+        createPresentation({
+          id: 'k3x9',
+          createdAt: NOW,
+          words: ['because', 'friend'],
+          makeSentence: makeSlideSentence({ tagWord: nounTagger, random: () => 0 }),
+        }),
       )
-      expect(navigator.pathname()).toBe('/spelling-trainer/presentations/k3x9/1')
+    })
+
+    it('uses the tagger and the random numbers that it gets', async () => {
+      const store = createMemoryStore()
+      const navigator = createMemoryNavigator(BASE)
+      const verbTagger: TagWord = () => ['Verb', 'PresentTense', 'Infinitive']
+      const { user } = renderHome({ store, navigator, loadTagger: async () => verbTagger, random: () => 0.99 })
+      await user.type(textbox(), 'describe')
+      await user.click(button('Make the presentation'))
+
+      await waitFor(() => expect(navigator.pathname()).toBe(firstSlidePath))
+      expect((await store.get('k3x9'))?.deck).toEqual(
+        buildDeck(['describe'], makeSlideSentence({ tagWord: verbTagger, random: () => 0.99 })),
+      )
+    })
+
+    it('still makes sentences when the tagger does not load', async () => {
+      const store = createMemoryStore()
+      const navigator = createMemoryNavigator(BASE)
+      const { user } = renderHome({ store, navigator, loadTagger: () => Promise.reject(new Error('offline')) })
+      await user.type(textbox(), 'centre{Enter}yacht')
+      await user.click(button('Make the presentation'))
+
+      await waitFor(() => expect(navigator.pathname()).toBe(firstSlidePath))
+      const deck = (await store.get('k3x9'))?.deck
+      // The override table does not need the tagger.
+      expect(deck?.[0].analysis).toEqual({ type: 'noun', form: 'singular' })
+      expect(deck?.[1].sentence?.text).toBe('The word is yacht.')
     })
 
     it('shows an error and stays on the page when the save fails', async () => {
@@ -139,6 +181,7 @@ describe('HomePage', () => {
 
       expect(await screen.findByRole('alert')).toHaveTextContent('The app could not save the presentation. Try again.')
       expect(navigator.pathname()).toBe(BASE)
+      expect(button('Make the presentation')).toBeEnabled()
     })
 
     it('saves only one presentation when the user clicks two times', async () => {
@@ -149,6 +192,7 @@ describe('HomePage', () => {
       await user.click(button('Make the presentation'))
       expect(button('Saving…')).toBeDisabled()
       await user.click(button('Saving…'))
+      await waitFor(() => expect(save).toHaveBeenCalledOnce())
       finishSave()
       expect(save).toHaveBeenCalledOnce()
     })
@@ -177,7 +221,7 @@ describe('HomePage', () => {
       const navigator = createMemoryNavigator(BASE)
       const { user } = renderHome({ store, navigator })
       await user.click(await screen.findByRole('link', { name: /cat/ }))
-      expect(navigator.pathname()).toBe('/spelling-trainer/presentations/k3x9/1')
+      expect(navigator.pathname()).toBe(firstSlidePath)
     })
 
     it('lets the browser open a new tab when the user holds Ctrl and clicks a link', async () => {

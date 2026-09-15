@@ -22,6 +22,8 @@ const renderApp = (start: string, overrides: Partial<AppDependencies> = {}) => {
     now: () => '2026-09-16T06:30:00.000Z',
     timeZone: 'Europe/London',
     version: 'test-version',
+    loadTagger: async () => () => [],
+    random: () => 0,
     ...overrides,
   }
   return { dependencies, user: userEvent.setup(), ...render(<App dependencies={dependencies} />) }

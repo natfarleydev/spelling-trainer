@@ -127,6 +127,37 @@ test('goes to the home page with Back, and lists the saved presentation', async 
   await expect(page.getByText('cat', { exact: true })).toBeVisible()
 })
 
+test('shows a simple sentence with the word on each slide', async ({ page }) => {
+  await makePresentation(page, ['necessary', 'yacht'])
+  const sentence = page.locator('.sentence')
+  await expect(sentence).toContainText('necessary')
+  await page.screenshot({ path: 'test-results/screenshots/slide-sentence.png' })
+
+  await page.keyboard.press('ArrowRight')
+  await expect(sentence).toContainText('yacht')
+})
+
+test('keeps a new sentence and a new word type after a reload', async ({ page }) => {
+  await makePresentation(page, ['record'])
+  const sentence = page.locator('.sentence')
+  const wordType = page.getByRole('combobox', { name: 'Word type' })
+  const first = await sentence.textContent()
+
+  await page.getByRole('button', { name: 'New sentence' }).click()
+  await expect(page.getByRole('status')).toHaveText('Saved.')
+  await expect(sentence).not.toHaveText(first ?? '')
+
+  // The templates for "Other" are predictable, so the test can check the sentence.
+  await wordType.selectOption('other')
+  await expect(sentence).toHaveText(/^(The word is record\.|Can you spell record\?|Write the word record\.)$/)
+  const saved = await sentence.textContent()
+
+  await page.reload()
+  await expect(wordType).toHaveValue('other')
+  await expect(sentence).toHaveText(saved ?? '')
+  await page.screenshot({ path: 'test-results/screenshots/slide-controls.png' })
+})
+
 test('opens a deep link through the GitHub Pages 404 page', async ({ page }) => {
   await makePresentation(page, TEN_WORDS)
   const deepLink = page.url().replace(/\/1$/, '/4')
