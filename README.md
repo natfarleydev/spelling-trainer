@@ -26,8 +26,12 @@ The app is in alpha. The features and the data format can change.
 The app can do these tasks now:
 
 - Accept a maximum of 10 words, with one word on each line.
-- Show one large word on each slide.
+- Keep the typed words in the browser until the teacher clicks **Clear**. **Undo** puts the words back.
+- Save each presentation in the browser (IndexedDB) and list the saved presentations on the home page.
+- Show one large word on each slide. The URL has the slide number, for example `/presentations/k3x9/3`. Thus a reload or a bookmark keeps the slide.
 - Download the slides as a PDF file or a PPTX file.
+
+The app keeps presentations only in the browser where the teacher made them. The app has no server.
 
 ## Development
 
@@ -59,6 +63,7 @@ This section tells you where each part of this project comes from.
 
 - The Claude Code AI agent wrote most of the code, and Nathanael Farley reviewed it. The `Co-Authored-By` lines in the commits show this.
 - The build configuration started from the `react-ts` template of [create-vite](https://github.com/vitejs/vite/tree/main/packages/create-vite) (MIT).
+- The `404.html` redirect for deep links on GitHub Pages uses the idea of [spa-github-pages](https://github.com/rafgraph/spa-github-pages) (MIT) by Rafael Pedicini. We wrote our own code for it in `src/spaRedirect.ts`.
 
 ### Runtime libraries
 
@@ -69,6 +74,7 @@ The app includes these libraries in the build that GitHub Pages serves.
 | [React](https://github.com/facebook/react) and React DOM | User interface | MIT |
 | [jsPDF](https://github.com/parallax/jsPDF) | Makes the PDF file | MIT |
 | [PptxGenJS](https://github.com/gitbrent/PptxGenJS) | Makes the PPTX file | MIT |
+| [idb-keyval](https://github.com/jakearchibald/idb-keyval) | Keeps the presentations in IndexedDB | Apache-2.0 |
 
 The development tools are in `devDependencies` in [package.json](package.json). They are not in the build.
 
