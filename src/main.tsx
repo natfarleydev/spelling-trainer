@@ -47,6 +47,7 @@ const dependencies: AppDependencies = {
   makeId: () => makeId(crypto.getRandomValues(new Uint8Array(ID_LENGTH))),
   now: () => new Date().toISOString(),
   timeZone: undefined,
+  version: import.meta.env.VITE_APP_VERSION,
 }
 
 createRoot(document.getElementById('root')!).render(

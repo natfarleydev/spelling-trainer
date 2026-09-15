@@ -1,6 +1,12 @@
 import { expect, test, type Page } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
 
+// BASE_URL is set when the tests run against a deployed site, not against a local build.
+const DEPLOYED = Boolean(process.env.BASE_URL)
+
+// A commit SHA from a build, or "development" when git was not available.
+const ANY_VERSION = /^([0-9a-f]{40}|development)$/
+
 const TEN_WORDS = [
   'because',
   'friend',
@@ -32,6 +38,14 @@ test('shows the home page with the alpha sticker', async ({ page }) => {
   await expect(page.getByRole('note', { name: 'Alpha version' })).toBeVisible()
   await expect(page.getByText('You have no saved presentations yet.')).toBeVisible()
   await page.screenshot({ path: 'test-results/screenshots/home.png', fullPage: true })
+})
+
+test('has the expected build version', async ({ page }) => {
+  // CI sets EXPECTED_APP_VERSION to the commit SHA. Then the test proves that the site has this commit.
+  const expected = process.env.EXPECTED_APP_VERSION ?? ANY_VERSION
+  await expect(page.getByTestId('app-version')).toHaveAttribute('data-version', expected)
+  // The HTML also has the version, so that a script can check a deployment without a browser.
+  await expect(page.locator('meta[name="app-version"]')).toHaveAttribute('content', expected)
 })
 
 test('disables the make button when there are more than 10 words', async ({ page }) => {
@@ -117,9 +131,12 @@ test('opens a deep link through the GitHub Pages 404 page', async ({ page }) => 
   await makePresentation(page, TEN_WORDS)
   const deepLink = page.url().replace(/\/1$/, '/4')
 
-  // GitHub Pages serves 404.html for a path that is not a file. The preview server does not do this, so the test does it.
-  const notFoundHtml = await readFile('dist/404.html', 'utf8')
-  await page.route(deepLink, (route) => route.fulfill({ status: 404, contentType: 'text/html', body: notFoundHtml }))
+  // GitHub Pages serves 404.html for a path that is not a file. The local preview server does not do this.
+  // Thus, for a local build, the test serves 404.html. A deployed site uses the real GitHub Pages behavior.
+  if (!DEPLOYED) {
+    const notFoundHtml = await readFile('dist/404.html', 'utf8')
+    await page.route(deepLink, (route) => route.fulfill({ status: 404, contentType: 'text/html', body: notFoundHtml }))
+  }
 
   await page.goto(deepLink)
   await expect(page).toHaveURL(deepLink)

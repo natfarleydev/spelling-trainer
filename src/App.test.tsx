@@ -21,6 +21,7 @@ const renderApp = (start: string, overrides: Partial<AppDependencies> = {}) => {
     makeId: () => 'new1',
     now: () => '2026-09-16T06:30:00.000Z',
     timeZone: 'Europe/London',
+    version: 'test-version',
     ...overrides,
   }
   return { dependencies, user: userEvent.setup(), ...render(<App dependencies={dependencies} />) }
@@ -41,6 +42,14 @@ describe('App', () => {
     renderApp(`${BASE}unknown`)
     expect(screen.getByRole('heading', { name: 'We cannot find this page' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'All presentations' })).toHaveAttribute('href', BASE)
+  })
+
+  // A deployment check reads this element, to make sure that the site has the expected build.
+  it.each([BASE, `${BASE}presentations/k3x9/1`, `${BASE}unknown`])('has a hidden build version on %s', (start) => {
+    renderApp(start)
+    const version = screen.getByTestId('app-version')
+    expect(version).toHaveAttribute('data-version', 'test-version')
+    expect(version).not.toBeVisible()
   })
 
   it('shows the new page when the path changes', async () => {

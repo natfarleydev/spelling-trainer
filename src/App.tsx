@@ -5,7 +5,7 @@ import { MessagePage } from './MessagePage'
 import type { Navigator } from './navigator'
 import { PresentationPage, type Downloads } from './PresentationPage'
 import type { PresentationStore } from './presentationStore'
-import { parseRoute } from './routes'
+import { parseRoute, type Route } from './routes'
 
 // All the side effects that the app uses. main.tsx gives the real ones. The tests give fakes.
 export type AppDependencies = {
@@ -17,13 +17,12 @@ export type AppDependencies = {
   makeId: () => string
   now: () => string
   timeZone: string | undefined
+  // The commit SHA of the build.
+  version: string
 }
 
-export default function App({ dependencies }: { dependencies: AppDependencies }) {
+function RoutePage({ route, dependencies }: { route: Route; dependencies: AppDependencies }) {
   const { base, navigator } = dependencies
-  const pathname = useSyncExternalStore(navigator.subscribe, navigator.pathname)
-  const route = parseRoute(pathname, base)
-
   switch (route.name) {
     case 'home':
       return <HomePage {...dependencies} />
@@ -47,4 +46,17 @@ export default function App({ dependencies }: { dependencies: AppDependencies })
         </MessagePage>
       )
   }
+}
+
+export default function App({ dependencies }: { dependencies: AppDependencies }) {
+  const { base, navigator } = dependencies
+  const pathname = useSyncExternalStore(navigator.subscribe, navigator.pathname)
+
+  return (
+    <>
+      <RoutePage route={parseRoute(pathname, base)} dependencies={dependencies} />
+      {/* The deployment check reads the build version. The user does not see it. */}
+      <div hidden data-testid="app-version" data-version={dependencies.version} />
+    </>
+  )
 }
