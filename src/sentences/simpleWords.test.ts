@@ -61,3 +61,26 @@ describe('the word data', () => {
     expect(words.filter((word) => AMERICAN_WORDS.has(word))).toEqual([])
   })
 })
+
+describe('AMERICAN_WORDS', () => {
+  // The sentence bank needs these words. Example: "Do not fall off the wall."
+  it.each(['fall', 'store'])('does not block %j, because British English also uses it as a verb', (word) => {
+    expect(AMERICAN_WORDS.has(word)).toBe(false)
+  })
+
+  it.each([
+    'color', 'favorite', 'behavior', 'center', 'program', 'organize', 'organization', 'realize', 'recognize',
+    'theater', 'meter', 'analyze', 'defense', 'offense', 'license', 'catalog', 'dialog', 'gray', 'neighbor',
+    'honor', 'labor', 'humor', 'harbor', 'favor', 'specialize', 'apologize', 'emphasize', 'criticize',
+    'summarize', 'characterize',
+  ])('blocks the American spelling %j', (word) => {
+    expect(AMERICAN_WORDS.has(word)).toBe(true)
+  })
+
+  it.each(['mom', 'movie', 'apartment', 'truck', 'toward', 'candy', 'cookie', 'vacation'])(
+    'blocks the American word %j',
+    (word) => {
+      expect(AMERICAN_WORDS.has(word)).toBe(true)
+    },
+  )
+})

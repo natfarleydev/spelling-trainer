@@ -44,12 +44,15 @@ export const WORD_FORMS: Readonly<Record<string, string>> = {
   them: 'they',
 }
 
-// American spellings and American words. The templates must use British English.
+// American spellings and American words. All sentences must use British English.
+// The list has the 30 American spellings in NGSL 1.2. It does not have "fall" or "store",
+// because British English also uses them as verbs. Example: "Do not fall off the wall."
 export const AMERICAN_WORDS: ReadonlySet<string> = new Set([
-  'apartment', 'behavior', 'candy', 'center', 'color', 'cookie', 'diaper', 'elevator', 'eraser', 'fall',
-  'favorite', 'flashlight', 'fries', 'gotten', 'gray', 'math', 'mom', 'movie', 'organization', 'organize',
-  'pants', 'program', 'realize', 'recognize', 'sidewalk', 'soccer', 'store', 'toward', 'trash', 'truck',
-  'vacation',
+  'analyze', 'apartment', 'apologize', 'behavior', 'candy', 'catalog', 'center', 'characterize', 'color', 'cookie',
+  'criticize', 'defense', 'diaper', 'dialog', 'elevator', 'emphasize', 'eraser', 'favor', 'favorite', 'flashlight',
+  'fries', 'gotten', 'gray', 'harbor', 'honor', 'humor', 'labor', 'license', 'math', 'meter',
+  'mom', 'movie', 'neighbor', 'offense', 'organization', 'organize', 'pants', 'program', 'realize', 'recognize',
+  'sidewalk', 'soccer', 'specialize', 'summarize', 'theater', 'toward', 'trash', 'truck', 'vacation',
 ])
 
 const SIMPLE_WORDS: ReadonlySet<string> = new Set(

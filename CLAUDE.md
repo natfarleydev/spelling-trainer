@@ -249,6 +249,17 @@ The app makes a simple sentence for each spelling word.
 - Add a word to `EXTRA_SIMPLE_WORDS` only when a template needs it, and only when a young child in the UK knows it.
 - If the tagger gives the wrong word type, add the word to `WORD_OVERRIDES` with a test. Use the KS2 statutory word lists to find problems.
 
+### Sentence bank
+
+A sentence must help the child to understand the **meaning** of the word. Example: "The astronaut was nervous about going into space."
+
+- Write bank sentences in `src/sentences/bank/`. Give each word at least 2 different sentences. Use a mix of real life and a little fun.
+- Use only words that a KS2 child knows: all NGSL words, the spelling lists, `EXTRA_SIMPLE_WORDS`, `KNOWN_EXTRA_WORDS`, `FUNCTION_WORD_FORMS` and `NUMBER_WORDS`. `isKnownWord` also accepts a base form, for example "drawings" from "draw".
+- Add a word to `KNOWN_EXTRA_WORDS` only when a bank sentence needs it, and only when a child aged 7 to 11 in the UK knows it.
+- Meaning rule: at least one content word in the sentence must have a word vector similarity of 0.40 or more with the word under test. Before you write a sentence, find clue words with the word vectors.
+- Keep a sentence to a maximum of 15 words, with no apostrophe.
+- `src/sentences/bank.test.ts` checks all these rules. It also checks that the bank has each word of the statutory lists for years 3 to 6.
+
 ## Language: ASD-STE100
 
 Use ASD-STE100 Simplified Technical English (STE) for all text.
