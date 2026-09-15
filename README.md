@@ -13,6 +13,7 @@
 [![Vite](https://img.shields.io/badge/Vite-8-646cff?logo=vite&logoColor=white)](https://vite.dev/)
 [![Vitest](https://img.shields.io/badge/tested%20with-Vitest-6e9f18?logo=vitest&logoColor=white)](https://vitest.dev/)
 [![Playwright](https://img.shields.io/badge/smoke%20tests-Playwright-2ead33?logo=playwright&logoColor=white)](https://playwright.dev/)
+[![Turborepo](https://img.shields.io/badge/cached%20with-Turborepo-ef4444?logo=turborepo&logoColor=white)](https://turborepo.com/)
 [![TDD](https://img.shields.io/badge/TDD-mandatory-e34f26)](CLAUDE.md#testing-test-driven-development-tdd)
 
 A teacher types 10 spelling words. The app makes a presentation from these words.
@@ -48,9 +49,10 @@ npm run dev
 | Command | Result |
 | --- | --- |
 | `npm run dev` | Start the development server. |
-| `npm run lint` | Run the lint checks. |
-| `npm test` | Run the unit tests and the component tests. |
-| `npm run test:e2e` | Build the app and run the Playwright smoke tests. |
+| `npm run test:watch` | Run the unit tests and the component tests after each change. |
+| `npm run check` | Run the lint checks, the type checks and the tests, with the Turborepo cache. |
+| `npm test` | Run the unit tests and the component tests one time. |
+| `npm run test:e2e` | Make the production build and run the Playwright smoke tests. |
 | `npm run build` | Do the type checks and make the production build. |
 
 Read [CLAUDE.md](CLAUDE.md) before you make a change. It has the rules for tests, code style, language, commits and deployment.

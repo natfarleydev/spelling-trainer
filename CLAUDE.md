@@ -18,7 +18,8 @@ Thus, the app must operate fully in the browser.
 
 - React 19 with TypeScript.
 - Vite 8 builds the app.
-- Vitest runs the unit tests and the component tests. The component tests use Testing Library and jsdom.
+- Vitest runs the unit tests and the component tests. The component tests use Testing Library and happy-dom.
+- Turborepo keeps the results of the lint checks, the type checks and the tests in a local cache.
 - Playwright runs the smoke tests in the `e2e` folder.
 - oxlint does the lint checks.
 - jsPDF makes the PDF file. PptxGenJS makes the PPTX file.
@@ -29,10 +30,12 @@ Thus, the app must operate fully in the browser.
 | Command | Result |
 | --- | --- |
 | `npm run dev` | Start the development server. |
+| `npm run test:watch` | Run the unit tests and the component tests after each change. Use this during TDD. |
+| `npm run check` | Run the lint checks, the type checks and the tests with the Turborepo cache. |
 | `npm run lint` | Run the lint checks. |
-| `npm test` | Run the unit tests one time. |
-| `npm run test:watch` | Run the unit tests after each change. |
-| `npm run test:e2e` | Build the app and run the Playwright smoke tests. |
+| `npm run typecheck` | Run the type checks. |
+| `npm test` | Run the unit tests and the component tests one time. |
+| `npm run test:e2e` | Make the production build and run the Playwright smoke tests. |
 | `npm run build` | Do the type checks and make the production build. |
 
 ## Testing: test-driven development (TDD)
@@ -51,7 +54,8 @@ Obey this cycle for each change:
 Use three levels of tests:
 
 - **Unit tests (Vitest, `unit` project):** Each pure unit must have unit tests. Put the test file next to the unit. Name it `<unit>.test.ts`. These tests run in the node environment, which is fast.
-- **Component tests (Vitest, `component` project):** Each React component must have component tests. Name the file `<Component>.test.tsx`. These tests use Testing Library in jsdom. Test what the user sees and does, not the internal state.
+- **Component tests (Vitest, `component` project):** Each React component must have component tests. Name the file `<Component>.test.tsx`. These tests use Testing Library in happy-dom. Test what the user sees and does, not the internal state.
+- **No layout in component tests:** happy-dom does not calculate a layout. Do not spy on DOM prototypes to make a layout. Give the measurement to the component as a prop, and give a fake in the test. Example: `Slideshow` gets `measureWord`. The smoke tests cover the real measurement.
 - **Smoke tests (Playwright):** Each user-visible feature must have a smoke test in `e2e/`. The smoke tests use the production build.
 
 If a test passes before you write the code, prove that the test can fail. Break the code for a short time, run the test, then restore the code.
@@ -61,7 +65,19 @@ Also obey these rules:
 - A defect fix starts with a test that shows the defect.
 - Do not delete a test to make the tests pass.
 - Do not skip a test. Do not commit `test.only` or `it.skip`.
-- Run `npm run lint`, `npm test`, `npm run build` and `npm run test:e2e` before each push.
+- Run `npm run check` and `npm run test:e2e` before each push.
+
+### Fast feedback
+
+Speed is necessary for TDD. Keep the red-green cycle short.
+
+- During the cycle, keep `npm run test:watch` open. Watch mode runs only the tests that a change affects, and it has no start time.
+- To run one test file one time, call Vitest with node: `node node_modules/vitest/vitest.mjs run src/words.test.ts`.
+- Do not use `npx` in a loop. On this project, `npx` adds approximately 3.3 seconds and `npm run` adds approximately 1.1 seconds to each command.
+- Run Playwright with a filter during the cycle: `npm run test:e2e -- -g "the test name"`.
+- `npm run check` uses the Turborepo cache. If the inputs of a task do not change, Turborepo gives the stored result immediately.
+- Keep pure logic in `*.test.ts` files. These tests run in the node environment and are much faster than component tests.
+- Measure before you change the test setup. Keep a change only when it gives a measured improvement.
 
 ## Clarifying questions
 
