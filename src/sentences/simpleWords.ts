@@ -15,10 +15,14 @@ export const WORD_FORMS: Readonly<Record<string, string>> = {
   went: 'go',
   came: 'come',
   talked: 'talk',
+  said: 'say',
+  saw: 'see',
   books: 'book',
+  things: 'thing',
   me: 'I',
   my: 'I',
   us: 'we',
+  our: 'we',
   them: 'they',
 }
 

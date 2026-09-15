@@ -25,13 +25,15 @@ export type TemplateKey =
 // Simple sentences in British English. Only the word under test can be difficult.
 // The tests make sure that each other word is in the first 1000 NGSL words, or is an extra simple word.
 // A template has no "a" or "an" before the word, because the correct article depends on the sound of the word.
+// A review of the sentences for all the KS2 statutory words gave the rules in sentence.test.ts.
 export const TEMPLATES: Readonly<Record<TemplateKey, readonly string[]>> = {
+  // These templates also operate for an abstract noun, for example "curiosity".
   'noun.singular': [
     'We talked about the {word}.',
     'Tell me about the {word}.',
     'I want to learn about the {word}.',
-    'Where is the {word}?',
-    'That is a good {word}.',
+    'Our teacher talked about the {word}.',
+    'I read about the {word}.',
   ],
   'noun.plural': [
     'We talked about the {word}.',
@@ -43,15 +45,16 @@ export const TEMPLATES: Readonly<Record<TemplateKey, readonly string[]>> = {
   'noun.month': ['My birthday is in {word}.', 'We will go on holiday in {word}.', 'It is often cold in {word}.'],
   'noun.day': ['We go to school on {word}.', 'I will see you on {word}.', 'Today is {word}.'],
   'verb.infinitive.transitive': ['I want to {word} them.', 'We will {word} them today.', 'Can you {word} it?'],
-  'verb.infinitive.intransitive': ['It will {word} soon.', 'I think it will {word}.', 'When will it {word}?'],
+  'verb.infinitive.intransitive': ['We will {word} soon.', 'When will it {word}?', 'I think they will {word}.'],
   'verb.past.transitive': ['We {word} them last week.', 'I think she {word} it.', 'They {word} it before school.'],
-  'verb.past.intransitive': ['It {word} last week.', 'I think it {word} again.', 'It {word} on the first day.'],
+  'verb.past.intransitive': ['It {word} last week.', 'I think they {word} again.', 'We {word} on the first day.'],
   'verb.thirdPerson.transitive': ['She {word} them every day.', 'He often {word} it.'],
-  'verb.thirdPerson.intransitive': ['It {word} every day.', 'It often {word} at night.'],
+  'verb.thirdPerson.intransitive': ['It {word} every day.', 'She often {word} at night.'],
   'verb.gerund.transitive': ['We are {word} them now.', 'She is {word} it today.'],
-  'verb.gerund.intransitive': ['It is {word} now.', 'I think it is {word} again.'],
-  adjective: ['That is very {word}.', 'I think it is {word}.', 'It was {word} today.'],
-  adverb: ['We {word} go to the park.', 'She did it {word}.', 'They {word} play here.'],
+  'verb.gerund.intransitive': ['It is {word} now.', 'They are {word} again.'],
+  // These templates also operate for an adjective that has no degrees, for example "actual".
+  adjective: ['I think it is {word}.', 'They are {word} people.', 'We saw some {word} things.'],
+  adverb: ['We {word} go to the park.', 'She did it {word}.', 'He said it {word}.'],
   'number.cardinal': ['I have {word} books.', 'There are {word} people here.'],
   'number.ordinal': ['It is my {word} birthday.', 'This is the {word} time.'],
   other: ['The word is {word}.', 'Can you spell {word}?', 'Write the word {word}.'],

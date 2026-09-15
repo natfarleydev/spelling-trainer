@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { analyseFromTags, analyseWord, withType, type WordAnalysis } from './wordType'
+import { analyseFromTags, analyseWord, isWordAnalysis, withType, type WordAnalysis } from './wordType'
 
 describe('analyseFromTags', () => {
   it.each<[string, readonly string[], WordAnalysis]>([
@@ -46,6 +46,9 @@ describe('analyseWord', () => {
     // Templates for a noun, verb or adjective do not operate for these words.
     ['though', { type: 'other' }],
     ['through', { type: 'other' }],
+    // The review of the KS2 sentences found no template that operates for these words.
+    ['suppose', { type: 'other' }],
+    ['especially', { type: 'other' }],
   ])('uses the override table for %j', (word, expected) => {
     const tagWord = tagAs(['Verb', 'PresentTense', 'Infinitive'])
     expect(analyseWord(word, tagWord)).toEqual(expected)
@@ -61,6 +64,13 @@ describe('analyseWord', () => {
     ['occurred', ['Verb', 'PastTense'], 'past'],
     ['disappears', ['Verb', 'PresentTense'], 'thirdPerson'],
     ['appearing', ['Verb', 'PresentTense', 'Gerund'], 'gerund'],
+    // The review of the KS2 sentences found "I want to decide them" and "I want to breathe them".
+    ['decide', ['Verb', 'PresentTense', 'Infinitive'], 'infinitive'],
+    ['breathed', ['Verb', 'PastTense'], 'past'],
+    ['communicates', ['Verb', 'PresentTense'], 'thirdPerson'],
+    ['exaggerating', ['Verb', 'PresentTense', 'Gerund'], 'gerund'],
+    ['reign', ['Verb', 'PresentTense', 'Infinitive'], 'infinitive'],
+    ['bargain', ['Verb', 'PresentTense', 'Infinitive'], 'infinitive'],
   ] as const)('marks the verb %j as intransitive', (word, tags, form) => {
     expect(analyseWord(word, tagAs(tags))).toEqual({ type: 'verb', form, transitive: false })
   })
@@ -70,6 +80,42 @@ describe('analyseWord', () => {
       throw new Error('the tagger did not load')
     })
     expect(analyseWord('yacht', tagWord)).toEqual({ type: 'other' })
+  })
+})
+
+describe('isWordAnalysis', () => {
+  it.each<WordAnalysis>([
+    { type: 'noun', form: 'singular' },
+    { type: 'noun', form: 'plural' },
+    { type: 'noun', form: 'uncountable' },
+    { type: 'noun', form: 'month' },
+    { type: 'noun', form: 'day' },
+    { type: 'verb', form: 'infinitive', transitive: true },
+    { type: 'verb', form: 'past', transitive: false },
+    { type: 'verb', form: 'thirdPerson', transitive: true },
+    { type: 'verb', form: 'gerund', transitive: false },
+    { type: 'adjective' },
+    { type: 'adverb' },
+    { type: 'number', form: 'cardinal' },
+    { type: 'number', form: 'ordinal' },
+    { type: 'other' },
+  ])('accepts %o', (analysis) => {
+    expect(isWordAnalysis(analysis)).toBe(true)
+  })
+
+  it.each([
+    null,
+    'noun',
+    {},
+    { type: 'animal' },
+    { type: 'noun' },
+    { type: 'noun', form: 'many' },
+    { type: 'verb', form: 'past' },
+    { type: 'verb', form: 'past', transitive: 'yes' },
+    { type: 'verb', form: 'future', transitive: true },
+    { type: 'number', form: 'first' },
+  ])('rejects %o', (value) => {
+    expect(isWordAnalysis(value)).toBe(false)
   })
 })
 

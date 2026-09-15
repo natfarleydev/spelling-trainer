@@ -16,6 +16,10 @@ export type WordType = WordAnalysis['type']
 // The types that the teacher can select, in the order that the selector shows them.
 export const WORD_TYPES: readonly WordType[] = ['noun', 'verb', 'adjective', 'adverb', 'number', 'other']
 
+const NOUN_FORMS: readonly NounForm[] = ['singular', 'plural', 'uncountable', 'month', 'day']
+const VERB_FORMS: readonly VerbForm[] = ['infinitive', 'past', 'thirdPerson', 'gerund']
+const NUMBER_FORMS: readonly NumberForm[] = ['cardinal', 'ordinal']
+
 // Give the part-of-speech tags of one word. The tag names are the compromise tag names.
 export type TagWord = (word: string) => readonly string[]
 
@@ -50,15 +54,22 @@ export const analyseFromTags = (tags: readonly string[]): WordAnalysis => {
 }
 
 // Verbs with no object, in all their forms. The templates for these verbs have no "it" or "them".
+// The review of the KS2 sentences found some of these verbs, for example "I want to decide them".
 const INTRANSITIVE_VERB_FORMS = [
-  ['arrive', 'arrives', 'arrived', 'arriving'],
   ['appear', 'appears', 'appeared', 'appearing'],
-  ['disappear', 'disappears', 'disappeared', 'disappearing'],
-  ['occur', 'occurs', 'occurred', 'occurring'],
-  ['interfere', 'interferes', 'interfered', 'interfering'],
-  ['happen', 'happens', 'happened', 'happening'],
-  ['exist', 'exists', 'existed', 'existing'],
+  ['arrive', 'arrives', 'arrived', 'arriving'],
+  ['bargain', 'bargains', 'bargained', 'bargaining'],
+  ['breathe', 'breathes', 'breathed', 'breathing'],
+  ['communicate', 'communicates', 'communicated', 'communicating'],
   ['correspond', 'corresponds', 'corresponded', 'corresponding'],
+  ['decide', 'decides', 'decided', 'deciding'],
+  ['disappear', 'disappears', 'disappeared', 'disappearing'],
+  ['exaggerate', 'exaggerates', 'exaggerated', 'exaggerating'],
+  ['exist', 'exists', 'existed', 'existing'],
+  ['happen', 'happens', 'happened', 'happening'],
+  ['interfere', 'interferes', 'interfered', 'interfering'],
+  ['occur', 'occurs', 'occurred', 'occurring'],
+  ['reign', 'reigns', 'reigned', 'reigning'],
 ]
 export const INTRANSITIVE_VERBS: ReadonlySet<string> = new Set(INTRANSITIVE_VERB_FORMS.flat())
 
@@ -92,8 +103,10 @@ export const WORD_OVERRIDES: Readonly<Record<string, WordAnalysis>> = {
   according: OTHER,
   although: OTHER,
   enough: OTHER,
+  especially: OTHER,
   forward: OTHER,
   forwards: OTHER,
+  suppose: OTHER,
   therefore: OTHER,
   though: OTHER,
   through: OTHER,
@@ -128,5 +141,28 @@ export const withType = (analysis: WordAnalysis, type: WordType, word: string): 
     case 'adverb':
     case 'other':
       return { type }
+  }
+}
+
+const isOneOf = <T extends string>(values: readonly T[], value: unknown): value is T =>
+  typeof value === 'string' && (values as readonly string[]).includes(value)
+
+// Make sure that a stored analysis has the correct format before the app uses it.
+export const isWordAnalysis = (value: unknown): value is WordAnalysis => {
+  if (typeof value !== 'object' || value === null) return false
+  const record = value as Record<string, unknown>
+  switch (record.type) {
+    case 'noun':
+      return isOneOf(NOUN_FORMS, record.form)
+    case 'verb':
+      return isOneOf(VERB_FORMS, record.form) && typeof record.transitive === 'boolean'
+    case 'number':
+      return isOneOf(NUMBER_FORMS, record.form)
+    case 'adjective':
+    case 'adverb':
+    case 'other':
+      return true
+    default:
+      return false
   }
 }

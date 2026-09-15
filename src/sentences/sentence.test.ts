@@ -36,6 +36,32 @@ describe('TEMPLATES', () => {
   it.each(everyTemplate)('%s: %j has no "a" or "an" before the word slot', (_, template) => {
     expect(template).not.toMatch(/\ban? \{word\}/i)
   })
+
+  // The rules below come from a review of the sentences for all the KS2 statutory words.
+
+  it.each(TEMPLATES['noun.singular'])('noun.singular: %j operates for an abstract noun', (template) => {
+    // "Where is the curiosity?" and "That is a good accident." do not make sense.
+    expect(template).not.toMatch(/^Where\b/)
+    expect(template).not.toMatch(/\bgood \{word\}/)
+  })
+
+  it.each(TEMPLATES.adjective)('adjective: %j operates for an adjective that has no degrees', (template) => {
+    // "That is very actual." and "It was favourite today." do not make sense.
+    expect(template).not.toMatch(/\bvery \{word\}/)
+    expect(template).not.toMatch(/\{word\} today\b/)
+  })
+
+  it.each([
+    'verb.infinitive.intransitive',
+    'verb.past.intransitive',
+    'verb.thirdPerson.intransitive',
+    'verb.gerund.intransitive',
+  ] as const)('%s has a template with a person as the subject of the verb', (key) => {
+    // "It will decide soon." does not make sense for a verb that a person does.
+    // "I think it will {word}." does not count, because "it" is the subject of the verb.
+    const personBeforeVerb = /\b(I|we|they|she|he|you)( will| often| are| is| am)? \{word\}/i
+    expect(TEMPLATES[key].some((template) => personBeforeVerb.test(template))).toBe(true)
+  })
 })
 
 describe('templateKey', () => {
