@@ -7,6 +7,7 @@ import type { Navigator } from './navigator'
 import { replaceSlide, type Presentation } from './presentation'
 import type { PresentationStore } from './presentationStore'
 import { homePath, presentationPath } from './routes'
+import { bankSentences } from './sentences/bank'
 import { changeWordType, newSentence } from './sentences/slideSentence'
 import { WORD_TYPES, type TagWord, type WordType } from './sentences/wordType'
 import { Slideshow } from './Slideshow'
@@ -24,7 +25,7 @@ export type PresentationPageProps = {
   store: PresentationStore
   navigator: Navigator
   downloads: Downloads
-  // Load the part-of-speech tagger. The page needs it only for a slide from schema version 1.
+  // Load the part-of-speech tagger. The page needs it for a new sentence and for a new word type.
   loadTagger: () => Promise<TagWord>
   // Give a number from 0 to 1, to choose the sentences.
   random: () => number
@@ -70,7 +71,7 @@ export function PresentationPage({
   const [state, setState] = useState<LoadState>({ status: 'loading' })
   const [downloadFailed, setDownloadFailed] = useState(false)
   const [saveState, setSaveState] = useState<SaveState>('idle')
-  // Load the tagger one time only, and only when a slide needs it.
+  // Load the tagger one time only, and only when the user changes a sentence.
   const taggerRef = useRef<Promise<TagWord> | null>(null)
 
   useEffect(() => {
@@ -160,10 +161,11 @@ export function PresentationPage({
 
   const giveNewSentence = () =>
     updateSlide(async (current) =>
-      newSentence(current, { tagWord: current.analysis ? NO_TAGS : await getTagger(), random }),
+      newSentence(current, { tagWord: await getTagger(), random, bankSentences }),
     )
 
-  const selectType = (type: WordType) => updateSlide((current) => changeWordType(current, type, { random }))
+  const selectType = (type: WordType) =>
+    updateSlide(async (current) => changeWordType(current, type, { tagWord: await getTagger(), random, bankSentences }))
 
   return (
     <div className="presentation-page">
@@ -193,6 +195,9 @@ export function PresentationPage({
               ))}
             </select>
           </label>
+          {currentSlide.sentence && currentSlide.sentence.source !== 'bank' && (
+            <p className="sentence-note">This simple sentence does not show what the word means.</p>
+          )}
           {saveState === 'saving' && <span role="status">Saving…</span>}
           {saveState === 'saved' && <span role="status">Saved.</span>}
           {saveState === 'failed' && (

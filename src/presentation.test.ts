@@ -122,6 +122,13 @@ describe('isPresentation', () => {
       { ...createPresentation({ id: 'k3x9', createdAt, words: ['cat'] }), deck: [{ word: 'cat', sentence: { text: 'The word is cat.' } }] },
     ],
     [
+      'a slide with a sentence that has an unknown source',
+      {
+        ...createPresentation({ id: 'k3x9', createdAt, words: ['cat'] }),
+        deck: [{ word: 'cat', sentence: { template: 'A cat.', text: 'A cat.', source: 'robot' } }],
+      },
+    ],
+    [
       'a slide with an analysis that is not correct',
       { ...createPresentation({ id: 'k3x9', createdAt, words: ['cat'] }), deck: [{ word: 'cat', analysis: { type: 'animal' } }] },
     ],
@@ -136,5 +143,12 @@ describe('isPresentation', () => {
 
   it('accepts a presentation with sentences in schema version 2', () => {
     expect(isPresentation(createPresentation({ id: 'k3x9', createdAt, words, makeSentence }))).toBe(true)
+  })
+
+  it.each(['bank', 'template'])('accepts a sentence with the source %j', (source) => {
+    const presentation = createPresentation({ id: 'k3x9', createdAt, words: ['cat'] })
+    expect(isPresentation({ ...presentation, deck: [{ word: 'cat', sentence: { template: 'A cat.', text: 'A cat.', source } }] })).toBe(
+      true,
+    )
   })
 })

@@ -1,5 +1,21 @@
 import { describe, expect, it, vi } from 'vitest'
-import { analyseFromTags, analyseWord, isWordAnalysis, withType, type WordAnalysis } from './wordType'
+import { analyseFromTags, analyseWord, isWordAnalysis, sameAnalysis, withType, type WordAnalysis } from './wordType'
+
+describe('sameAnalysis', () => {
+  it.each<[WordAnalysis, WordAnalysis, boolean]>([
+    [{ type: 'noun', form: 'singular' }, { type: 'noun', form: 'singular' }, true],
+    [{ type: 'noun', form: 'singular' }, { type: 'noun', form: 'plural' }, false],
+    [{ type: 'number', form: 'cardinal' }, { type: 'number', form: 'ordinal' }, false],
+    [{ type: 'verb', form: 'past', transitive: false }, { type: 'verb', form: 'past', transitive: false }, true],
+    [{ type: 'verb', form: 'past', transitive: false }, { type: 'verb', form: 'past', transitive: true }, false],
+    [{ type: 'verb', form: 'past', transitive: true }, { type: 'verb', form: 'gerund', transitive: true }, false],
+    [{ type: 'noun', form: 'singular' }, { type: 'verb', form: 'past', transitive: true }, false],
+    [{ type: 'adjective' }, { type: 'adverb' }, false],
+    [{ type: 'adjective' }, { type: 'adjective' }, true],
+  ])('compares %j and %j: %s', (a, b, expected) => {
+    expect(sameAnalysis(a, b)).toBe(expected)
+  })
+})
 
 describe('analyseFromTags', () => {
   it.each<[string, readonly string[], WordAnalysis]>([

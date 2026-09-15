@@ -5,6 +5,7 @@ import { createMemoryNavigator } from './navigator'
 import { createPresentation, type Presentation } from './presentation'
 import { PresentationPage, type Downloads, type PresentationPageProps } from './PresentationPage'
 import { createMemoryStore } from './presentationStore'
+import { bankSentences } from './sentences/bank'
 import { fillTemplate, TEMPLATES } from './sentences/sentence'
 import { makeSlideSentence } from './sentences/slideSentence'
 import type { TagWord } from './sentences/wordType'
@@ -15,8 +16,9 @@ const presentation = createPresentation({
   id: 'k3x9',
   createdAt: '2026-09-15T06:30:00.000Z',
   words: ['because', 'friend', 'necessary'],
-  makeSentence: makeSlideSentence({ tagWord: nounTagger, random: () => 0 }),
+  makeSentence: makeSlideSentence({ tagWord: nounTagger, random: () => 0, bankSentences }),
 })
+const NO_MEANING_NOTE = 'This simple sentence does not show what the word means.'
 const nounSentence = (index: number, word: string) => fillTemplate(TEMPLATES['noun.singular'][index], word)
 // The sentence has the word under test in a separate element, so the tests compare the full text of the sentence element.
 const sentenceMatcher = (text: string) => (_: string, element: Element | null) =>
@@ -153,6 +155,18 @@ describe('PresentationPage', () => {
       expect(await findSentence(nounSentence(0, 'because'))).toHaveClass('sentence')
     })
 
+    it('tells the user when the sentence does not show the meaning of the word', async () => {
+      renderPage()
+      await findSentence(nounSentence(0, 'because'))
+      expect(screen.getByText(NO_MEANING_NOTE)).toBeInTheDocument()
+    })
+
+    it('does not show the note for a sentence from the word bank', async () => {
+      renderPage({ slide: 3 })
+      await findSentence(bankSentences('necessary')[0])
+      expect(screen.queryByText(NO_MEANING_NOTE)).not.toBeInTheDocument()
+    })
+
     it('shows the word type of the slide in the selector', async () => {
       renderPage()
       await screen.findByText('because', WORD)
@@ -213,17 +227,17 @@ describe('PresentationPage', () => {
         schemaVersion: 1,
         id: 'old1',
         createdAt: presentation.createdAt,
-        words: ['yacht'],
-        deck: [{ word: 'yacht' }],
+        words: ['zebra'],
+        deck: [{ word: 'zebra' }],
       }
       const loadTagger = vi.fn(async () => nounTagger)
       const { user, container } = renderPage({ id: 'old1', store: createMemoryStore([old]), loadTagger })
-      await screen.findByText('yacht', WORD)
+      await screen.findByText('zebra', WORD)
       expect(container.querySelector('.sentence')).toBeNull()
 
       await user.click(button('New sentence'))
 
-      expect(await findSentence(nounSentence(0, 'yacht'))).toBeInTheDocument()
+      expect(await findSentence(nounSentence(0, 'zebra'))).toBeInTheDocument()
       expect(loadTagger).toHaveBeenCalledOnce()
     })
 

@@ -166,3 +166,18 @@ export const isWordAnalysis = (value: unknown): value is WordAnalysis => {
       return false
   }
 }
+
+// True when two analyses have the same type, form and transitivity.
+export const sameAnalysis = (a: WordAnalysis, b: WordAnalysis): boolean => {
+  switch (a.type) {
+    case 'noun':
+    case 'number':
+      return a.type === b.type && a.form === b.form
+    case 'verb':
+      return b.type === 'verb' && a.form === b.form && a.transitive === b.transitive
+    case 'adjective':
+    case 'adverb':
+    case 'other':
+      return a.type === b.type
+  }
+}

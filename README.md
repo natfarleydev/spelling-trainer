@@ -32,7 +32,7 @@ The app can do these tasks now:
 - Keep the typed words in the browser until the teacher clicks **Clear**. **Undo** puts the words back.
 - Save each presentation in the browser (IndexedDB) and list the saved presentations on the home page.
 - Show one large word on each slide. The URL has the slide number, for example `/presentations/k3x9/3`. Thus a reload or a bookmark keeps the slide.
-- Show a short sentence with the word under test on each slide. **New sentence** gives a different sentence, and **Word type** changes the type of the sentence.
+- Show a short sentence with the word under test on each slide. For each word of the KS2 statutory lists (years 3 to 6), the sentence helps the child to understand the meaning of the word. For other words, the app gives a simple sentence and tells the teacher that it does not show the meaning. **New sentence** gives a different sentence, and **Word type** changes the type of the sentence.
 - Use a friendly style for KS2 children: handwriting-style letters (Playpen Sans), a pastel colour for each slide, and the word under test underlined in the sentence. The style guide is in [CLAUDE.md](CLAUDE.md#style-guide).
 - Download the slides as a PDF file (with the same fonts and colours as the screen) or as a PPTX file.
 

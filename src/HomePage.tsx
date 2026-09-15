@@ -5,6 +5,7 @@ import type { Navigator } from './navigator'
 import { createPresentation, presentationName, type Presentation } from './presentation'
 import type { PresentationStore } from './presentationStore'
 import { presentationPath } from './routes'
+import { bankSentences } from './sentences/bank'
 import { makeSlideSentence } from './sentences/slideSentence'
 import type { TagWord } from './sentences/wordType'
 import { isValidWordList, MAX_WORDS, parseWords, wordCountMessage } from './words'
@@ -75,7 +76,7 @@ export function HomePage({ base, store, storage, navigator, makeId, now, timeZon
       id: makeId(),
       createdAt: now(),
       words,
-      makeSentence: makeSlideSentence({ tagWord, random }),
+      makeSentence: makeSlideSentence({ tagWord, random, bankSentences }),
     })
     try {
       await store.save(presentation)

@@ -75,9 +75,17 @@ export const templateKey = (analysis: WordAnalysis): TemplateKey => {
   }
 }
 
+// "bank": a written sentence that shows the meaning of the word. "template": a simple sentence that does not.
+export type SentenceSource = 'bank' | 'template'
+
+export const SENTENCE_SOURCES: readonly SentenceSource[] = ['bank', 'template']
+
 export type Sentence = {
+  // For a bank sentence, the template is the full sentence.
   readonly template: string
   readonly text: string
+  // A sentence from a previous version of the app has no source. It is a template sentence.
+  readonly source?: SentenceSource
 }
 
 export type SentenceRequest = {
@@ -98,5 +106,5 @@ export const chooseSentence = ({ word, analysis, random, previous }: SentenceReq
   const candidates = different.length > 0 ? different : templates
   const index = Math.max(0, Math.min(Math.floor(random() * candidates.length), candidates.length - 1))
   const template = candidates[index]
-  return { template, text: fillTemplate(template, word.trim()) }
+  return { template, text: fillTemplate(template, word.trim()), source: 'template' }
 }

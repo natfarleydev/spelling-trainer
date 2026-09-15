@@ -1,5 +1,5 @@
 import { buildDeck, type Deck, type MakeSentence, type Slide } from './deck'
-import type { Sentence } from './sentences/sentence'
+import { SENTENCE_SOURCES, type Sentence } from './sentences/sentence'
 import { isWordAnalysis } from './sentences/wordType'
 
 // A saved presentation. Change schemaVersion when the stored format changes.
@@ -74,7 +74,10 @@ export const makeId = (bytes: Uint8Array): string =>
 const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null
 
 const isSentence = (value: unknown): value is Sentence =>
-  isRecord(value) && typeof value.template === 'string' && typeof value.text === 'string'
+  isRecord(value) &&
+  typeof value.template === 'string' &&
+  typeof value.text === 'string' &&
+  (value.source === undefined || SENTENCE_SOURCES.some((source) => source === value.source))
 
 const isSlide = (value: unknown): value is Slide =>
   isRecord(value) &&

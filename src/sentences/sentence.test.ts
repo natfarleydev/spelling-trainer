@@ -123,6 +123,7 @@ describe('chooseSentence', () => {
     expect(chooseSentence({ word: 'yacht', analysis: noun, random: () => 0 })).toEqual({
       template: first,
       text: first.replace(WORD_SLOT, 'yacht'),
+      source: 'template',
     })
   })
 

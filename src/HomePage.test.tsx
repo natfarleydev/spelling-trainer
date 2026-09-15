@@ -7,6 +7,7 @@ import { HomePage, type HomePageProps } from './HomePage'
 import { createMemoryNavigator } from './navigator'
 import { createPresentation } from './presentation'
 import { createMemoryStore, type PresentationStore } from './presentationStore'
+import { bankSentences } from './sentences/bank'
 import { fillTemplate, TEMPLATES } from './sentences/sentence'
 import { makeSlideSentence } from './sentences/slideSentence'
 import type { TagWord } from './sentences/wordType'
@@ -140,7 +141,7 @@ describe('HomePage', () => {
           id: 'k3x9',
           createdAt: NOW,
           words: ['because', 'friend'],
-          makeSentence: makeSlideSentence({ tagWord: nounTagger, random: () => 0 }),
+          makeSentence: makeSlideSentence({ tagWord: nounTagger, random: () => 0, bankSentences }),
         }),
       )
     })
@@ -155,7 +156,7 @@ describe('HomePage', () => {
 
       await waitFor(() => expect(navigator.pathname()).toBe(firstSlidePath))
       expect((await store.get('k3x9'))?.deck).toEqual(
-        buildDeck(['describe'], makeSlideSentence({ tagWord: verbTagger, random: () => 0.99 })),
+        buildDeck(['describe'], makeSlideSentence({ tagWord: verbTagger, random: () => 0.99, bankSentences })),
       )
     })
 
@@ -163,14 +164,14 @@ describe('HomePage', () => {
       const store = createMemoryStore()
       const navigator = createMemoryNavigator(BASE)
       const { user } = renderHome({ store, navigator, loadTagger: () => Promise.reject(new Error('offline')) })
-      await user.type(textbox(), 'centre{Enter}yacht')
+      await user.type(textbox(), 'centre{Enter}zebra')
       await user.click(button('Make the presentation'))
 
       await waitFor(() => expect(navigator.pathname()).toBe(firstSlidePath))
       const deck = (await store.get('k3x9'))?.deck
       // The override table does not need the tagger.
       expect(deck?.[0].analysis).toEqual({ type: 'noun', form: 'singular' })
-      expect(deck?.[1].sentence?.text).toBe(fillTemplate(TEMPLATES.other[0], 'yacht'))
+      expect(deck?.[1].sentence?.text).toBe(fillTemplate(TEMPLATES.other[0], 'zebra'))
     })
 
     it('shows an error and stays on the page when the save fails', async () => {

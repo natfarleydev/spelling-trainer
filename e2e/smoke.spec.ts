@@ -130,14 +130,21 @@ test('goes to the home page with Back, and lists the saved presentation', async 
   await expect(slideWord(page)).toHaveText('cat')
 })
 
-test('shows a simple sentence with the word on each slide', async ({ page }) => {
-  await makePresentation(page, ['necessary', 'yacht'])
+const NO_MEANING_NOTE = 'This simple sentence does not show what the word means.'
+
+test('shows a sentence with the word on each slide, and tells the user when it does not show the meaning', async ({
+  page,
+}) => {
+  await makePresentation(page, ['necessary', 'zebra'])
   const sentence = page.locator('.sentence')
+  // "necessary" is in the word bank, so its sentence shows the meaning.
   await expect(sentence).toContainText('necessary')
+  await expect(page.getByText(NO_MEANING_NOTE)).toBeHidden()
   await page.screenshot({ path: 'test-results/screenshots/slide-sentence.png' })
 
   await page.keyboard.press('ArrowRight')
-  await expect(sentence).toContainText('yacht')
+  await expect(sentence).toContainText('zebra')
+  await expect(page.getByText(NO_MEANING_NOTE)).toBeVisible()
 })
 
 test('keeps a new sentence and a new word type after a reload', async ({ page }) => {

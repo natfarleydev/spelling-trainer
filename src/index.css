@@ -326,6 +326,11 @@ button.link-button {
   color: var(--ink);
 }
 
+.sentence-note {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
 .slideshow {
   position: relative;
   flex: 1;

@@ -2,6 +2,7 @@ import nlp from 'compromise/three'
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { BANK_ENTRIES, bankSentences } from './bank'
+import { FUNCTION_WORDS } from './functionWords'
 import { splitSentence } from './highlight'
 import { AMERICAN_WORDS } from './simpleWords'
 import { isKnownWord } from './testing/knownWords'
@@ -19,16 +20,6 @@ const rootOf = (word: string): string => {
 }
 
 const vectorOf = (word: string) => vectors.vector(word) ?? vectors.vector(rootOf(word))
-
-// Words that carry no meaning of their own. The meaning check ignores them.
-const FUNCTION_WORDS: ReadonlySet<string> = new Set(
-  (
-    'a about after all also am an and any are as at be because been before but by can could did do does ' +
-    'for from had has have he her him his how i if in into is it its me more my no not of on one or our ' +
-    'out over so some than that the their them then there these they this to too up us very was we were ' +
-    'what when where which who will with would you your'
-  ).split(' '),
-)
 
 const wordsOf = (sentence: string): string[] => sentence.split(/[^A-Za-z]+/).filter((word) => word !== '')
 
