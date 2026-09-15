@@ -155,3 +155,6 @@ playwright/.cache/
 # Files that a download test can write to disk by accident
 /spelling-words.pdf
 /spelling-words.pptx
+
+# Turborepo cache
+.turbo/

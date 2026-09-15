@@ -2,6 +2,9 @@ import { defineConfig, devices } from '@playwright/test'
 
 const PORT = 4173
 
+// Call Vite with node. npx adds approximately 3 seconds, and the typecheck is a separate step.
+const VITE = 'node node_modules/vite/bin/vite.js'
+
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
@@ -15,7 +18,7 @@ export default defineConfig({
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   // Test the production build, because GitHub Pages serves the production build.
   webServer: {
-    command: `npm run build && npm run preview -- --port ${PORT} --strictPort`,
+    command: `${VITE} build && ${VITE} preview --port ${PORT} --strictPort`,
     url: `http://localhost:${PORT}/spelling-trainer/`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

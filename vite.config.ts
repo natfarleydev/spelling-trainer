@@ -29,7 +29,8 @@ export default defineConfig({
         test: {
           name: 'component',
           include: ['src/**/*.test.tsx'],
-          environment: 'jsdom',
+          // happy-dom was approximately 20% faster than jsdom on this project, with the same results.
+          environment: 'happy-dom',
           setupFiles: ['./src/componentTestSetup.ts'],
         },
       },

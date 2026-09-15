@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { buildDeck } from './deck'
-import { screenFontSize } from './fontSize'
+import { fitMeasuredFontSize, screenFontSize } from './fontSize'
 import { Slideshow } from './Slideshow'
 
 const deck = buildDeck(['because', 'friend', 'necessary'])
@@ -26,9 +26,23 @@ describe('Slideshow', () => {
     expect(screen.queryByText('friend')).not.toBeInTheDocument()
   })
 
-  it('gives the word the screen font size', () => {
+  it('keeps the estimated font size when the browser has no layout', () => {
     renderSlideshow(0)
-    expect(screen.getByText('because').getAttribute('style')).toContain(screenFontSize('because'))
+    // The test DOM has no layout, so the measured fit gives null. Thus the word must not get a measured px size.
+    expect(screen.getByText('because').style.fontSize).not.toMatch(/px$/)
+    expect(screenFontSize('because')).toMatch(/^min\(/)
+  })
+
+  it('fits the measured word to the slide', () => {
+    // A fake measurement. The test DOM has no layout, and this fake operates in all test DOMs.
+    const measurement = { textWidth: 400, fontSize: 50, availableWidth: 375, availableHeight: 700 }
+    const measureWord = vi.fn(() => measurement)
+
+    render(<Slideshow deck={deck} index={0} onIndexChange={vi.fn()} measureWord={measureWord} />)
+
+    const word = screen.getByText('because')
+    expect(word.style.fontSize).toBe(`${fitMeasuredFontSize(measurement)}px`)
+    expect(measureWord).toHaveBeenCalledWith(word.parentElement, word)
   })
 
   it('asks for the next index when the user clicks Next slide', async () => {

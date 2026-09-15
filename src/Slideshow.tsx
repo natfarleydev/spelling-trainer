@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef } from 'react'
 import type { Deck } from './deck'
 import { fitMeasuredFontSize, screenFontSize } from './fontSize'
+import { measureWordInBrowser, type MeasureWord } from './measureWord'
 import { nextIndex, previousIndex } from './navigation'
 
 type SlideshowProps = {
@@ -8,10 +9,12 @@ type SlideshowProps = {
   // The index of the current slide. It starts at 0.
   index: number
   onIndexChange: (index: number) => void
+  // The tests give a fake. The app uses the real browser measurement.
+  measureWord?: MeasureWord
 }
 
 // Show one slide of the deck. The parent keeps the index, so that the URL can keep the slide number.
-export function Slideshow({ deck, index, onIndexChange }: SlideshowProps) {
+export function Slideshow({ deck, index, onIndexChange, measureWord = measureWordInBrowser }: SlideshowProps) {
   const slideRef = useRef<HTMLDivElement>(null)
   const wordRef = useRef<HTMLSpanElement>(null)
 
@@ -28,12 +31,7 @@ export function Slideshow({ deck, index, onIndexChange }: SlideshowProps) {
     if (!slideElement || !wordElement) return
 
     const fit = () => {
-      const size = fitMeasuredFontSize({
-        textWidth: wordElement.getBoundingClientRect().width,
-        fontSize: parseFloat(getComputedStyle(wordElement).fontSize),
-        availableWidth: slideElement.clientWidth,
-        availableHeight: slideElement.clientHeight,
-      })
+      const size = fitMeasuredFontSize(measureWord(slideElement, wordElement))
       if (size !== null) wordElement.style.fontSize = `${size}px`
     }
 
@@ -44,7 +42,7 @@ export function Slideshow({ deck, index, onIndexChange }: SlideshowProps) {
     observer.observe(slideElement)
     observer.observe(wordElement)
     return () => observer.disconnect()
-  }, [word])
+  }, [word, measureWord])
 
   const next = () => {
     if (!isLast) onIndexChange(nextIndex(index, count))

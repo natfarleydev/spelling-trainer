@@ -45,7 +45,7 @@ const MEASURED_MAX_HEIGHT = 0.4
 const isPositive = (value: number): boolean => Number.isFinite(value) && value > 0
 
 // Give the font size that makes a measured word fit. Different devices have different fonts, so an estimate is not sufficient.
-// Give null when a measurement is not available. Example: jsdom has no layout.
+// Give null when a measurement is not available. Example: a test DOM has no layout.
 export const fitMeasuredFontSize = ({
   textWidth,
   fontSize,

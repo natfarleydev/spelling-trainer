@@ -1,0 +1,22 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "globalDependencies": ["package-lock.json"],
+  "tasks": {
+    "lint": {
+      "inputs": ["src/**", "e2e/**", "*.ts", ".oxlintrc.json"],
+      "outputs": []
+    },
+    "typecheck": {
+      "inputs": ["src/**", "e2e/**", "*.ts", "tsconfig*.json"],
+      "outputs": []
+    },
+    "test": {
+      "inputs": ["src/**", "vite.config.ts", "tsconfig*.json"],
+      "outputs": []
+    },
+    "build": {
+      "inputs": ["src/**", "public/**", "index.html", "404.html", "vite.config.ts", "tsconfig*.json"],
+      "outputs": ["dist/**"]
+    }
+  }
+}
