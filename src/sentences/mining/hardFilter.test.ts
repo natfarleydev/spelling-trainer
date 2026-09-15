@@ -18,6 +18,7 @@ describe('hardFilterReason', () => {
     ['a number', 'We eat food when we are 9 and hungry.', 'food'],
     ['an apostrophe', 'We eat food when we’re hungry.', 'food'],
     ['a quotation mark', 'We eat "food" when we are hungry.', 'food'],
+    ['an ellipsis', 'We eat food... when we are hungry.', 'food'],
     ['an unknown word', 'We eat food when we are ravenous.', 'food'],
     ['an American spelling', 'We eat food with a color.', 'food'],
     ['a blocked word', 'We eat food and beer when we are hungry.', 'food'],

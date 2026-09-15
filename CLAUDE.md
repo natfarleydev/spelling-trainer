@@ -272,6 +272,8 @@ The bank also uses real sentences from [Tatoeba](https://tatoeba.org) (CC BY 2.0
 - **Hard filters:** a whole sentence, a short length for KS2, the word one time, only known words, British English, no topic from the blocklist.
 - **Names and contractions:** allow a short list of common first names. Expand contractions (for example, "don't" to "do not") and record the change. Do not allow a possessive apostrophe.
 - **Score:** a GDEX score (Kilgarriff et al. 2008) multiplied by a context score. The context score hides the word and measures how well a masked language model guesses it. Run the model only at build time, never in the browser.
+- **GDEX details:** the best length is 6 to 10 words. The commonness of each word comes from its NGSL rank. A greylist word (formal, old-fashioned, American or adult) multiplies the score by 0.7. The first review found that a yes-or-no commonness check gave 1.00 to 94% of the candidates, so the old sentences with the lowest ids won.
+- **Diversity:** do not pick a sentence that shares 40% or more of its three-word sequences with a sentence that is already picked.
 - **Validation:** a hand-labelled set of good and poor context sentences must rank correctly with the score.
 - If Tatoeba does not give 3 good sentences for a word, write the missing sentences.
 - Keep the Tatoeba id of each sentence. The README must say that the sentences come from Tatoeba, with a link.

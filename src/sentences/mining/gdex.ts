@@ -5,7 +5,65 @@
 // src/sentences/mining/context.ts measures the context.
 
 // The best sentence length for KS2 children, in words.
-export const OPTIMAL_LENGTH = { min: 6, max: 12 } as const
+export const OPTIMAL_LENGTH = { min: 6, max: 10 } as const
+
+// Each greylist word multiplies the score by this value.
+const GREYLIST_PENALTY = 0.7
+
+// Words that make a sentence formal, old-fashioned, American or about adult life.
+// The first review of the Tatoeba candidates (2026-09-15) found many of them in the oldest sentences.
+export const GREYLIST: ReadonlySet<string> = new Set([
+  // Formal or old-fashioned words.
+  'whom',
+  'shall',
+  'thus',
+  'upon',
+  'hence',
+  'whereas',
+  'whatever',
+  'whether',
+  'regard',
+  'mine',
+  'ought',
+  'indeed',
+  'moreover',
+  'therefore',
+  'somewhat',
+  'rather',
+  'lest',
+  'thee',
+  'thou',
+  // American words. AMERICAN_WORDS already rejects some other American words, for example "apartment".
+  'cookies',
+  'dollar',
+  'dollars',
+  'college',
+  'subway',
+  'garbage',
+  'gasoline',
+  'highway',
+  'freshman',
+  // Adult life.
+  'business',
+  'company',
+  'office',
+  'boss',
+  'salary',
+  'tax',
+  'taxes',
+  'loan',
+  'debt',
+  'election',
+  'politics',
+  'lawyer',
+  'customer',
+  'wife',
+  'husband',
+  'marriage',
+  'married',
+  'hotel',
+  'coffee',
+])
 
 // A pronoun at the start usually refers to something outside the sentence.
 const START_PRONOUNS = new Set(['he', 'she', 'it', 'they', 'this', 'that', 'these', 'those', 'him', 'her', 'them', 'his', 'its', 'their'])
@@ -31,25 +89,30 @@ export const keywordPositionScore = (tokens: readonly string[], keyword: string)
 export const pronounStartScore = (tokens: readonly string[]): number =>
   START_PRONOUNS.has((tokens[0] ?? '').toLowerCase()) ? 0.5 : 1
 
-// The share of the words, without the keyword, that are common words.
-export const commonWordShare = (tokens: readonly string[], keyword: string, isCommon: (word: string) => boolean): number => {
+// The mean commonness of the words, without the keyword.
+export const commonWordScore = (tokens: readonly string[], keyword: string, commonness: (word: string) => number): number => {
   const others = tokens.filter((token) => token.toLowerCase() !== keyword.toLowerCase())
-  return others.length === 0 ? 1 : others.filter(isCommon).length / others.length
+  return others.length === 0 ? 1 : others.reduce((sum, token) => sum + commonness(token), 0) / others.length
 }
 
+export const greylistScore = (tokens: readonly string[]): number =>
+  tokens.reduce((score, token) => (GREYLIST.has(token.toLowerCase()) ? score * GREYLIST_PENALTY : score), 1)
+
 export type GdexTools = {
-  // True for a word that a young child knows well, for example a word in the first 1000 NGSL words.
-  readonly isCommon: (word: string) => boolean
+  // From 0 to 1: how well a young child knows the word. Example: 1 for "dog", less for "provide".
+  readonly commonness: (word: string) => number
 }
 
 // A score from 0 (worst) to 1 (best).
-export const gdexScore = (sentence: string, keyword: string, { isCommon }: GdexTools): number => {
+export const gdexScore = (sentence: string, keyword: string, { commonness }: GdexTools): number => {
   if (!isWholeSentence(sentence)) return 0
   const tokens = tokenize(sentence)
+  const others = tokens.filter((token) => token.toLowerCase() !== keyword.toLowerCase())
   return (
     optimalInterval(tokens.length, OPTIMAL_LENGTH.min, OPTIMAL_LENGTH.max) *
     keywordPositionScore(tokens, keyword) *
     pronounStartScore(tokens) *
-    (0.5 + 0.5 * commonWordShare(tokens, keyword, isCommon))
+    greylistScore(others) *
+    (0.5 + 0.5 * commonWordScore(tokens, keyword, commonness))
   )
 }

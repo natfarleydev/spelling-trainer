@@ -116,6 +116,8 @@ export type FilterTools = {
 export const hardFilterReason = (sentence: string, keyword: string, { isKnown }: FilterTools): string | null => {
   if (!isWholeSentence(sentence)) return 'not a whole sentence'
   if (!ALLOWED_CHARACTERS.test(sentence)) return 'a character that is not allowed'
+  // An ellipsis shows a pause or a missing part, which is difficult for a child to read.
+  if (sentence.includes('..')) return 'an ellipsis'
   const tokens = tokenize(sentence)
   if (tokens.length < MINIMUM_WORDS) return 'too short'
   if (tokens.length > MAXIMUM_WORDS) return 'too long'

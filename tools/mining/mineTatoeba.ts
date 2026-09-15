@@ -16,19 +16,20 @@ import nlp from 'compromise/three'
 import { FUNCTION_WORDS } from '../../src/sentences/functionWords'
 import { contextScore, maskSentence, type Guess } from '../../src/sentences/mining/context'
 import { expandContractions } from '../../src/sentences/mining/contractions'
+import { makeCommonness } from '../../src/sentences/mining/commonness'
+import { pickDiverse } from '../../src/sentences/mining/diversity'
 import { gdexScore, tokenize } from '../../src/sentences/mining/gdex'
 import { hardFilterReason, MAXIMUM_WORDS, MINIMUM_WORDS, NAMES } from '../../src/sentences/mining/hardFilter'
 import { NGSL_WORDS } from '../../src/sentences/ngsl'
-import { isSimpleWord } from '../../src/sentences/simpleWords'
 import { YEAR_1_COMMON_EXCEPTION_WORDS, YEAR_2_COMMON_EXCEPTION_WORDS } from '../../src/sentences/testing/commonExceptionWords'
-import { isKnownWord } from '../../src/sentences/testing/knownWords'
+import { candidateBases, isKnownWord } from '../../src/sentences/testing/knownWords'
 import { YEARS_3_AND_4, YEARS_5_AND_6 } from '../../src/sentences/testing/ks2StatutoryWords'
 import { cosineSimilarity, decodeWordVectors } from '../../src/sentences/wordVectors'
 
 const SOURCE = '../../.cache/tatoeba/eng_sentences_detailed.tsv'
 const OUTPUT_FOLDER = '../../.cache/mining'
 // The number of candidates for each word after stage 1. Each candidate costs one model call in stage 2.
-const GDEX_CANDIDATES = 30
+const GDEX_CANDIDATES = 120
 // The number of candidates for each word in the output.
 const OUTPUT_CANDIDATES = 12
 const TOP_K = 50
@@ -82,6 +83,10 @@ type Candidate = {
   readonly gdex: number
 }
 
+// The NGSL rank of each word. GDEX prefers the words that a young child knows best.
+const NGSL_RANK = new Map(NGSL_WORDS.map((word, index) => [word.toLowerCase(), index + 1]))
+const commonness = makeCommonness({ rankOf: (word) => NGSL_RANK.get(word), bases: candidateBases, names: NAMES })
+
 // Stage 1.
 const candidates = new Map<string, Candidate[]>(words.map((word) => [word, []]))
 const seen = new Map<string, Set<string>>(words.map((word) => [word, new Set()]))
@@ -120,7 +125,7 @@ for await (const line of reader) {
       text: expansion.text,
       original,
       changed: expansion.changed,
-      gdex: gdexScore(expansion.text, word, { isCommon: isSimpleWord }),
+      gdex: gdexScore(expansion.text, word, { commonness }),
     })
     if (list.length > GDEX_CANDIDATES * 4) candidates.set(word, keepBest(list))
   }
@@ -151,7 +156,7 @@ for (const [index, word] of words.entries()) {
     scored.push({ ...candidate, context, score: candidate.gdex * context })
   }
   scored.sort((a, b) => b.score - a.score)
-  results.push({ word, available: seen.get(word)!.size, candidates: scored.slice(0, OUTPUT_CANDIDATES) })
+  results.push({ word, available: seen.get(word)!.size, candidates: [...pickDiverse(scored, OUTPUT_CANDIDATES)] })
   if ((index + 1) % 25 === 0) console.log(`stage 2: ${index + 1} of ${words.length} words, ${Math.round((Date.now() - started) / 1000)} s`)
 }
 
