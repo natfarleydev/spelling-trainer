@@ -55,6 +55,16 @@ npm run dev
 | `npm run test:e2e` | Make the production build and run the Playwright smoke tests. |
 | `npm run build` | Do the type checks and make the production build. |
 
+### Test the live site
+
+After each deploy, CI runs the smoke tests against the live site. It first makes sure that the site has the new commit. You can also run the smoke tests against the live site:
+
+```bash
+BASE_URL=https://natfarleydev.github.io/spelling-trainer/ EXPECTED_APP_VERSION=$(git rev-parse origin/main) npm run test:e2e
+```
+
+To see the version of the live site, look for `<meta name="app-version">` in the page source.
+
 Read [CLAUDE.md](CLAUDE.md) before you make a change. It has the rules for tests, code style, language, commits and deployment.
 
 ## Provenance

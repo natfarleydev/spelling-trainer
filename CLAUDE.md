@@ -179,8 +179,23 @@ This project uses trunk-based development only.
 ### CI and deploy
 
 Each push to `main` starts the `CI and deploy` workflow in `.github/workflows/deploy.yml`.
-The workflow runs the lint checks, the unit tests, the build and the smoke tests.
+The workflow runs the lint checks, the type checks, the unit tests, the build and the smoke tests.
 It deploys to GitHub Pages only when all these steps pass.
+
+After the deploy, the `verify-deployment` job tests the live site:
+
+1. It waits until the live HTML has `<meta name="app-version">` with the commit SHA.
+2. It runs all the Playwright smoke tests against the live site, with `EXPECTED_APP_VERSION` set to the commit SHA.
+
+The app also has a hidden element with `data-testid="app-version"`. The smoke test "has the expected build version" reads it.
+
+To run the smoke tests against the live site from your computer, use this command:
+
+```bash
+BASE_URL=https://natfarleydev.github.io/spelling-trainer/ EXPECTED_APP_VERSION=$(git rev-parse origin/main) npm run test:e2e
+```
+
+A smoke test must operate against a local build and against the live site. Do not write a smoke test that only operates locally.
 
 After each push, monitor the workflow in the background:
 
