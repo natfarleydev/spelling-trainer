@@ -119,6 +119,26 @@ Composition makes the tests fast and keeps each test isolated.
 - React components must be thin. Move logic into pure functions and test these functions.
 - Give side effects to a component as props with real defaults. Example: `App` gets `downloads`. The component tests give fakes.
 
+## Third-party code and data
+
+Provenance must always be clear.
+
+- Before you add a library or data, find its licence. Do not add it if the licence is not clear.
+- Start each third-party data file with an SPDX licence line, the source, the version, the citation and a list of our changes.
+- Add each runtime library to the README table "Runtime libraries".
+- Add each data source to the README table "Data".
+- The repository uses CC0 1.0. A ShareAlike file keeps its own licence. Name it in the README section "Licence".
+- Keep test-only data in a `testing` folder, so that the app build does not include it.
+
+## Sentences: British English
+
+The app makes a simple sentence for each spelling word.
+
+- Use British English in all sentences and all user interface text. Example: "colour", "programme", "holiday".
+- In a sentence, only the word under test can be difficult. All other words must be in the first 1000 NGSL words or in `EXTRA_SIMPLE_WORDS`. The tests make sure of this.
+- Add a word to `EXTRA_SIMPLE_WORDS` only when a template needs it, and only when a young child in the UK knows it.
+- If the tagger gives the wrong word type, add the word to `WORD_OVERRIDES` with a test. Use the KS2 statutory word lists to find problems.
+
 ## Language: ASD-STE100
 
 Use ASD-STE100 Simplified Technical English (STE) for all text.

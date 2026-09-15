@@ -4,6 +4,8 @@
 [![Live site](https://img.shields.io/badge/live-GitHub%20Pages-2f5bd3?logo=github)](https://natfarleydev.github.io/spelling-trainer/)
 [![Status: alpha](https://img.shields.io/badge/status-alpha-ffd400)](#status)
 [![Licence: CC0 1.0](https://img.shields.io/badge/licence-CC0%201.0-lightgrey?logo=creativecommons)](LICENSE)
+[![Word data: CC BY-SA 4.0](https://img.shields.io/badge/word%20data-CC%20BY--SA%204.0-lightgrey?logo=creativecommons)](#data)
+[![English: British](https://img.shields.io/badge/English-British-012169)](#data)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-fe5196?logo=conventionalcommits&logoColor=white)](https://www.conventionalcommits.org/)
 [![Trunk-based](https://img.shields.io/badge/workflow-trunk--based-0a7d5a)](CLAUDE.md#workflow-trunk-based-development)
 [![Language: ASD-STE100](https://img.shields.io/badge/language-ASD--STE100-6f42c1)](CLAUDE.md#language-asd-ste100)
@@ -87,14 +89,24 @@ The app includes these libraries in the build that GitHub Pages serves.
 | [jsPDF](https://github.com/parallax/jsPDF) | Makes the PDF file | MIT |
 | [PptxGenJS](https://github.com/gitbrent/PptxGenJS) | Makes the PPTX file | MIT |
 | [idb-keyval](https://github.com/jakearchibald/idb-keyval) | Keeps the presentations in IndexedDB | Apache-2.0 |
+| [compromise](https://github.com/spencermountain/compromise) (`compromise/two`) | Finds the word type (noun, verb and more) for the sentences. The app loads it only when it makes sentences. | MIT |
 
 The development tools are in `devDependencies` in [package.json](package.json). They are not in the build.
 
 ### Data
 
-The app does not include word lists or other third-party data yet.
-When we add data, this section will name the source, the version, the licence and the changes that we made.
+| Data | Source and version | Licence | Our changes | File |
+| --- | --- | --- | --- | --- |
+| The first 1000 words of the New General Service List (the "simple words" for the sentences) | [NGSL 1.2](https://www.newgeneralservicelist.com/new-general-service-list), `NGSL_12_stats.csv`, SFI Rank 1 to 1000. Browne, C., Culligan, B., and Phillips, J. | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) | We changed 9 American spellings to British spellings (for example, color to colour). | [src/sentences/ngslFirst1000.ts](src/sentences/ngslFirst1000.ts) |
+| The statutory word lists for years 3 to 6 (**test data only**, not in the app) | [English Appendix 1: Spelling](https://assets.publishing.service.gov.uk/media/5a7ccc06ed915d63cc65ce61/English_Appendix_1_-_Spelling.pdf), National curriculum in England, Department for Education | [Open Government Licence v3.0](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/) | We wrote each optional form as a separate word (for example, "accident(ally)" gives "accident" and "accidentally"). | [src/sentences/testing/ks2StatutoryWords.ts](src/sentences/testing/ks2StatutoryWords.ts) |
+| The sentence templates, the extra simple words, the inflected forms and the word type corrections | Our own work | CC0 1.0 | Not applicable | [src/sentences/](src/sentences/) |
+
+Citation for the NGSL: Browne, C., Culligan, B. (2013). The New General Service List. Retrieved from https://www.newgeneralservicelist.com.
+
+Each data file starts with an SPDX licence line, the source and a list of our changes.
 
 ## Licence
 
 [CC0 1.0 Universal](LICENSE). Third-party libraries and data keep their own licences, as the Provenance section shows.
+
+Exception: [src/sentences/ngslFirst1000.ts](src/sentences/ngslFirst1000.ts) is an adaptation of the NGSL, so it uses [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
