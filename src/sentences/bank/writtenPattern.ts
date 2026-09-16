@@ -200,4 +200,34 @@ export const WRITTEN_PATTERN_BANK: readonly BankEntry[] = [
     word: 'stationary',
     sentences: ['The car was stationary, so its wheels did not turn.', 'A stationary bike stays in one place when you ride it.'],
   },
+  {
+    word: 'antiseptic',
+    sentences: ['Put antiseptic on the cut to clean your skin.', 'Antiseptic is a liquid that cleans a cut.'],
+  },
+  {
+    word: 'antisocial',
+    sentences: ['Shouting in the library is rude and antisocial behaviour.', 'Antisocial behaviour upsets the people who live nearby.'],
+  },
+  {
+    word: 'adoration',
+    sentences: ['He watched his hero with adoration and admiration.', 'Adoration is a feeling of great love and happiness.'],
+  },
+  { word: 'comical', sentences: ['His silly hat looked comical and made us laugh.'] },
+  { word: 'division', sentences: ['Our team plays in the second division of the league.'] },
+  { word: 'enclosure', sentences: ['A wooden fence goes around the elephant enclosure.'] },
+  {
+    word: 'scene',
+    sentences: ['The first scene of the show is in a garden.', 'In the last scene of the story, the friends meet again.'],
+  },
+  { word: 'crescent', sentences: ['The crescent moon was thin and bright in the sky.'] },
+  {
+    word: 'vein',
+    sentences: ['Blood flows through a vein back to your heart.', 'You can see a blue vein under the skin of your arm.'],
+  },
+  { word: 'berry', sentences: ['A berry is a small, sweet fruit.', 'We picked a sweet berry from the plant.'] },
+  {
+    word: 'great',
+    sentences: ['The film was great, and we all had a good time.', 'She did a great job, and everyone said it was good work.'],
+  },
+  { word: 'groan', sentences: ['He let out a groan, then a yawn, and went to bed.'] },
 ]
