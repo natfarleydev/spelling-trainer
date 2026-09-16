@@ -2,7 +2,9 @@ import { COMMON_EXCEPTION_WORDS_BANK } from './bank/commonExceptionWords'
 import { TATOEBA_0001_BANK } from './bank/tatoeba0001'
 import { TATOEBA_0002_BANK } from './bank/tatoeba0002'
 import { TATOEBA_0003_BANK } from './bank/tatoeba0003'
+import { TATOEBA_0004_BANK } from './bank/tatoeba0004'
 import { WRITTEN_CONCRETE_BANK } from './bank/writtenConcrete'
+import { WRITTEN_PATTERN_BANK } from './bank/writtenPattern'
 import { YEARS_3_AND_4_BANK } from './bank/years3And4'
 import { YEARS_5_AND_6_BANK } from './bank/years5And6'
 
@@ -47,7 +49,12 @@ export const mergeEntries = (...lists: readonly (readonly BankEntry[])[]): reado
 }
 
 // All the Tatoeba batches, in the order of the mining.
-export const TATOEBA_ENTRIES: readonly TatoebaEntry[] = [...TATOEBA_0001_BANK, ...TATOEBA_0002_BANK, ...TATOEBA_0003_BANK]
+export const TATOEBA_ENTRIES: readonly TatoebaEntry[] = [
+  ...TATOEBA_0001_BANK,
+  ...TATOEBA_0002_BANK,
+  ...TATOEBA_0003_BANK,
+  ...TATOEBA_0004_BANK,
+]
 
 export const BANK_ENTRIES: readonly BankEntry[] = mergeEntries(
   COMMON_EXCEPTION_WORDS_BANK,
@@ -55,6 +62,7 @@ export const BANK_ENTRIES: readonly BankEntry[] = mergeEntries(
   YEARS_5_AND_6_BANK,
   toBankEntries(TATOEBA_ENTRIES),
   WRITTEN_CONCRETE_BANK,
+  WRITTEN_PATTERN_BANK,
 )
 
 const SENTENCES_BY_WORD: ReadonlyMap<string, readonly string[]> = new Map(

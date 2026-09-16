@@ -2,6 +2,7 @@ import { NGSL_WORDS } from '../ngsl'
 import { EXTRA_SIMPLE_WORDS } from '../simpleWords'
 import { YEAR_1_COMMON_EXCEPTION_WORDS, YEAR_2_COMMON_EXCEPTION_WORDS } from './commonExceptionWords'
 import { YEARS_3_AND_4, YEARS_5_AND_6 } from './ks2StatutoryWords'
+import { ALL_PATTERN_WORDS } from './patternWords'
 
 // Give the base form of a word. Example: "waited" gives "wait". The bank rules test uses compromise for this.
 export type RootOf = (word: string) => string
@@ -13,6 +14,7 @@ export const KNOWN_EXTRA_WORDS: readonly string[] = [
   'amazing',
   'apple',
   'astronaut',
+  'balloon',
   'bark',
   'bench',
   'brave',
@@ -27,7 +29,9 @@ export const KNOWN_EXTRA_WORDS: readonly string[] = [
   'homework',
   'melt',
   'mum',
+  'palace',
   'pet',
+  'puppy',
   'queen',
   'saturday',
   'soup',
@@ -286,6 +290,7 @@ const KNOWN_WORDS: ReadonlySet<string> = new Set(
     ...YEAR_2_COMMON_EXCEPTION_WORDS,
     ...YEARS_3_AND_4,
     ...YEARS_5_AND_6,
+    ...ALL_PATTERN_WORDS,
   ].map((word) => word.toLowerCase()),
 )
 

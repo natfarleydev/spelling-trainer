@@ -27,7 +27,12 @@ describe('isKnownWord', () => {
     expect(isKnownWord(word, noRoot)).toBe(true)
   })
 
-  it.each(['frog', 'astronaut', 'queen', 'Saturday'])('accepts the extra word %j', (word) => {
+  it.each(['frog', 'astronaut', 'queen', 'Saturday', 'balloon', 'palace', 'puppy'])('accepts the extra word %j', (word) => {
+    expect(isKnownWord(word, noRoot)).toBe(true)
+  })
+
+  // The spelling patterns of the national curriculum (English Appendix 1) teach these words to the same children.
+  it.each(['rabbit', 'pie', 'frisky', 'nicer', 'pyramid', 'delicious'])('accepts the spelling pattern word %j', (word) => {
     expect(isKnownWord(word, noRoot)).toBe(true)
   })
 
