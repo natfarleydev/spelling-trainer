@@ -44,6 +44,12 @@ export const WRITTEN_CYPLEX_BANK: readonly BankEntry[] = [
   },
   { word: 'towers', sentences: ['The castle has two tall towers and a stone roof.'] },
   { word: 'glare', sentences: ['The bright glare of the sun hurt my eyes.'] },
+  { word: 'patches', sentences: ['The white dog has brown patches of hair on its back.'] },
+  { word: 'fiery', sentences: ['He has a fiery temper and gets angry quickly.'] },
+  { word: 'circular', sentences: ['A ring has a circular shape, like a curved loop.'] },
+  { word: 'glory', sentences: ['The hero dreams of glory and great success.'] },
+  { word: 'tangle', sentences: ['The wires are in a messy tangle behind the television.'] },
+  { word: 'hush', sentences: ['A hush fell over the room, and nobody made a whisper.'] },
   {
     word: 'nerves',
     sentences: ['Nerves carry messages from your finger to your brain.', 'Before the test I felt nervous, and my nerves were bad.'],

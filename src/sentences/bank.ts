@@ -8,6 +8,7 @@ import { TATOEBA_0006_BANK } from './bank/tatoeba0006'
 import { TATOEBA_0007_BANK } from './bank/tatoeba0007'
 import { TATOEBA_0008_BANK } from './bank/tatoeba0008'
 import { TATOEBA_0009_BANK } from './bank/tatoeba0009'
+import { TATOEBA_0010_BANK } from './bank/tatoeba0010'
 import { WRITTEN_CONCRETE_BANK } from './bank/writtenConcrete'
 import { WRITTEN_CYPLEX_BANK } from './bank/writtenCyplex'
 import { WRITTEN_PATTERN_BANK } from './bank/writtenPattern'
@@ -66,6 +67,7 @@ export const TATOEBA_ENTRIES: readonly TatoebaEntry[] = [
   ...TATOEBA_0007_BANK,
   ...TATOEBA_0008_BANK,
   ...TATOEBA_0009_BANK,
+  ...TATOEBA_0010_BANK,
 ]
 
 export const BANK_ENTRIES: readonly BankEntry[] = mergeEntries(
