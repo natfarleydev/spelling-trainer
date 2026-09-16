@@ -24,6 +24,7 @@ import { gdexScore, tokenize } from '../../src/sentences/mining/gdex'
 import { hardFilterReason, MAXIMUM_WORDS, MINIMUM_WORDS, NAMES } from '../../src/sentences/mining/hardFilter'
 import { NGSL_WORDS } from '../../src/sentences/ngsl'
 import { YEAR_1_COMMON_EXCEPTION_WORDS, YEAR_2_COMMON_EXCEPTION_WORDS } from '../../src/sentences/testing/commonExceptionWords'
+import { CYPLEX_WORDS } from '../../src/sentences/testing/cyplexWords'
 import { candidateBases, isKnownWord } from '../../src/sentences/testing/knownWords'
 import { YEARS_3_AND_4, YEARS_5_AND_6 } from '../../src/sentences/testing/ks2StatutoryWords'
 import { ALL_PATTERN_WORDS } from '../../src/sentences/testing/patternWords'
@@ -47,22 +48,33 @@ if (!existsSync(SOURCE)) {
   process.exit(1)
 }
 
-// --list all: all the bank words. --list concrete (the default): the concrete words, most frequent first.
 // A function word has no meaning of its own, so it gets no sentences.
+// A word that already has 3 bank sentences does not go in a "todo" list. Thus a todo list becomes shorter after each
+// new bank file, and the numbers of --from and --to then point to different words. Mine the next batch before you
+// commit the batch before it.
 const NGSL_ORDER = new Map(NGSL_WORDS.map((word, index) => [word.toLowerCase(), index]))
 const listIndex = process.argv.indexOf('--list')
 const listName = listIndex === -1 ? 'concrete' : process.argv[listIndex + 1]
-// --list pattern: the spelling pattern words that still need sentences, in the order of the year groups.
-const PATTERN_TODO = [...new Set(ALL_PATTERN_WORDS)].filter((word) => !FUNCTION_WORDS.has(word) && bankSentences(word).length < 3)
-const ALL_WORDS = listName === 'pattern' ? PATTERN_TODO : listName === 'concrete'
-  ? [...CONCRETE_WORDS].sort((a, b) => (NGSL_ORDER.get(a) ?? Infinity) - (NGSL_ORDER.get(b) ?? Infinity))
-  : [
-  ...new Set(
-    [...NGSL_WORDS, ...YEAR_1_COMMON_EXCEPTION_WORDS, ...YEAR_2_COMMON_EXCEPTION_WORDS, ...YEARS_3_AND_4, ...YEARS_5_AND_6]
-      .map((word) => word.toLowerCase())
-      .filter((word) => !FUNCTION_WORDS.has(word)),
-  ),
-  ]
+const todo = (words: readonly string[]): readonly string[] =>
+  [...new Set(words.map((word) => word.toLowerCase()))].filter((word) => !FUNCTION_WORDS.has(word) && bankSentences(word).length < 3)
+
+const LISTS: Record<string, readonly string[]> = {
+  // The concrete words, most frequent first.
+  concrete: [...CONCRETE_WORDS].sort((a, b) => (NGSL_ORDER.get(a) ?? Infinity) - (NGSL_ORDER.get(b) ?? Infinity)),
+  // The spelling pattern words that still need sentences, in the order of the year groups.
+  pattern: todo(ALL_PATTERN_WORDS),
+  // The CYP-LEX book words that still need sentences, the words in the most books first.
+  cyplex: todo(CYPLEX_WORDS),
+  // All the bank words.
+  all: [
+    ...new Set(
+      [...NGSL_WORDS, ...YEAR_1_COMMON_EXCEPTION_WORDS, ...YEAR_2_COMMON_EXCEPTION_WORDS, ...YEARS_3_AND_4, ...YEARS_5_AND_6]
+        .map((word) => word.toLowerCase())
+        .filter((word) => !FUNCTION_WORDS.has(word)),
+    ),
+  ],
+}
+const ALL_WORDS = LISTS[listName] ?? LISTS.concrete
 const from = argument('from', 0)
 const to = argument('to', ALL_WORDS.length)
 const words = ALL_WORDS.slice(from, to)

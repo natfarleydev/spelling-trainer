@@ -76,7 +76,7 @@ The sentence bank uses sentences from [Tatoeba](https://tatoeba.org). The tools 
    cd tools/mining && node node_modules/tsx/dist/cli.mjs mineTatoeba.ts --list pattern --from 0 --to 150
    ```
 
-   `--list` selects the words: `concrete` (the default), `pattern` (the spelling pattern words of English Appendix 1) or `all`.
+   `--list` selects the words: `concrete` (the default), `pattern` (the spelling pattern words of English Appendix 1), `cyplex` (the CYP-LEX words that children meet in books) or `all`.
    Each list has only the words that still have fewer than 3 bank sentences. Thus the list becomes shorter after each new bank file,
    and the numbers of `--from` and `--to` then point to different words. Mine the next batch before you commit the batch before it.
 
