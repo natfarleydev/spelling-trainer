@@ -73,8 +73,12 @@ The sentence bank uses sentences from [Tatoeba](https://tatoeba.org). The tools 
 3. Mine one batch of words. The first run downloads the RoBERTa model (approximately 126 MB) into `.cache/models`:
 
    ```bash
-   cd tools/mining && node node_modules/tsx/dist/cli.mjs mineTatoeba.ts --from 0 --to 300
+   cd tools/mining && node node_modules/tsx/dist/cli.mjs mineTatoeba.ts --list pattern --from 0 --to 150
    ```
+
+   `--list` selects the words: `concrete` (the default), `pattern` (the spelling pattern words of English Appendix 1) or `all`.
+   Each list has only the words that still have fewer than 3 bank sentences. Thus the list becomes shorter after each new bank file,
+   and the numbers of `--from` and `--to` then point to different words. Mine the next batch before you commit the batch before it.
 
 The script removes sentences that fail the hard filters, then sorts the others by a GDEX score multiplied by a context score. The context score hides the word and measures how well the model guesses it. `validateContext.ts` checks the context score against a hand-labelled set.
 
