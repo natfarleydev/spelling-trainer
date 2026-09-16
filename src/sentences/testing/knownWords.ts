@@ -29,6 +29,7 @@ export const KNOWN_EXTRA_WORDS: readonly string[] = [
   'glue',
   'grandad',
   'homework',
+  'hungry',
   'melt',
   'mum',
   'palace',
