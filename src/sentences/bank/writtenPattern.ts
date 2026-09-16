@@ -131,4 +131,73 @@ export const WRITTEN_PATTERN_BANK: readonly BankEntry[] = [
     word: 'imperfect',
     sentences: ['It is sensible to know that every person is imperfect.', 'A perfect plan is impossible, so my plan is imperfect.'],
   },
+  { word: 'mane', sentences: ['The horse shook the long hair of its mane.'] },
+  {
+    word: 'rein',
+    sentences: ['Pull the rein to reduce the speed of the horse.', 'Hold the rein and push gently to turn the horse.'],
+  },
+  {
+    word: 'vicious',
+    sentences: ['A vicious dog can be dangerous, so keep away from it.', 'The two boys had a vicious fight in the yard.'],
+  },
+  {
+    word: 'malicious',
+    sentences: ['It was malicious and unfair to hide her bag.', 'A malicious joke can hurt an innocent person.'],
+  },
+  {
+    word: 'expectant',
+    sentences: ['The expectant children were impatient for the show to start.', 'The expectant fans were impatient and could not keep still.'],
+  },
+  {
+    word: 'hesitant',
+    sentences: ['She was hesitant and wary about the deep water.', 'He felt hesitant, so he was cautious on the ice.'],
+  },
+  { word: 'substance', sentences: ['Glue is a thick substance, a little like a liquid.'] },
+  {
+    word: 'frequency',
+    sentences: ['The frequency of the bus is higher than usual today.', 'A clock keeps a steady frequency all day.'],
+  },
+  {
+    word: 'obedience',
+    sentences: ['The dog learns obedience and will obey every order.', 'Obedience means you respect the rules and follow them.'],
+  },
+  {
+    word: 'tolerable',
+    sentences: ['The noise was tolerable, so it seemed reasonable to stay.', 'Waiting ten minutes is tolerable and quite understandable.'],
+  },
+  {
+    word: 'legible',
+    sentences: ['Your writing is legible, so I copied it easily.', 'Write in legible letters, and do not misspell a word.'],
+  },
+  {
+    word: 'sensibly',
+    sentences: ['She spent her money sensibly, as she ought to.', 'Dress sensibly for the cold, because a sensible coat helps.'],
+  },
+  {
+    word: 'referral',
+    sentences: ['The doctor gave the patient a referral to the hospital.', 'With a referral, you can get treatment more quickly.'],
+  },
+  { word: 'nought', sentences: ['Nought means zero, so the score was nought to one.', 'The final score was two goals to nought.'] },
+  {
+    word: 'borough',
+    sentences: ['A borough is one part of a big city or town.', 'Our borough has its own school and library.'],
+  },
+  { word: 'plough', sentences: ['The farmer bought a plough to turn the soil.', 'He bought a plough and a cart for the farm.'] },
+  { word: 'bough', sentences: ['A bough is a big branch of a pear tree.', 'The lamb rested under a low bough.'] },
+  {
+    word: 'solemn',
+    sentences: ['The room was quiet and solemn, and nobody smiled.', 'We stood in solemn silence to show respect.'],
+  },
+  {
+    word: 'thistle',
+    sentences: ['A thistle is a wild plant, and its flower looks like a purple cup.', 'We put one thistle flower in a bowl of water.'],
+  },
+  {
+    word: 'precede',
+    sentences: ['A short pause will precede the start of the show.', 'The band will arrive early and precede the singers.'],
+  },
+  {
+    word: 'stationary',
+    sentences: ['The car was stationary, so its wheels did not turn.', 'A stationary bike stays in one place when you ride it.'],
+  },
 ]

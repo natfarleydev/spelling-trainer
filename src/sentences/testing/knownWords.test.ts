@@ -27,7 +27,7 @@ describe('isKnownWord', () => {
     expect(isKnownWord(word, noRoot)).toBe(true)
   })
 
-  it.each(['frog', 'astronaut', 'queen', 'Saturday', 'balloon', 'palace', 'puppy'])('accepts the extra word %j', (word) => {
+  it.each(['frog', 'astronaut', 'queen', 'Saturday', 'balloon', 'palace', 'puppy', 'glue', 'purple', 'cart'])('accepts the extra word %j', (word) => {
     expect(isKnownWord(word, noRoot)).toBe(true)
   })
 
@@ -40,7 +40,7 @@ describe('isKnownWord', () => {
     expect(isKnownWord(word, noRoot)).toBe(true)
   })
 
-  it.each(['two', 'Four', 'nine', 'sixty', 'seventy', 'hundred', 'third'])('accepts the number word %j', (word) => {
+  it.each(['two', 'Four', 'nine', 'sixty', 'seventy', 'hundred', 'third', 'zero'])('accepts the number word %j', (word) => {
     expect(isKnownWord(word, noRoot)).toBe(true)
   })
 

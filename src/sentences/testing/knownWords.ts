@@ -19,12 +19,14 @@ export const KNOWN_EXTRA_WORDS: readonly string[] = [
   'bench',
   'brave',
   'captain',
+  'cart',
   'clap',
   'cotton',
   'drum',
   'english',
   'france',
   'french',
+  'glue',
   'grandad',
   'homework',
   'melt',
@@ -32,6 +34,7 @@ export const KNOWN_EXTRA_WORDS: readonly string[] = [
   'palace',
   'pet',
   'puppy',
+  'purple',
   'queen',
   'saturday',
   'soup',
@@ -83,6 +86,7 @@ export const FUNCTION_WORD_FORMS: readonly string[] = [
 ]
 
 export const NUMBER_WORDS: readonly string[] = [
+  'zero',
   'one',
   'two',
   'three',
