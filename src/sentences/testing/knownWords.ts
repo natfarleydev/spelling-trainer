@@ -2,6 +2,7 @@ import { NGSL_WORDS } from '../ngsl'
 import { EXTRA_SIMPLE_WORDS } from '../simpleWords'
 import { YEAR_1_COMMON_EXCEPTION_WORDS, YEAR_2_COMMON_EXCEPTION_WORDS } from './commonExceptionWords'
 import { YEARS_3_AND_4, YEARS_5_AND_6 } from './ks2StatutoryWords'
+import { CYPLEX_WORDS } from './cyplexWords'
 import { ALL_PATTERN_WORDS } from './patternWords'
 
 // Give the base form of a word. Example: "waited" gives "wait". The bank rules test uses compromise for this.
@@ -296,6 +297,7 @@ const KNOWN_WORDS: ReadonlySet<string> = new Set(
     ...YEARS_3_AND_4,
     ...YEARS_5_AND_6,
     ...ALL_PATTERN_WORDS,
+    ...CYPLEX_WORDS,
   ].map((word) => word.toLowerCase()),
 )
 

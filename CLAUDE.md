@@ -255,7 +255,7 @@ The app makes a simple sentence for each spelling word.
 A sentence must help the child to understand the **meaning** of the word. Example: "The astronaut was nervous about going into space."
 
 - Write bank sentences in `src/sentences/bank/`. Give each word at least 2 different sentences. Use a mix of real life and a little fun.
-- Use only words that a KS2 child knows: all NGSL words, the statutory spelling lists, the spelling pattern words of English Appendix 1 (`ALL_PATTERN_WORDS`), `EXTRA_SIMPLE_WORDS`, `KNOWN_EXTRA_WORDS`, `FUNCTION_WORD_FORMS` and `NUMBER_WORDS`. `isKnownWord` also accepts a base form, for example "drawings" from "draw".
+- Use only words that a KS2 child knows: all NGSL words, the statutory spelling lists, the spelling pattern words of English Appendix 1 (`ALL_PATTERN_WORDS`), the CYP-LEX book words (`CYPLEX_WORDS`), `EXTRA_SIMPLE_WORDS`, `KNOWN_EXTRA_WORDS`, `FUNCTION_WORD_FORMS` and `NUMBER_WORDS`. `isKnownWord` also accepts a base form, for example "drawings" from "draw".
 - Add a word to `KNOWN_EXTRA_WORDS` only when a bank sentence needs it, and only when a child aged 7 to 11 in the UK knows it.
 - Meaning rule: at least one content word in the sentence must have a word vector similarity of 0.40 or more with the word under test. Before you write a sentence, find clue words with the word vectors.
 - Keep a sentence to a maximum of 15 words, with no apostrophe.

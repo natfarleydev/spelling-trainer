@@ -36,6 +36,11 @@ describe('isKnownWord', () => {
     expect(isKnownWord(word, noRoot)).toBe(true)
   })
 
+  // CYP-LEX shows that children aged 7 to 9 meet these words in a fifth or more of the books that they read.
+  it.each(['thump', 'scarf', 'kettle', 'pavement'])('accepts the CYP-LEX book word %j', (word) => {
+    expect(isKnownWord(word, noRoot)).toBe(true)
+  })
+
   it.each(['us', 'Her', 'him', 'them', 'their', 'its', 'an', 'cannot'])('accepts the function word form %j', (word) => {
     expect(isKnownWord(word, noRoot)).toBe(true)
   })

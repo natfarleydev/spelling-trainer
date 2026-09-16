@@ -13,6 +13,7 @@ import { NGSL_FIRST_1000 } from '../src/sentences/ngslFirst1000.ts'
 import { YEAR_1_COMMON_EXCEPTION_WORDS, YEAR_2_COMMON_EXCEPTION_WORDS } from '../src/sentences/testing/commonExceptionWords.ts'
 import { YEARS_3_AND_4, YEARS_5_AND_6 } from '../src/sentences/testing/ks2StatutoryWords.ts'
 import { ALL_PATTERN_WORDS } from '../src/sentences/testing/patternWords.ts'
+import { CYPLEX_WORDS } from '../src/sentences/testing/cyplexWords.ts'
 import { encodeWordVectors, type WordVectorEntry } from '../src/sentences/wordVectors.ts'
 
 const SOURCE = '.cache/glove/glove.6B.50d'
@@ -33,6 +34,7 @@ const listWords = new Set(
     ...NGSL_FIRST_1000,
     ...CONCRETE_WORDS,
     ...ALL_PATTERN_WORDS,
+    ...CYPLEX_WORDS,
     ...YEARS_3_AND_4,
     ...YEARS_5_AND_6,
     ...YEAR_1_COMMON_EXCEPTION_WORDS,
