@@ -283,6 +283,16 @@ The bank also uses real sentences from [Tatoeba](https://tatoeba.org) (CC BY 2.0
 - Keep the downloads (the Tatoeba file and the model) in the `.cache` folder. Do not commit them.
 - **Links are an experiment:** `src/sentences/link.ts` puts a word into a bank sentence of a word with a similar meaning. A review on 2026-09-15 found that most links did not show the meaning, so the app does not use them. Do not use links in the app until a review of real links shows good results.
 
+### CYP-LEX book words (decision from 2026-09-16)
+
+The spelling lists do not have all the words that a teacher sets. CYP-LEX gives the words that children meet in the books that they read.
+
+- **Source:** CYP-LEX, ages 7 to 9 (`main_cyplex79.csv`), CC BY 4.0. `src/sentences/testing/cyplexWords.ts` has the licence, the citation and the filter.
+- **Filter:** 4 to 12 letters, Zipf frequency 3.2 to 4.4, the word appears in 20% or more of the books, the most frequent word type is a noun or an adjective, and the word is not a function word, a first name, a blocked word or an American spelling.
+- **Book spread is necessary:** the frequency alone keeps the name of a character of one book, for example "lily". The column `CD_book_perc_raw` removes these names.
+- **Hand check:** Claude reads the list and removes the words that are not correct for a spelling test for children: dark subjects, parts of compound words (for example "haired") and proper nouns.
+- Mine these words with `--list cyplex`. The safety rules and the vetting rules of the Tatoeba sentences also apply to this list.
+
 ## Language: ASD-STE100
 
 Use ASD-STE100 Simplified Technical English (STE) for all text.
