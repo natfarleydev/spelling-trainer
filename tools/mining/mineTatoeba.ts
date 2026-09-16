@@ -14,6 +14,7 @@ import { createInterface } from 'node:readline'
 import { env, pipeline } from '@huggingface/transformers'
 import nlp from 'compromise/three'
 import { FUNCTION_WORDS } from '../../src/sentences/functionWords'
+import { bankSentences } from '../../src/sentences/bank'
 import { CONCRETE_WORDS } from '../../src/sentences/mining/concreteWords'
 import { contextScore, maskSentence, type Guess } from '../../src/sentences/mining/context'
 import { expandContractions } from '../../src/sentences/mining/contractions'
@@ -25,6 +26,7 @@ import { NGSL_WORDS } from '../../src/sentences/ngsl'
 import { YEAR_1_COMMON_EXCEPTION_WORDS, YEAR_2_COMMON_EXCEPTION_WORDS } from '../../src/sentences/testing/commonExceptionWords'
 import { candidateBases, isKnownWord } from '../../src/sentences/testing/knownWords'
 import { YEARS_3_AND_4, YEARS_5_AND_6 } from '../../src/sentences/testing/ks2StatutoryWords'
+import { ALL_PATTERN_WORDS } from '../../src/sentences/testing/patternWords'
 import { cosineSimilarity, decodeWordVectors } from '../../src/sentences/wordVectors'
 
 const SOURCE = '../../.cache/tatoeba/eng_sentences_detailed.tsv'
@@ -50,7 +52,9 @@ if (!existsSync(SOURCE)) {
 const NGSL_ORDER = new Map(NGSL_WORDS.map((word, index) => [word.toLowerCase(), index]))
 const listIndex = process.argv.indexOf('--list')
 const listName = listIndex === -1 ? 'concrete' : process.argv[listIndex + 1]
-const ALL_WORDS = listName === 'concrete'
+// --list pattern: the spelling pattern words that still need sentences, in the order of the year groups.
+const PATTERN_TODO = [...new Set(ALL_PATTERN_WORDS)].filter((word) => !FUNCTION_WORDS.has(word) && bankSentences(word).length < 3)
+const ALL_WORDS = listName === 'pattern' ? PATTERN_TODO : listName === 'concrete'
   ? [...CONCRETE_WORDS].sort((a, b) => (NGSL_ORDER.get(a) ?? Infinity) - (NGSL_ORDER.get(b) ?? Infinity))
   : [
   ...new Set(

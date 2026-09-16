@@ -64,13 +64,14 @@ describe('the word data', () => {
 
 describe('AMERICAN_WORDS', () => {
   // The sentence bank needs these words. Example: "Do not fall off the wall."
-  it.each(['fall', 'store'])('does not block %j, because British English also uses it as a verb', (word) => {
+  // "licence" is the British noun, but "license" is the British verb. The same rule applies to "practice" and "practise".
+  it.each(['fall', 'store', 'license', 'practice'])('does not block %j, because British English also uses it', (word) => {
     expect(AMERICAN_WORDS.has(word)).toBe(false)
   })
 
   it.each([
     'color', 'favorite', 'behavior', 'center', 'program', 'organize', 'organization', 'realize', 'recognize',
-    'theater', 'meter', 'analyze', 'defense', 'offense', 'license', 'catalog', 'dialog', 'gray', 'neighbor',
+    'theater', 'meter', 'analyze', 'defense', 'offense', 'catalog', 'dialog', 'gray', 'neighbor',
     'honor', 'labor', 'humor', 'harbor', 'favor', 'specialize', 'apologize', 'emphasize', 'criticize',
     'summarize', 'characterize',
   ])('blocks the American spelling %j', (word) => {

@@ -245,6 +245,7 @@ Provenance must always be clear.
 The app makes a simple sentence for each spelling word.
 
 - Use British English in all sentences and all user interface text. Example: "colour", "programme", "holiday".
+- `AMERICAN_WORDS` must not have a spelling that is also correct British English. Example: "licence" is the British noun, but "license" is the British verb. The same rule applies to "practice" (noun) and "practise" (verb).
 - In a sentence, only the word under test can be difficult. All other words must be in the first 1000 NGSL words or in `EXTRA_SIMPLE_WORDS`. The tests make sure of this.
 - Add a word to `EXTRA_SIMPLE_WORDS` only when a template needs it, and only when a young child in the UK knows it.
 - If the tagger gives the wrong word type, add the word to `WORD_OVERRIDES` with a test. Use the KS2 statutory word lists to find problems.

@@ -50,7 +50,7 @@ export const WORD_FORMS: Readonly<Record<string, string>> = {
 export const AMERICAN_WORDS: ReadonlySet<string> = new Set([
   'analyze', 'apartment', 'apologize', 'behavior', 'candy', 'catalog', 'center', 'characterize', 'color', 'cookie',
   'criticize', 'defense', 'diaper', 'dialog', 'elevator', 'emphasize', 'eraser', 'favor', 'favorite', 'flashlight',
-  'fries', 'gotten', 'gray', 'harbor', 'honor', 'humor', 'labor', 'license', 'math', 'meter',
+  'fries', 'gotten', 'gray', 'harbor', 'honor', 'humor', 'labor', 'math', 'meter',
   'mom', 'movie', 'neighbor', 'offense', 'organization', 'organize', 'pants', 'program', 'realize', 'recognize',
   'sidewalk', 'soccer', 'specialize', 'summarize', 'theater', 'toward', 'trash', 'truck', 'vacation',
 ])
