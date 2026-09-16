@@ -58,4 +58,77 @@ export const WRITTEN_PATTERN_BANK: readonly BankEntry[] = [
     word: 'blackberry',
     sentences: ['A blackberry is a dark fruit, smaller than an apple.', 'We picked a blackberry and an apple from the garden.'],
   },
+  { word: 'dodge', sentences: ['On his bike he can dodge past the slow cars.'] },
+  { word: 'giraffe', sentences: ['A giraffe is taller than an elephant and eats leaves from trees.'] },
+  {
+    word: 'bulge',
+    sentences: ['The ball made a big bulge in his coat pocket.', 'A bulge in the pocket showed where the keys were.'],
+  },
+  {
+    word: 'gem',
+    sentences: ['A gem is a precious stone in a gold ring.', 'The queen keeps her gem with the rest of her treasure.'],
+  },
+  {
+    word: 'cell',
+    sentences: ['A cell is the smallest living part of the brain or the heart.', 'Every cell in your heart is far too small to see.'],
+  },
+  { word: 'gnat', sentences: ['A gnat is a tiny fly, smaller than a worm.', 'The bird ate a gnat and then a worm.'] },
+  {
+    word: 'gnaw',
+    sentences: ['The mouse will gnaw the wood and crawl into the hole.', 'The dog will gnaw the bone, then yawn and sleep.'],
+  },
+  {
+    word: 'wrong',
+    sentences: ['I got the answer wrong, so I had to guess again.', 'I was sure my answer was right, but it was wrong.'],
+  },
+  { word: 'tinsel', sentences: ['We hung shiny tinsel on the tree.', 'The pink tinsel looks shiny on the wall.'] },
+  { word: 'fossil', sentences: ['The fossil shows the bones of a dinosaur from long ago.'] },
+  {
+    word: 'nostril',
+    sentences: ['A nostril is one of the two holes in your nose.', 'When my nose is runny, I hold one nostril shut.'],
+  },
+  {
+    word: 'hiker',
+    sentences: ['A hiker is a person who enjoys hiking in the hills.', 'Even a beginner can be a good hiker with strong boots.'],
+  },
+  { word: 'dropped', sentences: ['I dropped my glass and it fell down and broke.'] },
+  {
+    word: 'sadder',
+    sentences: ['The song was sad, but the next one was sadder.', 'Rain makes the day sadder, and sun makes it happier.'],
+  },
+  {
+    word: 'fattest',
+    sentences: ['That pig is fatter than the others, but this one is the fattest.', 'The nicest cat in the house is also the fattest.'],
+  },
+  { word: 'chimney', sentences: ['Smoke comes out of the chimney on the roof.'] },
+  {
+    word: 'war',
+    sentences: ['In a war, two countries fight each other.', 'Many people want to end the war and stop the fighting.'],
+  },
+  {
+    word: 'hopeless',
+    sentences: ['We felt sad and hopeless after we lost every game.', 'She was unhappy and hopeless until her friend helped her.'],
+  },
+  {
+    word: 'merriment',
+    sentences: ['The music brought merriment and enjoyment to everyone.', 'There was merriment and laughter, with no sadness at all.'],
+  },
+  { word: 'plentiful', sentences: ['Water is plentiful after the heavy rain.', 'Fruit is plentiful in summer, and there is enough for all.'] },
+  {
+    word: 'limiting',
+    sentences: ['The rule is limiting us to one hour, and that limit is fair.', 'Limiting the noise helps, so keep it under the limit.'],
+  },
+  {
+    word: 'limitation',
+    sentences: ['One limitation of the plan is the limit on time.', 'A limitation is something that limits what you can do.'],
+  },
+  {
+    word: 'myth',
+    sentences: ['A myth is an old story that may not be true.', 'The old myth of the giant is fiction, not fact.'],
+  },
+  { word: 'misspell', sentences: ['It can annoy the teacher when you misspell a name.'] },
+  {
+    word: 'imperfect',
+    sentences: ['It is sensible to know that every person is imperfect.', 'A perfect plan is impossible, so my plan is imperfect.'],
+  },
 ]
