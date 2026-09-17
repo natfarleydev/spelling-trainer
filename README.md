@@ -82,6 +82,18 @@ The sentence bank uses sentences from [Tatoeba](https://tatoeba.org). The tools 
 
 The script removes sentences that fail the hard filters, then sorts the others by a GDEX score multiplied by a context score. The context score hides the word and measures how well the model guesses it. `validateContext.ts` checks the context score against a hand-labelled set.
 
+### Write the sentences that Tatoeba cannot give
+
+Tatoeba has no good sentence for some words, for example "merriment" or "subheading". We write these sentences. The tool `checkWritten.ts` helps:
+
+```bash
+cd tools/mining
+node node_modules/tsx/dist/cli.mjs checkWritten.ts --clues merriment,thistle
+node node_modules/tsx/dist/cli.mjs checkWritten.ts --check draft.json
+```
+
+`--clues` gives the known words with the highest word vector similarity. Use them to write a sentence that shows the meaning. `--check` reads a file of `{ "<word>": ["<sentence>", ...] }` and applies the rules of `src/sentences/bank.test.ts`.
+
 ### Test the live site
 
 After each deploy, CI runs the smoke tests against the live site. It first makes sure that the site has the new commit. You can also run the smoke tests against the live site:
