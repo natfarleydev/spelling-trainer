@@ -339,6 +339,27 @@ Write the description in STE.
 Write the description in lowercase.
 Do not put a full stop at the end of the description.
 
+### The commit body is the logbook
+
+The commit history is the logbook of this project. Write a body for each commit
+that changes the sentence bank, the word lists, the mining tools or the app
+behavior. Only a small change, for example a format change, gets no body.
+
+Write the body in STE, and wrap each line at 80 characters. Give this
+information:
+
+1. **What the commit does.** Give the numbers. Example: "Add 423 Tatoeba
+   sentences for 145 book words."
+2. **Why we do it.** Give the decision and the reason. Example: "Tatoeba covers
+   these words only with idioms."
+3. **What we leave out, and why.** Name the words that we reject, with the
+   reason. Example: "Leave out "beloved": the candidates are about romance."
+4. **What we do next.** Name the next batch or the next word list, so that the
+   next session starts immediately.
+
+Read the last commits before you start work. They tell you the state of the work
+and the next step.
+
 ## Workflow: trunk-based development
 
 This project uses trunk-based development only.
