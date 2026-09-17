@@ -11,6 +11,7 @@ import { TATOEBA_0009_BANK } from './bank/tatoeba0009'
 import { TATOEBA_0010_BANK } from './bank/tatoeba0010'
 import { WRITTEN_CONCRETE_BANK } from './bank/writtenConcrete'
 import { WRITTEN_CYPLEX_BANK } from './bank/writtenCyplex'
+import { WRITTEN_EXCEPTION_EXTRA_BANK } from './bank/writtenExceptionExtra'
 import { WRITTEN_PATTERN_BANK } from './bank/writtenPattern'
 import { WRITTEN_PATTERN_EXTRA_BANK } from './bank/writtenPatternExtra'
 import { YEARS_3_AND_4_BANK } from './bank/years3And4'
@@ -79,6 +80,7 @@ export const BANK_ENTRIES: readonly BankEntry[] = mergeEntries(
   WRITTEN_PATTERN_BANK,
   WRITTEN_PATTERN_EXTRA_BANK,
   WRITTEN_CYPLEX_BANK,
+  WRITTEN_EXCEPTION_EXTRA_BANK,
 )
 
 const SENTENCES_BY_WORD: ReadonlyMap<string, readonly string[]> = new Map(
