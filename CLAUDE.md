@@ -264,6 +264,45 @@ A sentence must help the child to understand the **meaning** of the word. Exampl
 - The app uses bank sentences only for the word type from the tagger. If the teacher selects a different type, the app uses the templates.
 - Give each word a minimum of 3 good sentences, so that the teacher has a choice when one sentence does not operate.
 
+#### The state of the bank (2026-09-17)
+
+The bank has 6 word sources. This table gives the state of each source. Make it
+correct again after each batch.
+
+| Word source | Words | State |
+| --- | --- | --- |
+| Statutory spelling lists, years 3 to 6 | 213 | Complete: 3 or more sentences for each word. |
+| Common exception words, years 1 and 2 | 75 | Complete: 3 or more sentences for each word. |
+| Spelling pattern words, English Appendix 1 | 685 | Complete: 3 or more sentences for each word. |
+| CYP-LEX book words, ages 7 to 9 | 470 | Complete: 3 or more sentences for each word. |
+| Concrete words (`CONCRETE_WORDS`) | 455 | Complete: 3 or more sentences for each word. |
+| First 1000 NGSL words | 941 | In work: 450 words still have fewer than 3 sentences. |
+
+Do the NGSL words in the order of the NGSL rank, the most common word first.
+A teacher can set any of these words.
+
+#### How to write a sentence that Tatoeba does not give
+
+1. Find the clue words: `node node_modules/tsx/dist/cli.mjs checkWritten.ts
+   --clues <words>` in `tools/mining`.
+2. Write the drafts in a JSON file: `{ "<word>": ["<sentence>", ...] }`.
+3. Check the drafts: `node node_modules/tsx/dist/cli.mjs checkWritten.ts
+   --check <file>`. The tool applies the rules of `src/sentences/bank.test.ts`.
+4. Correct each problem, and then write the bank file in `src/sentences/bank/`.
+5. Add the new file to `BANK_ENTRIES` in `src/sentences/bank.ts`.
+
+**The word vector of a rare word is near its own word family, and not near the
+plain word for the meaning.** Example: "copier" is 0.74 from "printer", but only
+0.27 from "copy". Thus a sentence for a rare word must give a word of the same
+family as the clue. Example: "The rabbit will disappear and then reappear from
+the hat."
+
+**A word vector can also carry a meaning that is not the meaning for a child.**
+Example: "thistle" is near the names of football clubs, "mound" is near the
+words of a baseball game, and "forcible" is near the words of crime and court.
+Keep the sentence on the meaning that a child meets, and take the clue from the
+words that are also correct for a child.
+
 ### Tatoeba sentences (decisions from 2026-09-15)
 
 The bank also uses real sentences from [Tatoeba](https://tatoeba.org) (CC BY 2.0 FR). A build script finds and scores them. A person does not approve each sentence: Claude reads the best candidates and chooses them.
@@ -281,6 +320,7 @@ The bank also uses real sentences from [Tatoeba](https://tatoeba.org) (CC BY 2.0
 - If Tatoeba does not give 3 good sentences for a word, write the missing sentences.
 - Keep the Tatoeba id of each sentence. The README must say that the sentences come from Tatoeba, with a link.
 - Keep the downloads (the Tatoeba file and the model) in the `.cache` folder. Do not commit them.
+- **If the download gives 403 (2026-09-17):** the egress policy of the session does not allow `downloads.tatoeba.org`. Do not try to go around it. Write the sentences with `tools/mining/checkWritten.ts` instead, and mine the words in a session that allows the download.
 - **Links are an experiment:** `src/sentences/link.ts` puts a word into a bank sentence of a word with a similar meaning. A review on 2026-09-15 found that most links did not show the meaning, so the app does not use them. Do not use links in the app until a review of real links shows good results.
 
 ### CYP-LEX book words (decision from 2026-09-16)
