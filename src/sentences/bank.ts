@@ -13,6 +13,7 @@ import { WRITTEN_CONCRETE_BANK } from './bank/writtenConcrete'
 import { WRITTEN_CYPLEX_BANK } from './bank/writtenCyplex'
 import { WRITTEN_EXCEPTION_EXTRA_BANK } from './bank/writtenExceptionExtra'
 import { WRITTEN_PATTERN_BANK } from './bank/writtenPattern'
+import { WRITTEN_PATTERN_COMMON_BANK } from './bank/writtenPatternCommon'
 import { WRITTEN_PATTERN_EXTRA_BANK } from './bank/writtenPatternExtra'
 import { YEARS_3_AND_4_BANK } from './bank/years3And4'
 import { YEARS_5_AND_6_BANK } from './bank/years5And6'
@@ -79,6 +80,7 @@ export const BANK_ENTRIES: readonly BankEntry[] = mergeEntries(
   WRITTEN_CONCRETE_BANK,
   WRITTEN_PATTERN_BANK,
   WRITTEN_PATTERN_EXTRA_BANK,
+  WRITTEN_PATTERN_COMMON_BANK,
   WRITTEN_CYPLEX_BANK,
   WRITTEN_EXCEPTION_EXTRA_BANK,
 )
