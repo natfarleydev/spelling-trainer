@@ -15,6 +15,7 @@ import { WRITTEN_CYPLEX_EXTRA_BANK } from './bank/writtenCyplexExtra'
 import { WRITTEN_EXCEPTION_EXTRA_BANK } from './bank/writtenExceptionExtra'
 import { WRITTEN_NGSL_0001_BANK } from './bank/writtenNgsl0001'
 import { WRITTEN_NGSL_0002_BANK } from './bank/writtenNgsl0002'
+import { WRITTEN_NGSL_0003_BANK } from './bank/writtenNgsl0003'
 import { WRITTEN_PATTERN_BANK } from './bank/writtenPattern'
 import { WRITTEN_PATTERN_COMMON_BANK } from './bank/writtenPatternCommon'
 import { WRITTEN_PATTERN_EXTRA_BANK } from './bank/writtenPatternExtra'
@@ -91,6 +92,7 @@ export const BANK_ENTRIES: readonly BankEntry[] = mergeEntries(
   WRITTEN_EXCEPTION_EXTRA_BANK,
   WRITTEN_NGSL_0001_BANK,
   WRITTEN_NGSL_0002_BANK,
+  WRITTEN_NGSL_0003_BANK,
 )
 
 const SENTENCES_BY_WORD: ReadonlyMap<string, readonly string[]> = new Map(
