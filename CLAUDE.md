@@ -276,7 +276,7 @@ correct again after each batch.
 | Spelling pattern words, English Appendix 1 | 685 | Complete: 3 or more sentences for each word. |
 | CYP-LEX book words, ages 7 to 9 | 470 | Complete: 3 or more sentences for each word. |
 | Concrete words (`CONCRETE_WORDS`) | 455 | Complete: 3 or more sentences for each word. |
-| First 1000 NGSL words | 941 | In work: 350 words still have fewer than 3 sentences. |
+| First 1000 NGSL words | 941 | In work: 300 words still have fewer than 3 sentences. |
 
 Do the NGSL words in the order of the NGSL rank, the most common word first.
 A teacher can set any of these words.

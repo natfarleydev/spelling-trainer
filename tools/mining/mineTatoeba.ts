@@ -23,6 +23,7 @@ import { pickDiverse } from '../../src/sentences/mining/diversity'
 import { gdexScore, tokenize } from '../../src/sentences/mining/gdex'
 import { hardFilterReason, MAXIMUM_WORDS, MINIMUM_WORDS, NAMES } from '../../src/sentences/mining/hardFilter'
 import { NGSL_WORDS } from '../../src/sentences/ngsl'
+import { AMERICAN_WORDS } from '../../src/sentences/simpleWords'
 import { YEAR_1_COMMON_EXCEPTION_WORDS, YEAR_2_COMMON_EXCEPTION_WORDS } from '../../src/sentences/testing/commonExceptionWords'
 import { CYPLEX_WORDS } from '../../src/sentences/testing/cyplexWords'
 import { candidateBases, isKnownWord } from '../../src/sentences/testing/knownWords'
@@ -49,6 +50,8 @@ if (!existsSync(SOURCE)) {
 }
 
 // A function word has no meaning of its own, so it gets no sentences.
+// An American spelling, for example "toward", also gets no sentences, because the rule for British English does not
+// allow it in a sentence. The British word is "towards".
 // A word that already has 3 bank sentences does not go in a "todo" list. Thus a todo list becomes shorter after each
 // new bank file, and the numbers of --from and --to then point to different words. Mine the next batch before you
 // commit the batch before it.
@@ -56,7 +59,9 @@ const NGSL_ORDER = new Map(NGSL_WORDS.map((word, index) => [word.toLowerCase(), 
 const listIndex = process.argv.indexOf('--list')
 const listName = listIndex === -1 ? 'concrete' : process.argv[listIndex + 1]
 const todo = (words: readonly string[]): readonly string[] =>
-  [...new Set(words.map((word) => word.toLowerCase()))].filter((word) => !FUNCTION_WORDS.has(word) && bankSentences(word).length < 3)
+  [...new Set(words.map((word) => word.toLowerCase()))].filter(
+    (word) => !FUNCTION_WORDS.has(word) && !AMERICAN_WORDS.has(word) && bankSentences(word).length < 3,
+  )
 
 const LISTS: Record<string, readonly string[]> = {
   // The concrete words, most frequent first.
