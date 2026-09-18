@@ -266,7 +266,7 @@ A sentence must help the child to understand the **meaning** of the word. Exampl
 
 #### The state of the bank (2026-09-17)
 
-The bank has 6 word sources. This table gives the state of each source. Make it
+The bank has 7 word sources. This table gives the state of each source. Make it
 correct again after each batch.
 
 | Word source | Words | State |
@@ -277,9 +277,20 @@ correct again after each batch.
 | CYP-LEX book words, ages 7 to 9 | 470 | Complete: 3 or more sentences for each word. |
 | Concrete words (`CONCRETE_WORDS`) | 455 | Complete: 3 or more sentences for each word. |
 | First 1000 NGSL words | 941 | In work: 250 words still have fewer than 3 sentences. |
+| Days of the week and months (`EVERYDAY_WORDS`) | 19 | Complete: 3 or more sentences for each word. |
 
 Do the NGSL words in the order of the NGSL rank, the most common word first.
 A teacher can set any of these words.
+
+**A word with two meanings keeps one list.** The bank finds the sentences with
+the word in lower case, so "may" the modal verb and "May" the month have one
+list. Put the sentences of both meanings in the list. The teacher presses "New
+sentence" to find the other meaning. The app uses the list only when the teacher
+keeps the word type of the tagger.
+
+**The tagger does not know each month.** compromise tags "March" as a singular
+noun and "May" as a modal verb. This is not a problem, because the bank does not
+select a sentence by the word type.
 
 #### How to write a sentence that Tatoeba does not give
 

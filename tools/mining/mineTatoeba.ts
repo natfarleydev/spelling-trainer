@@ -26,6 +26,7 @@ import { NGSL_WORDS } from '../../src/sentences/ngsl'
 import { AMERICAN_WORDS } from '../../src/sentences/simpleWords'
 import { YEAR_1_COMMON_EXCEPTION_WORDS, YEAR_2_COMMON_EXCEPTION_WORDS } from '../../src/sentences/testing/commonExceptionWords'
 import { CYPLEX_WORDS } from '../../src/sentences/testing/cyplexWords'
+import { EVERYDAY_WORDS } from '../../src/sentences/testing/everydayWords'
 import { candidateBases, isKnownWord } from '../../src/sentences/testing/knownWords'
 import { YEARS_3_AND_4, YEARS_5_AND_6 } from '../../src/sentences/testing/ks2StatutoryWords'
 import { ALL_PATTERN_WORDS } from '../../src/sentences/testing/patternWords'
@@ -70,6 +71,8 @@ const LISTS: Record<string, readonly string[]> = {
   pattern: todo(ALL_PATTERN_WORDS),
   // The CYP-LEX book words that still need sentences, the words in the most books first.
   cyplex: todo(CYPLEX_WORDS),
+  // The days of the week and the months that still need sentences.
+  everyday: todo(EVERYDAY_WORDS),
   // All the bank words.
   all: [
     ...new Set(

@@ -154,6 +154,19 @@ test('shows a sentence with the word on each slide, and tells the user when it d
   await expect(page.getByText(NO_MEANING_NOTE)).toBeVisible()
 })
 
+// A teacher sets a day of the week or a month every term. These words are proper nouns, so the other word sources
+// leave them out. The bank must show the meaning of the day and the month.
+test('shows a sentence that gives the meaning of a day of the week and a month', async ({ page }) => {
+  await makePresentation(page, ['Wednesday', 'September'])
+  const sentence = page.locator('.sentence')
+  await expect(sentence).toContainText('Wednesday')
+  await expect(page.getByText(NO_MEANING_NOTE)).toBeHidden()
+
+  await page.keyboard.press('ArrowRight')
+  await expect(sentence).toContainText('September')
+  await expect(page.getByText(NO_MEANING_NOTE)).toBeHidden()
+})
+
 test('keeps a new sentence and a new word type after a reload', async ({ page }) => {
   await makePresentation(page, ['record'])
   const sentence = page.locator('.sentence')

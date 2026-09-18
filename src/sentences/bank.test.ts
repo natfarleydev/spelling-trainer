@@ -7,6 +7,7 @@ import { splitSentence } from './highlight'
 import { NAMES } from './mining/hardFilter'
 import { AMERICAN_WORDS } from './simpleWords'
 import { YEAR_1_COMMON_EXCEPTION_WORDS, YEAR_2_COMMON_EXCEPTION_WORDS } from './testing/commonExceptionWords'
+import { ALL_MONTH_WORDS, DAY_WORDS } from './testing/everydayWords'
 import { isKnownWord } from './testing/knownWords'
 import { YEARS_3_AND_4, YEARS_5_AND_6 } from './testing/ks2StatutoryWords'
 import { cosineSimilarity, decodeWordVectors } from './wordVectors'
@@ -74,6 +75,15 @@ describe('BANK_ENTRIES', () => {
   // The meaning check for a written sentence needs a vector for the word.
   it('has a word vector for each bank word', () => {
     expect(BANK_ENTRIES.map((entry) => entry.word).filter((word) => vectorOf(word) === undefined)).toEqual([])
+  })
+
+  // A teacher sets a day or a month every term, for example in a diary or a letter.
+  it('has at least 3 sentences for each day of the week', () => {
+    expect(DAY_WORDS.filter((word) => bankSentences(word).length < 3)).toEqual([])
+  })
+
+  it('has at least 3 sentences for each month', () => {
+    expect(ALL_MONTH_WORDS.filter((word) => bankSentences(word).length < 3)).toEqual([])
   })
 
   it('has at least 3 sentences for each word of the Tatoeba batches', () => {
