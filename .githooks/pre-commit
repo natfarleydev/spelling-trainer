@@ -1,0 +1,12 @@
+#!/bin/sh
+# Write WORD-COVERAGE.md again before each commit, so that the repository always shows the state of the bank.
+# "npm run prepare" sets core.hooksPath to .githooks. npm install also runs it.
+set -e
+
+if [ ! -d node_modules ]; then
+  echo "pre-commit: node_modules does not exist. Run npm ci. WORD-COVERAGE.md stays as it is."
+  exit 0
+fi
+
+npm run --silent coverage
+git add WORD-COVERAGE.md

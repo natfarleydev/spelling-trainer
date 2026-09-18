@@ -12,7 +12,8 @@
     "src/**/*.test.tsx",
     "src/componentTestSetup.ts",
     "src/testing",
-    "src/sentences/testing"
+    "src/sentences/testing",
+    "scripts/writeCoverage.ts"
   ],
   "exclude": []
 }

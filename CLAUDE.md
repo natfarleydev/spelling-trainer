@@ -38,6 +38,7 @@ Thus, the app must operate fully in the browser.
 | `npm run test:e2e` | Make the production build and run the Playwright smoke tests. |
 | `npm run build` | Do the type checks and make the production build. |
 | `npm run build:vectors` | Make `public/data/word-vectors.bin` again from the GloVe cache in `.cache/glove`. The script tells you how to get the cache. |
+| `npm run coverage` | Write [WORD-COVERAGE.md](WORD-COVERAGE.md) again. It gives the words that still need bank sentences. |
 
 ## Testing: test-driven development (TDD)
 
@@ -264,21 +265,24 @@ A sentence must help the child to understand the **meaning** of the word. Exampl
 - The app uses bank sentences only for the word type from the tagger. If the teacher selects a different type, the app uses the templates.
 - Give each word a minimum of 3 good sentences, so that the teacher has a choice when one sentence does not operate.
 
-#### The state of the bank (2026-09-17)
+#### The state of the bank: WORD-COVERAGE.md
 
-The bank has 8 word sources. This table gives the state of each source. Make it
-correct again after each batch.
+[WORD-COVERAGE.md](WORD-COVERAGE.md) gives the state of each word source. The
+file is generated, and it crosses off each word that has 3 sentences or more.
+Read it first: it tells you which words still need sentences.
 
-| Word source | Words | State |
-| --- | --- | --- |
-| Statutory spelling lists, years 3 to 6 | 213 | Complete: 3 or more sentences for each word. |
-| Common exception words, years 1 and 2 | 75 | Complete: 3 or more sentences for each word. |
-| Spelling pattern words, English Appendix 1 | 685 | Complete: 3 or more sentences for each word. |
-| CYP-LEX book words, ages 7 to 9 | 470 | Complete: 3 or more sentences for each word. |
-| Concrete words (`CONCRETE_WORDS`) | 455 | Complete: 3 or more sentences for each word. |
-| First 1000 NGSL words | 941 | In work: 250 words still have fewer than 3 sentences. |
-| Days of the week and months (`EVERYDAY_WORDS`) | 19 | Complete: 3 or more sentences for each word. |
-| Number words (`NUMBER_WORDS`) | 40 | Complete: 3 or more sentences for each word. |
+- `npm run coverage` writes the file again.
+- The pre-commit hook in `.githooks` also writes it before each commit, so a
+  batch crosses off its words in the same commit. `npm install` installs the
+  hook, because the `prepare` script sets `core.hooksPath`.
+- `src/sentences/testing/coverageFile.test.ts` fails when the file is old. Thus
+  the CI finds a file that the hook did not write.
+- `src/sentences/testing/wordSources.ts` holds the word sources of the report.
+  Add each new word list there.
+
+The report leaves out a function word, for example "the", and an American
+spelling, for example "toward". The bank can never give a sentence to these
+words.
 
 Do the NGSL words in the order of the NGSL rank, the most common word first.
 A teacher can set any of these words.

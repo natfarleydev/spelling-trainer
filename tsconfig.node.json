@@ -25,5 +25,10 @@
     "playwright.config.ts",
     "e2e",
     "scripts"
+  ],
+  // writeCoverage.ts reads the sentence bank, and the bank files import each other without a file extension.
+  // The rule "nodenext" of this project does not allow that, so tsconfig.test.json checks this script.
+  "exclude": [
+    "scripts/writeCoverage.ts"
   ]
 }

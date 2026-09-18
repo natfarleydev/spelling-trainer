@@ -58,6 +58,7 @@ npm run dev
 | `npm test` | Run the unit tests and the component tests one time. |
 | `npm run test:e2e` | Make the production build and run the Playwright smoke tests. |
 | `npm run build` | Do the type checks and make the production build. |
+| `npm run coverage` | Write [WORD-COVERAGE.md](WORD-COVERAGE.md) again, which gives the words that still need bank sentences. |
 
 ### Mine the Tatoeba sentences
 
@@ -81,6 +82,16 @@ The sentence bank uses sentences from [Tatoeba](https://tatoeba.org). The tools 
    and the numbers of `--from` and `--to` then point to different words. Mine the next batch before you commit the batch before it.
 
 The script removes sentences that fail the hard filters, then sorts the others by a GDEX score multiplied by a context score. The context score hides the word and measures how well the model guesses it. `validateContext.ts` checks the context score against a hand-labelled set.
+
+### See which words still need sentences
+
+[WORD-COVERAGE.md](WORD-COVERAGE.md) gives the state of each word source. A word is crossed off when the bank has 3 sentences or more for it.
+
+```bash
+npm run coverage
+```
+
+The pre-commit hook in `.githooks` also writes the file before each commit. `npm install` installs the hook. A test fails when the file is old, so the CI finds a file that the hook did not write.
 
 ### Write the sentences that Tatoeba cannot give
 
