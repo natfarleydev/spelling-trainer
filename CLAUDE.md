@@ -266,7 +266,7 @@ A sentence must help the child to understand the **meaning** of the word. Exampl
 
 #### The state of the bank (2026-09-17)
 
-The bank has 7 word sources. This table gives the state of each source. Make it
+The bank has 8 word sources. This table gives the state of each source. Make it
 correct again after each batch.
 
 | Word source | Words | State |
@@ -278,6 +278,7 @@ correct again after each batch.
 | Concrete words (`CONCRETE_WORDS`) | 455 | Complete: 3 or more sentences for each word. |
 | First 1000 NGSL words | 941 | In work: 250 words still have fewer than 3 sentences. |
 | Days of the week and months (`EVERYDAY_WORDS`) | 19 | Complete: 3 or more sentences for each word. |
+| Number words (`NUMBER_WORDS`) | 40 | Complete: 3 or more sentences for each word. |
 
 Do the NGSL words in the order of the NGSL rank, the most common word first.
 A teacher can set any of these words.

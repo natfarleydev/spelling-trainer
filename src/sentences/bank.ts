@@ -19,6 +19,7 @@ import { WRITTEN_NGSL_0002_BANK } from './bank/writtenNgsl0002'
 import { WRITTEN_NGSL_0003_BANK } from './bank/writtenNgsl0003'
 import { WRITTEN_NGSL_0004_BANK } from './bank/writtenNgsl0004'
 import { WRITTEN_NGSL_0005_BANK } from './bank/writtenNgsl0005'
+import { WRITTEN_NUMBER_BANK } from './bank/writtenNumber'
 import { WRITTEN_PATTERN_BANK } from './bank/writtenPattern'
 import { WRITTEN_PATTERN_COMMON_BANK } from './bank/writtenPatternCommon'
 import { WRITTEN_PATTERN_EXTRA_BANK } from './bank/writtenPatternExtra'
@@ -99,6 +100,7 @@ export const BANK_ENTRIES: readonly BankEntry[] = mergeEntries(
   WRITTEN_NGSL_0004_BANK,
   WRITTEN_NGSL_0005_BANK,
   WRITTEN_EVERYDAY_BANK,
+  WRITTEN_NUMBER_BANK,
 )
 
 const SENTENCES_BY_WORD: ReadonlyMap<string, readonly string[]> = new Map(

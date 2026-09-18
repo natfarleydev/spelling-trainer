@@ -8,7 +8,7 @@ import { NAMES } from './mining/hardFilter'
 import { AMERICAN_WORDS } from './simpleWords'
 import { YEAR_1_COMMON_EXCEPTION_WORDS, YEAR_2_COMMON_EXCEPTION_WORDS } from './testing/commonExceptionWords'
 import { ALL_MONTH_WORDS, DAY_WORDS } from './testing/everydayWords'
-import { isKnownWord } from './testing/knownWords'
+import { isKnownWord, NUMBER_WORDS } from './testing/knownWords'
 import { YEARS_3_AND_4, YEARS_5_AND_6 } from './testing/ks2StatutoryWords'
 import { cosineSimilarity, decodeWordVectors } from './wordVectors'
 
@@ -84,6 +84,11 @@ describe('BANK_ENTRIES', () => {
 
   it('has at least 3 sentences for each month', () => {
     expect(ALL_MONTH_WORDS.filter((word) => bankSentences(word).length < 3)).toEqual([])
+  })
+
+  // A child writes a number in words in a sum, a date and a story.
+  it('has at least 3 sentences for each number word', () => {
+    expect(NUMBER_WORDS.filter((word) => bankSentences(word).length < 3)).toEqual([])
   })
 
   it('has at least 3 sentences for each word of the Tatoeba batches', () => {
