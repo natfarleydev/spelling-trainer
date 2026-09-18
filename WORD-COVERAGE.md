@@ -6,7 +6,7 @@ Run `npm run coverage` to make it again, or let the pre-commit hook do it.
 A word is crossed off when the bank has 3 sentences or more for it.
 The number after each word is the number of bank sentences.
 
-**3519 of 3928 words are complete. 409 words still need sentences.**
+**3519 of 3926 words are complete. 407 words still need sentences.**
 
 | Word source | Words | With 3 sentences | Missing |
 | --- | --- | --- | --- |
@@ -20,7 +20,7 @@ The number after each word is the number of bank sentences.
 | Everyday nouns | 53 | 53 | 0 |
 | Number words | 40 | 40 | 0 |
 | First 1000 NGSL words | 939 | 939 | 0 |
-| NGSL words 1001 to 2000 | 979 | 570 | 409 |
+| NGSL words 1001 to 2000 | 977 | 570 | 407 |
 
 ## Statutory spelling list, years 3 and 4
 
@@ -3035,7 +3035,7 @@ The most common English words. A teacher can set any of them, so the bank needs 
 
 The next most common English words. The list leaves out the words that children must not read.
 
-570 of 979 words have 3 sentences or more.
+570 of 977 words have 3 sentences or more.
 
 - [x] difficulty (3)
 - [x] purchase (3)
@@ -3461,7 +3461,6 @@ The next most common English words. The list leaves out the words that children 
 - [ ] quote (0)
 - [x] climb (5)
 - [x] basically (3)
-- [ ] violence (0)
 - [ ] minister (0)
 - [ ] mainly (0)
 - [x] mouth (3)
@@ -3542,7 +3541,6 @@ The next most common English words. The list leaves out the words that children 
 - [ ] internal (0)
 - [ ] chain (0)
 - [ ] literature (0)
-- [ ] victim (0)
 - [ ] threaten (0)
 - [x] division (3)
 - [x] secure (3)
