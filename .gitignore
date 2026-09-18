@@ -158,3 +158,6 @@ playwright/.cache/
 
 # Turborepo cache
 .turbo/
+
+# Local scratch scripts of a session. Example: tools/mining/probe.local.ts
+*.local.ts
