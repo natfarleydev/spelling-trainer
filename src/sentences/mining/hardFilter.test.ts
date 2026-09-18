@@ -28,7 +28,7 @@ describe('hardFilterReason', () => {
   })
 
   // A word of violence is not correct for a spelling test, and not correct in a sentence. Children read the slides.
-  it.each(['violence', 'violent', 'victim', 'affair'])('rejects a sentence with the word "%s"', (blocked) => {
+  it.each(['violence', 'violent', 'victim', 'affair', 'abuse'])('rejects a sentence with the word "%s"', (blocked) => {
     const known: FilterTools = { isKnown: () => true }
     expect(hardFilterReason(`We saw the ${blocked} thing in the town today.`, 'town', known)).not.toBeNull()
   })

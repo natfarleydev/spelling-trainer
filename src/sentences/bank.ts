@@ -29,6 +29,7 @@ import { WRITTEN_NGSL_NEXT_0002_BANK } from './bank/writtenNgslNext0002'
 import { WRITTEN_NGSL_NEXT_0003_BANK } from './bank/writtenNgslNext0003'
 import { WRITTEN_NGSL_NEXT_0004_BANK } from './bank/writtenNgslNext0004'
 import { WRITTEN_NGSL_NEXT_0005_BANK } from './bank/writtenNgslNext0005'
+import { WRITTEN_NGSL_NEXT_0006_BANK } from './bank/writtenNgslNext0006'
 import { WRITTEN_NUMBER_BANK } from './bank/writtenNumber'
 import { WRITTEN_PATTERN_BANK } from './bank/writtenPattern'
 import { WRITTEN_PATTERN_COMMON_BANK } from './bank/writtenPatternCommon'
@@ -118,6 +119,7 @@ export const BANK_ENTRIES: readonly BankEntry[] = mergeEntries(
   WRITTEN_NGSL_NEXT_0003_BANK,
   WRITTEN_NGSL_NEXT_0004_BANK,
   WRITTEN_NGSL_NEXT_0005_BANK,
+  WRITTEN_NGSL_NEXT_0006_BANK,
   WRITTEN_EVERYDAY_BANK,
   WRITTEN_EVERYDAY_NOUN_BANK,
   WRITTEN_NUMBER_BANK,
