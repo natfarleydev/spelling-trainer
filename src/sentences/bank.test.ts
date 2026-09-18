@@ -7,8 +7,9 @@ import { splitSentence } from './highlight'
 import { NAMES } from './mining/hardFilter'
 import { AMERICAN_WORDS } from './simpleWords'
 import { YEAR_1_COMMON_EXCEPTION_WORDS, YEAR_2_COMMON_EXCEPTION_WORDS } from './testing/commonExceptionWords'
-import { ALL_MONTH_WORDS, DAY_WORDS } from './testing/everydayWords'
+import { ALL_MONTH_WORDS, DAY_WORDS, EVERYDAY_NOUN_WORDS } from './testing/everydayWords'
 import { isKnownWord, NUMBER_WORDS } from './testing/knownWords'
+import { needsMeaningCheck } from './testing/meaningExceptions'
 import { YEARS_3_AND_4, YEARS_5_AND_6 } from './testing/ks2StatutoryWords'
 import { cosineSimilarity, decodeWordVectors } from './wordVectors'
 
@@ -50,6 +51,9 @@ const everySentence = BANK_ENTRIES.flatMap((entry) => entry.sentences.map((sente
 // That measure agrees better with a person than the word vector check (see tools/mining/validateContext.ts).
 const TATOEBA_TEXTS: ReadonlySet<string> = new Set(TATOEBA_ENTRIES.flatMap((entry) => entry.sentences.map(({ text }) => text)))
 const writtenSentences = everySentence.filter(([, sentence]) => !TATOEBA_TEXTS.has(sentence))
+// The word vector of a word in MEANING_EXCEPTIONS carries a meaning that a child does not use, so the meaning rule
+// cannot check its sentences. src/sentences/testing/meaningExceptions.ts gives the reason for each word.
+const checkedSentences = writtenSentences.filter(([word]) => needsMeaningCheck(word))
 
 describe('BANK_ENTRIES', () => {
   it('has each word one time', () => {
@@ -84,6 +88,11 @@ describe('BANK_ENTRIES', () => {
 
   it('has at least 3 sentences for each month', () => {
     expect(ALL_MONTH_WORDS.filter((word) => bankSentences(word).length < 3)).toEqual([])
+  })
+
+  // A teacher sets these everyday nouns of a school, a home and a street.
+  it('has at least 3 sentences for each everyday noun', () => {
+    expect(EVERYDAY_NOUN_WORDS.filter((word) => bankSentences(word).length < 3)).toEqual([])
   })
 
   // A child writes a number in words in a sum, a date and a story.
@@ -130,7 +139,7 @@ describe.each(everySentence)('%s: %j', (word, sentence) => {
   })
 })
 
-describe.each(writtenSentences)('written sentence for %s: %j', (word, sentence) => {
+describe.each(checkedSentences)('written sentence for %s: %j', (word, sentence) => {
   it(`shows the meaning: a content word has a similarity of at least ${MEANING_THRESHOLD}`, () => {
     const clue = bestClue(word, sentence)
     expect(clue?.similarity ?? 0, `best clue: ${JSON.stringify(clue)}`).toBeGreaterThanOrEqual(MEANING_THRESHOLD)

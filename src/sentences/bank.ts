@@ -13,6 +13,7 @@ import { WRITTEN_CONCRETE_BANK } from './bank/writtenConcrete'
 import { WRITTEN_CYPLEX_BANK } from './bank/writtenCyplex'
 import { WRITTEN_CYPLEX_EXTRA_BANK } from './bank/writtenCyplexExtra'
 import { WRITTEN_EVERYDAY_BANK } from './bank/writtenEveryday'
+import { WRITTEN_EVERYDAY_NOUN_BANK } from './bank/writtenEverydayNoun'
 import { WRITTEN_EXCEPTION_EXTRA_BANK } from './bank/writtenExceptionExtra'
 import { WRITTEN_NGSL_0001_BANK } from './bank/writtenNgsl0001'
 import { WRITTEN_NGSL_0002_BANK } from './bank/writtenNgsl0002'
@@ -100,6 +101,7 @@ export const BANK_ENTRIES: readonly BankEntry[] = mergeEntries(
   WRITTEN_NGSL_0004_BANK,
   WRITTEN_NGSL_0005_BANK,
   WRITTEN_EVERYDAY_BANK,
+  WRITTEN_EVERYDAY_NOUN_BANK,
   WRITTEN_NUMBER_BANK,
 )
 

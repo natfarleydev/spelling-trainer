@@ -15,6 +15,7 @@ import { splitSentence } from '../../src/sentences/highlight'
 import { NAMES } from '../../src/sentences/mining/hardFilter'
 import { AMERICAN_WORDS } from '../../src/sentences/simpleWords'
 import { isKnownWord } from '../../src/sentences/testing/knownWords'
+import { needsMeaningCheck } from '../../src/sentences/testing/meaningExceptions'
 import { cosineSimilarity, decodeWordVectors } from '../../src/sentences/wordVectors'
 
 const MEANING_THRESHOLD = 0.4
@@ -68,7 +69,7 @@ const problems = (word: string, sentence: string): readonly string[] => {
     ...(/['’]/.test(sentence) ? ['it has an apostrophe'] : []),
     ...(unknown.length === 0 ? [] : [`unknown words: ${unknown.join(', ')}`]),
     ...(american.length === 0 ? [] : [`American words: ${american.join(', ')}`]),
-    ...((best?.similarity ?? 0) >= MEANING_THRESHOLD
+    ...(!needsMeaningCheck(word) || (best?.similarity ?? 0) >= MEANING_THRESHOLD
       ? []
       : [`the best clue is ${best ? `"${best.word}" (${best.similarity.toFixed(2)})` : 'none'}`]),
   ]

@@ -5,7 +5,7 @@ import { CONCRETE_WORDS } from '../mining/concreteWords'
 import { YEAR_1_COMMON_EXCEPTION_WORDS, YEAR_2_COMMON_EXCEPTION_WORDS } from './commonExceptionWords'
 import type { WordSource } from './coverage'
 import { CYPLEX_WORDS } from './cyplexWords'
-import { EVERYDAY_WORDS } from './everydayWords'
+import { ALL_MONTH_WORDS, DAY_WORDS, EVERYDAY_NOUN_WORDS } from './everydayWords'
 import { NUMBER_WORDS } from './knownWords'
 import { YEARS_3_AND_4, YEARS_5_AND_6 } from './ks2StatutoryWords'
 import { ALL_PATTERN_WORDS } from './patternWords'
@@ -56,7 +56,12 @@ export const WORD_SOURCES: readonly WordSource[] = [
   {
     name: 'Days of the week and months',
     description: 'The everyday proper nouns that a child writes in a diary, a letter and a date.',
-    words: settable(EVERYDAY_WORDS),
+    words: settable([...DAY_WORDS, ...ALL_MONTH_WORDS]),
+  },
+  {
+    name: 'Everyday nouns',
+    description: 'The nouns of a school, a home and a street that a child meets every day.',
+    words: settable(EVERYDAY_NOUN_WORDS),
   },
   {
     name: 'Number words',

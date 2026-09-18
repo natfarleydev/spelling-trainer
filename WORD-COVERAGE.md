@@ -6,7 +6,7 @@ Run `npm run coverage` to make it again, or let the pre-commit hook do it.
 A word is crossed off when the bank has 3 sentences or more for it.
 The number after each word is the number of bank sentences.
 
-**2647 of 2896 words are complete. 249 words still need sentences.**
+**2702 of 2949 words are complete. 247 words still need sentences.**
 
 | Word source | Words | With 3 sentences | Missing |
 | --- | --- | --- | --- |
@@ -17,8 +17,9 @@ The number after each word is the number of bank sentences.
 | CYP-LEX book words, ages 7 to 9 | 470 | 470 | 0 |
 | Concrete words | 455 | 455 | 0 |
 | Days of the week and months | 19 | 19 | 0 |
+| Everyday nouns | 53 | 53 | 0 |
 | Number words | 40 | 40 | 0 |
-| First 1000 NGSL words | 939 | 690 | 249 |
+| First 1000 NGSL words | 939 | 692 | 247 |
 
 ## Statutory spelling list, years 3 and 4
 
@@ -1979,6 +1980,65 @@ The everyday proper nouns that a child writes in a diary, a letter and a date.
 - [x] October (3)
 - [x] November (3)
 - [x] December (3)
+## Everyday nouns
+
+The nouns of a school, a home and a street that a child meets every day.
+
+53 of 53 words have 3 sentences or more.
+
+- [x] classroom (3)
+- [x] register (3)
+- [x] assembly (3)
+- [x] uniform (3)
+- [x] homework (3)
+- [x] ruler (3)
+- [x] rubber (3)
+- [x] glue (3)
+- [x] bathroom (3)
+- [x] garage (3)
+- [x] stairs (3)
+- [x] blanket (3)
+- [x] pillow (3)
+- [x] sandwich (3)
+- [x] butter (3)
+- [x] jam (3)
+- [x] cereal (3)
+- [x] pizza (3)
+- [x] pasta (3)
+- [x] salad (3)
+- [x] sausage (3)
+- [x] trousers (3)
+- [x] glove (3)
+- [x] trainers (3)
+- [x] lion (3)
+- [x] tiger (3)
+- [x] snake (3)
+- [x] spider (3)
+- [x] frog (3)
+- [x] penguin (3)
+- [x] owl (3)
+- [x] duck (3)
+- [x] fog (3)
+- [x] frost (3)
+- [x] rainbow (3)
+- [x] breeze (3)
+- [x] leaf (3)
+- [x] branch (3)
+- [x] birthday (3)
+- [x] grandfather (3)
+- [x] tomorrow (3)
+- [x] yesterday (3)
+- [x] Easter (3)
+- [x] purple (3)
+- [x] teeth (3)
+- [x] tractor (3)
+- [x] helicopter (3)
+- [x] railway (3)
+- [x] cricket (3)
+- [x] swimming (3)
+- [x] skipping (3)
+- [x] penny (3)
+- [x] wallet (3)
 ## Number words
 
 The numbers in words, for the sums, the dates and the stories that a child writes.
@@ -2029,7 +2089,7 @@ The numbers in words, for the sums, the dates and the stories that a child write
 
 The most common English words. A teacher can set any of them, so the bank needs all of them.
 
-690 of 939 words have 3 sentences or more.
+692 of 939 words have 3 sentences or more.
 
 - [x] she (3)
 - [x] say (3)
@@ -2673,7 +2733,7 @@ The most common English words. A teacher can set any of them, so the bank needs 
 - [ ] fit (0)
 - [ ] guy (0)
 - [ ] function (0)
-- [ ] yesterday (0)
+- [x] yesterday (3)
 - [ ] image (0)
 - [ ] size (0)
 - [x] behaviour (3)
@@ -2696,7 +2756,7 @@ The most common English words. A teacher can set any of them, so the bank needs 
 - [ ] series (0)
 - [x] direct (3)
 - [ ] success (0)
-- [ ] tomorrow (0)
+- [x] tomorrow (3)
 - [ ] director (0)
 - [ ] clearly (0)
 - [ ] lack (0)
