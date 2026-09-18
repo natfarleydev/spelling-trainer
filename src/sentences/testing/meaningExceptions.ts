@@ -11,6 +11,7 @@
 export const MEANING_EXCEPTIONS: ReadonlyMap<string, string> = new Map([
   ['ruler', 'The vector is a king who rules a country (king 0.74), and not the thing that measures a line (line 0.19).'],
   ['trainers', 'The vector is a person who trains other people (coaches 0.67), and not the soft shoes for sport.'],
+  ['tire', 'The vector is the American spelling of "tyre" (tires 0.84, wheels 0.74), and not the verb that makes you tired.'],
 ])
 
 // True when the meaning rule must check the sentences of the word.
