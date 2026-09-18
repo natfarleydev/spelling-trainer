@@ -73,7 +73,7 @@ describe('AMERICAN_WORDS', () => {
     'color', 'favorite', 'behavior', 'center', 'program', 'organize', 'organization', 'realize', 'recognize',
     'theater', 'meter', 'analyze', 'defense', 'offense', 'catalog', 'dialog', 'gray', 'neighbor',
     'honor', 'labor', 'humor', 'harbor', 'favor', 'specialize', 'apologize', 'emphasize', 'criticize',
-    'summarize', 'characterize',
+    'summarize', 'characterize', 'neighborhood',
   ])('blocks the American spelling %j', (word) => {
     expect(AMERICAN_WORDS.has(word)).toBe(true)
   })

@@ -13,6 +13,7 @@ export const MEANING_EXCEPTIONS: ReadonlyMap<string, string> = new Map([
   ['trainers', 'The vector is a person who trains other people (coaches 0.67), and not the soft shoes for sport.'],
   ['tire', 'The vector is the American spelling of "tyre" (tires 0.84, wheels 0.74), and not the verb that makes you tired.'],
   ['wed', 'The vector is the short form of "Wednesday" (saturdays 0.47), and not the verb that means to marry.'],
+  ['index', 'The vector is the price index of a stock market (indexes 0.86, futures 0.75), and not the list at the back of a book.'],
 ])
 
 // True when the meaning rule must check the sentences of the word.

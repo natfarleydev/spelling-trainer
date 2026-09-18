@@ -51,7 +51,7 @@ export const AMERICAN_WORDS: ReadonlySet<string> = new Set([
   'analyze', 'apartment', 'apologize', 'behavior', 'candy', 'catalog', 'center', 'characterize', 'color', 'cookie',
   'criticize', 'defense', 'diaper', 'dialog', 'elevator', 'emphasize', 'eraser', 'favor', 'favorite', 'flashlight',
   'fries', 'gotten', 'gray', 'harbor', 'honor', 'humor', 'labor', 'math', 'meter',
-  'mom', 'movie', 'neighbor', 'offense', 'organization', 'organize', 'pants', 'program', 'realize', 'recognize',
+  'mom', 'movie', 'neighbor', 'neighborhood', 'offense', 'organization', 'organize', 'pants', 'program', 'realize', 'recognize',
   'sidewalk', 'soccer', 'specialize', 'summarize', 'theater', 'toward', 'trash', 'truck', 'vacation',
 ])
 
