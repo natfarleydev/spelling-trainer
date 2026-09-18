@@ -867,7 +867,6 @@ export const TATOEBA_0010_BANK: readonly TatoebaEntry[] = [
     word: "posters",
     sentences: [
       { id: 9826629, text: "I hung some posters on the wall." },
-      { id: 12676537, text: "We put up posters all over the neighborhood." },
       { id: 11612604, text: "The walls of their room are covered in animal posters." },
     ],
   },

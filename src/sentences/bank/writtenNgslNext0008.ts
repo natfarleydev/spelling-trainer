@@ -5,6 +5,8 @@ import type { BankEntry } from '../bank'
 // back of a book.
 // src/sentences/bank.test.ts checks the rules.
 export const WRITTEN_NGSL_NEXT_0008_BANK: readonly BankEntry[] = [
+  // The Tatoeba sentence for "posters" used the American spelling "neighborhood", so this sentence replaces it.
+  { word: 'posters', sentences: ['We put up posters of the school play, and each poster has a picture.'] },
   {
     word: 'complaint',
     sentences: [
