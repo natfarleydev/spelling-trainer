@@ -117,6 +117,7 @@ export const BLOCKED_WORDS: ReadonlySet<string> = new Set([
   'ugly',
   'vodka',
   'war',
+  'affair',
   'victim',
   'violence',
   'violent',
