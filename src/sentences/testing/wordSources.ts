@@ -7,6 +7,7 @@ import type { WordSource } from './coverage'
 import { CYPLEX_WORDS } from './cyplexWords'
 import { ALL_MONTH_WORDS, DAY_WORDS, EVERYDAY_NOUN_WORDS } from './everydayWords'
 import { NUMBER_WORDS } from './knownWords'
+import { NGSL_NEXT_WORDS } from './ngslNextWords'
 import { YEARS_3_AND_4, YEARS_5_AND_6 } from './ks2StatutoryWords'
 import { ALL_PATTERN_WORDS } from './patternWords'
 
@@ -72,5 +73,10 @@ export const WORD_SOURCES: readonly WordSource[] = [
     name: 'First 1000 NGSL words',
     description: 'The most common English words. A teacher can set any of them, so the bank needs all of them.',
     words: settable(NGSL_FIRST_1000),
+  },
+  {
+    name: 'NGSL words 1001 to 2000',
+    description: 'The next most common English words. The list leaves out the words that children must not read.',
+    words: settable(NGSL_NEXT_WORDS),
   },
 ]
